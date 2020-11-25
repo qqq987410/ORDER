@@ -19,6 +19,7 @@ jobs:
               repoToken: "${{ secrets.GITHUB_TOKEN }}"
               firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_ORDER_7CBBF }}"
               projectId: order-7cbbf
+              # firebase 預設的網址，push後live會被蓋掉
               channelId: live
            env:
               FIREBASE_CLI_PREVIEWS: hostingchannels
