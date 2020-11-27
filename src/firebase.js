@@ -28,26 +28,20 @@ function createFakeData() {
         phoneNumber: doc.data().phoneNumber,
         title: doc.data().title,
       });
-      console.log(`AAA=${doc.id}`, doc.data().title);
+      // console.log(`AAA=${doc.id}`, doc.data().title);
     });
+    return data;
   });
-  console.log(data);
-  return data;
-  // let ref = db.collection("restaurant");
-  // ref.where("category", "==", "beverage")
-  //    .get()
-  //    .then((item) => {
-  //       item.forEach((doc) => {
-  //          console.log(`AAA=${doc.id}`, doc.data().title);
-  //       });
-  //    });
-  // let ref = db.collection("restaurant").doc();
-  // ref.set({
-  //    address: "110台北市信義區忠孝東路四段553巷52弄5號1樓",
-  //    businessHour: ["11:30–15:30", "17:30-21:00"],
-  //    category: "cantonese",
-  //    phoneNumber: "+886237621195",
-  //    title: "??????? (港式茶餐廳)",
-  // });
 }
 export { createFakeData, data };
+
+/*
+   let ref = db.collection("restaurant").doc();
+   ref.set({
+      address: "110台北市信義區忠孝東路四段553巷52弄5號1樓",
+      businessHour: ["11:30–15:30", "17:30-21:00"],
+      category: "cantonese",
+      phoneNumber: "+886237621195",
+      title: "??????? (港式茶餐廳)",
+   });
+*/
