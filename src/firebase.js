@@ -3,6 +3,7 @@ import firebase from "firebase/app";
 // import "firebase/analytics";
 // import "firebase/auth";
 import "firebase/firestore";
+import { useCallback } from "react";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnIZz9XKePiURWd1lArnKnZqgcHDk0xkQ",
@@ -16,24 +17,32 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 let db = firebase.firestore();
 
-let data = [];
-function createFakeData() {
+function createFakeData(callback) {
+  let fakeData = [];
   let ref = db.collection("restaurant");
-  ref.get().then((item) => {
-    item.forEach((doc) => {
-      data.push({
-        address: doc.data().address,
-        businessHour: [doc.data().businessHour[0], doc.data().businessHour[1]],
-        category: doc.data().category,
-        phoneNumber: doc.data().phoneNumber,
-        title: doc.data().title,
+  ref
+    .get()
+    .then((item) => {
+      item.forEach((doc) => {
+        fakeData.push({
+          address: doc.data().address,
+          businessHour: [
+            doc.data().businessHour[0],
+            doc.data().businessHour[1],
+          ],
+          category: doc.data().category,
+          phoneNumber: doc.data().phoneNumber,
+          title: doc.data().title,
+          id: doc.id,
+        });
       });
-      // console.log(`AAA=${doc.id}`, doc.data().title);
+      return fakeData;
+    })
+    .then((result) => {
+      callback(result);
     });
-    return data;
-  });
 }
-export { createFakeData, data };
+export { createFakeData };
 
 /*
    let ref = db.collection("restaurant").doc();
