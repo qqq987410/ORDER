@@ -1,9 +1,10 @@
 // firebase
 import firebase from "firebase/app";
 // import "firebase/analytics";
-// import "firebase/auth";
+import "firebase/auth";
 import "firebase/firestore";
 import { useCallback } from "react";
+import { useParams } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnIZz9XKePiURWd1lArnKnZqgcHDk0xkQ",
@@ -16,6 +17,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 let db = firebase.firestore();
+let provider = new firebase.auth.FacebookAuthProvider();
 
 function createFakeData(callback) {
   let fakeData = [];
@@ -42,15 +44,49 @@ function createFakeData(callback) {
       callback(result);
     });
 }
-export { createFakeData };
 
-/*
-   let ref = db.collection("restaurant").doc();
-   ref.set({
-      address: "110台北市信義區忠孝東路四段553巷52弄5號1樓",
-      businessHour: ["11:30–15:30", "17:30-21:00"],
-      category: "cantonese",
-      phoneNumber: "+886237621195",
-      title: "??????? (港式茶餐廳)",
-   });
-*/
+function facebookLogin() {
+  firebase
+    .auth()
+    .signInWithPopup(provider)
+    .then(function (result) {
+      let token = result.credential.accessToken;
+      let userName = result.additionalUserInfo.profile.name;
+      let userEmail = result.additionalUserInfo.profile.email;
+      let uid = result.user.uid;
+      console.log("您被選中入宮當秀女囉", result);
+      localStorage.setItem("accessToken", JSON.stringify(token));
+
+      db.collection("users")
+        .doc(uid)
+        .set({
+          userName: userName,
+          userEmail: userEmail,
+          userHistoryOrder: "",
+        })
+        .then(() => {
+          console.log("Add successful");
+        });
+    })
+    .catch(function (error) {
+      console.log("登入失敗", error);
+    });
+}
+function facebookLogout() {
+  firebase
+    .auth()
+    .signOut()
+    .then(() => {
+      localStorage.removeItem("accessToken");
+      console.log("您被逐出紫禁城了");
+    });
+}
+export { createFakeData, facebookLogin, facebookLogout, db };
+// let ref = db.collection("restaurant").doc();
+// ref.set({
+//    address: "110台北市信義區忠孝東路四段553巷52弄5號1樓",
+//    businessHour: ["11:30–15:30", "17:30-21:00"],
+//    category: "cantonese",
+//    phoneNumber: "+886237621195",
+//    title: "給蝦米碗糕",
+// });

@@ -6,7 +6,7 @@ import Home from "./Home";
 import Main from "./Main";
 import Menu from "./Menu";
 
-function App(props) {
+function App() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
