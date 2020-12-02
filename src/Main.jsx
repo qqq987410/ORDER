@@ -8,8 +8,16 @@ import {
   useHistory,
 } from "react-router-dom";
 import { db } from "./firebase";
+import firebase from "firebase";
 
 function Main(props) {
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      console.log("判斷登錄狀態success＝", user);
+    } else {
+      console.log("判斷登錄狀態false");
+    }
+  });
   let data = props.data;
   //    console.log(data);
   let queryString = window.location.search.slice(8);

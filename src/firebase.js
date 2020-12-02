@@ -55,7 +55,7 @@ function facebookLogin() {
       let userEmail = result.additionalUserInfo.profile.email;
       let uid = result.user.uid;
       console.log("您被選中入宮當秀女囉", result);
-      localStorage.setItem("accessToken", JSON.stringify(token));
+      // localStorage.setItem("accessToken", JSON.stringify(token));
 
       db.collection("users")
         .doc(uid)
