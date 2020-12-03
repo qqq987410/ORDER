@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { db } from "./firebase";
 import firebase from "firebase";
+import time from "./image/time.svg";
 
 function Main(props) {
   firebase.auth().onAuthStateChanged(function (user) {
@@ -18,14 +19,13 @@ function Main(props) {
       console.log("判斷登錄狀態false");
     }
   });
-  let data = props.data;
-  //    console.log(data);
   let queryString = window.location.search.slice(8);
   let queryStringAfterDecode = decodeURI(queryString);
 
   let citiesRef = db.collection("restaurant");
   let [showRestaurant, setShowRestaurant] = useState([]);
-  useEffect(() => {
+  let [showRestaurantDetail, setShowRestaurantDetail] = useState({});
+  useEffect(function () {
     citiesRef
       .orderBy("title")
       .startAt(queryStringAfterDecode)
@@ -49,12 +49,35 @@ function Main(props) {
         });
       });
   }, []);
+  function LeftSide() {
+    let sigleTime = (
+      <div> 營業時間：{showRestaurantDetail?.businessHour?.[0]}</div>
+    );
+    let doubleTime = (
+      <div>
+        營業時間：{showRestaurantDetail?.businessHour?.[0]}&nbsp;&amp;&nbsp;
+        {showRestaurantDetail?.businessHour?.[1]}
+      </div>
+    );
 
-  return (
-    <div>
-      <h2 className={styles.h2}>Main Page</h2>
-      <div className={styles.stores}>
+    return (
+      <div className={styles.leftSide}>
+        <div>{showRestaurantDetail.title}</div>
+        <div className="time">
+          <img src={time} alt="time" />
+          {showRestaurantDetail?.businessHour?.[1] ? doubleTime : sigleTime}
+        </div>
+
+        <div>地址：{showRestaurantDetail?.address}</div>
+        <div>電話：{showRestaurantDetail?.phoneNumber}</div>
+      </div>
+    );
+  }
+  function RightSide() {
+    return (
+      <div className={styles.rightSide}>
         {showRestaurant.map((store) => {
+          console.log(store.title);
           return (
             <Store
               title={store.title}
@@ -68,18 +91,63 @@ function Main(props) {
           );
         })}
       </div>
-    </div>
-  );
-}
-function Store(props) {
-  let history = useHistory();
-  function linkToMenu() {
-    history.push("./menu");
+    );
+  }
+  function Store(props) {
+    let history = useHistory();
+    function linkToMenu(e) {
+      console.log(e.target);
+      console.log(props.title, props.id);
+      history.push(`./menu?restaurantID=${props.id}`);
+    }
+    function mouseEnter(e) {
+      e.target.style.backgroundColor = "#eb4d4b";
+      e.target.style.color = "#ffffff";
+
+      setShowRestaurantDetail({
+        title: props.title,
+        category: props.category,
+        businessHour: props.businessHour,
+        phoneNumber: props.phoneNumber,
+        address: props.address,
+        id: props.id,
+        key: props.id,
+      });
+      // return (
+      //    <LeftSide
+      //       title={props.title}
+      //       category={props.category}
+      //       businessHour={props.businessHour}
+      //       phoneNumber={props.phoneNumber}
+      //       address={props.address}
+      //       id={props.id}
+      //       key={props.id}
+      //    />
+      // );
+    }
+    function mouseLeave(e) {
+      e.target.style.backgroundColor = "#ffffff";
+      e.target.style.color = "#eb4d4b";
+    }
+    return (
+      <div
+        className={styles.store}
+        onClick={linkToMenu}
+        onMouseEnter={mouseEnter}
+        onMouseLeave={mouseLeave}
+      >
+        <p>{props.title}</p>
+      </div>
+    );
   }
   return (
-    <div className={styles.store}>
-      <p onClick={linkToMenu}>{props.title}</p>
+    <div>
+      <div className={styles.main}>
+        <LeftSide />
+        <RightSide />
+      </div>
     </div>
   );
 }
+
 export default Main;
