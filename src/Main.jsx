@@ -113,17 +113,6 @@ function Main(props) {
         id: props.id,
         key: props.id,
       });
-      // return (
-      //    <LeftSide
-      //       title={props.title}
-      //       category={props.category}
-      //       businessHour={props.businessHour}
-      //       phoneNumber={props.phoneNumber}
-      //       address={props.address}
-      //       id={props.id}
-      //       key={props.id}
-      //    />
-      // );
     }
     function mouseLeave(e) {
       e.target.style.backgroundColor = "#ffffff";
