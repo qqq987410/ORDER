@@ -6,27 +6,69 @@
   padding-top: 60px;
 }
 .leftSide {
-  width: 40vw;
+  width: 50vw;
   height: 100vh;
-  // background-image: radial-gradient(circle, lightyellow 0%, transparent 100%),
-  //    radial-gradient(circle at top, lightblue 0%, transparent 100%),
-  //    radial-gradient(circle at bottom, lightgreen 0%, transparent 100%),
-  //    radial-gradient(circle at right, lightpink 0%, transparent 100%),
-  //    radial-gradient(circle at left, NavajoWhite 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
   background-image: radial-gradient(circle, lightyellow 0%, transparent 100%),
     radial-gradient(circle at top, #f29635 0%, transparent 100%),
     radial-gradient(circle at bottom, #cf531a 0%, transparent 100%),
     radial-gradient(circle at right, #730e00 0%, transparent 100%),
     radial-gradient(circle at left, #703819 0%, transparent 100%),
     radial-gradient(circle at center, red 0%, transparent 100%);
+  .title {
+    border: 2px dotted #70493c;
+    border-radius: 6px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding: 6px 10px;
+    color: #745539;
+    letter-spacing: 2px;
+  }
+  .detail {
+    color: #70493c;
+    .time {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+      }
+    }
+    .phone {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+      }
+    }
+    .address {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+      }
+    }
+  }
 }
 .rightSide {
-  width: 60vw;
+  width: 50vw;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 50px;
+  overflow: scroll;
 }
 // Store
 .store {
@@ -39,4 +81,46 @@
   color: #eb4d4b;
   margin-bottom: 30px;
   cursor: pointer;
+  &:hover {
+    background-color: #eb4d4b;
+    color: #ffffff;
+  }
+}
+
+@media (max-width: 800px) {
+  .leftSide {
+    width: 100vw;
+    height: 220px;
+    position: fixed;
+    top: 60px;
+    padding: 0;
+    padding-top: 20px;
+    justify-content: space-evenly;
+    .title {
+      margin: 0;
+    }
+    .detail {
+      margin-top: 10px;
+    }
+  }
+  .rightSide {
+    width: 100vw;
+    height: 100vh;
+    margin-top: 220px;
+    padding: 0;
+    padding-top: 30px;
+  }
+}
+@media (max-width: 500px) {
+  .leftSide {
+    height: 250px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .rightSide {
+    margin-top: 250px;
+  }
+  .store {
+    width: 230px;
+  }
 }

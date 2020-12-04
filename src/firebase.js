@@ -26,6 +26,7 @@ function createFakeData(callback) {
     .get()
     .then((item) => {
       item.forEach((doc) => {
+        // console.log(doc.collection("menu"));
         fakeData.push({
           address: doc.data().address,
           businessHour: [

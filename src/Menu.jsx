@@ -2,8 +2,7 @@ import styles from "./Menu.module.scss";
 function Menu(props) {
   let queryString = window.location.search.slice(14);
   let queryStringAfterDecode = decodeURI(queryString);
-  console.log(queryStringAfterDecode);
-  console.log(props.data);
+
   let data = props.data;
   let restaurantObj = {};
   data.forEach((element) => {
@@ -16,16 +15,19 @@ function Menu(props) {
         title: element.title,
         id: element.id,
       };
-      //  console.log(restaurantObj);
-      //  return restaurantObj;
     }
   });
+
   console.log(restaurantObj);
   return (
-    <div>
+    <div className={styles.main}>
       <p> {restaurantObj.title}</p>
       <p>{restaurantObj.address}</p>
       <p>{restaurantObj.phoneNumber}</p>
+      <p>
+        {restaurantObj?.businessHour?.[0]}
+        {restaurantObj?.businessHour?.[1]}
+      </p>
     </div>
   );
 }
