@@ -15,7 +15,7 @@ function App() {
     createFakeData(setData);
   }, []);
 
-  //   console.log(data);
+  // console.log(data);
   return (
     <Router>
       <nav className={styles.navbar}>

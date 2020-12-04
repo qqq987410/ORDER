@@ -1,6 +1,22 @@
 .main {
+  border: 2px solid red;
   width: 100vw;
   height: 100vh;
-  padding-top: 60px;
-  //    border: 2px solid red;
+  margin-top: 60px;
+}
+// <Meal />
+.meal {
+  width: 150px;
+  border: 1px solid #ffbe76;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  p {
+    text-align: center;
+    color: #f0932b;
+    cursor: pointer;
+    &:hover {
+      background-color: #f0932b;
+      color: #ffffff;
+    }
+  }
 }

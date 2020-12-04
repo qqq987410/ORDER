@@ -1,24 +1,47 @@
 import styles from "./Menu.module.scss";
+import { db } from "./firebase";
+import { useEffect, useState } from "react";
+import { nanoid } from "nanoid";
+
 function Menu(props) {
+  let [menus, setMenus] = useState({});
+
   let queryString = window.location.search.slice(14);
   let queryStringAfterDecode = decodeURI(queryString);
 
   let data = props.data;
   let restaurantObj = {};
-  data.forEach((element) => {
-    if (element.id === queryStringAfterDecode) {
+
+  data.forEach((doc) => {
+    if (doc.id === queryStringAfterDecode) {
       restaurantObj = {
-        address: element.address,
-        businessHour: [element.businessHour[0], element.businessHour[1]],
-        category: element.category,
-        phoneNumber: element.phoneNumber,
-        title: element.title,
-        id: element.id,
+        address: doc.address,
+        businessHour: [doc.businessHour[0], doc.businessHour[1]],
+        category: doc.category,
+        phoneNumber: doc.phoneNumber,
+        title: doc.title,
+        id: doc.id,
       };
     }
   });
+  useEffect(() => {
+    db.collection("restaurant")
+      .doc(queryStringAfterDecode)
+      .collection("menu")
+      .get()
+      .then((res) => {
+        res.forEach((doc) => {
+          console.log(doc.data());
+          setMenus(doc.data());
+        });
+      });
+  }, []);
 
-  console.log(restaurantObj);
+  let newMenus = [];
+  for (let i in menus) {
+    newMenus.push({ name: i, price: menus[i] });
+  }
+  //  console.log(newMenus);
   return (
     <div className={styles.main}>
       <p> {restaurantObj.title}</p>
@@ -27,6 +50,21 @@ function Menu(props) {
       <p>
         {restaurantObj?.businessHour?.[0]}
         {restaurantObj?.businessHour?.[1]}
+      </p>
+      <hr />
+      {newMenus.map((menu) => {
+        console.log(menu);
+        return <Meal name={menu.name} price={menu.price} key={nanoid()} />;
+      })}
+    </div>
+  );
+}
+function Meal(props) {
+  return (
+    <div className={styles.meal}>
+      <p>
+        {props.name}
+        {props.price}
       </p>
     </div>
   );
