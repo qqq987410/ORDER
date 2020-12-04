@@ -60,8 +60,9 @@ function Menu(props) {
   );
 }
 function Meal(props) {
+  function mealPoppUp() {}
   return (
-    <div className={styles.meal}>
+    <div className={styles.meal} onClick={mealPoppUp}>
       <p>
         {props.name}
         {props.price}
