@@ -74,14 +74,10 @@ function LeftSide({ showRestaurant, showRestaurantDetail }) {
       {showRestaurantDetail?.businessHour?.[1]}
     </div>
   );
-  if (showRestaurant.length === 0) {
-    let leftSide = document.getElementsByClassName(styles.leftSide);
-    // leftSide.style.width = "100vw";
-  }
   return (
     <div
-      className={styles.leftSide}
-      style={{ width: showRestaurant.length > 0 ? "50vw" : "100vw" }}
+      className={styles.topSide}
+      // style={{ width: showRestaurant.length > 0 ? "50vw" : "100vw" }}
     >
       {showRestaurant.length === 0 ? (
         <h1>Not Founf</h1>
@@ -115,13 +111,13 @@ function LeftSide({ showRestaurant, showRestaurantDetail }) {
 }
 function RightSide({ showRestaurant, setShowRestaurantDetail }) {
   if (showRestaurant.length === 0) {
-    let rightSide = document.getElementsByClassName(styles.leftSide);
+    let rightSide = document.getElementsByClassName(styles.topSide);
     // rightSide.style.width = "0vw";
   }
   return (
     <div
-      className={styles.rightSide}
-      style={{ width: showRestaurant.length > 0 ? "50vw" : "0vw" }}
+      className={styles.downSide}
+      // style={{ width: showRestaurant.length > 0 ? "50vw" : "0vw" }}
     >
       {showRestaurant.map((store) => {
         return (
