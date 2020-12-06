@@ -80,7 +80,10 @@ function LeftSide({ showRestaurant, showRestaurantDetail }) {
       // style={{ width: showRestaurant.length > 0 ? "50vw" : "100vw" }}
     >
       {showRestaurant.length === 0 ? (
-        <h1>Not Founf</h1>
+        <h1 className={styles.errorMessage}>
+          Sorry !<br />
+          Not Found
+        </h1>
       ) : (
         <>
           {showRestaurant.length > 0 ? (

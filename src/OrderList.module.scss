@@ -1,0 +1,119 @@
+.h1 {
+  color: cadetblue;
+}
+.outer {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(231, 231, 231);
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .inner {
+    width: 90%;
+    min-height: 400px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    max-width: 500px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      .user {
+        display: flex;
+        align-items: center;
+        img {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+      }
+      .totalPrice {
+        display: flex;
+        align-items: center;
+        img {
+          width: 20px;
+          height: 20px;
+          margin-right: 10px;
+        }
+      }
+    }
+    .middle {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .item {
+        width: 90%;
+        height: 60px;
+        background-color: rgb(246, 246, 246);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 20px;
+        padding-left: 20px;
+        margin-bottom: 20px;
+        .left {
+          .title {
+            color: #70493c;
+            font-weight: bolder;
+            font-size: 18px;
+          }
+          .orderDetail {
+            color: rgb(113, 113, 113);
+            font-size: 14px;
+          }
+        }
+        .right {
+          cursor: pointer;
+          img {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      }
+    }
+    .footer {
+      display: flex;
+      justify-content: space-evenly;
+      margin-top: 20px;
+      .keepBuying {
+        width: 150px;
+        height: 40px;
+        border-radius: 6px;
+        border: none;
+        background-color: #70493c;
+        color: #ffffff;
+        cursor: pointer;
+        position: relative;
+        &:hover {
+          bottom: 5px;
+          box-shadow: 0px 3px 10px black;
+          font-size: 16px;
+          transition: all ease 0.2s;
+        }
+      }
+      .checkout {
+        width: 150px;
+        height: 40px;
+        border-radius: 6px;
+        border: none;
+        background-color: #70493c;
+        color: #ffffff;
+        cursor: pointer;
+        position: relative;
+        &:hover {
+          bottom: 5px;
+          box-shadow: 0px 3px 10px black;
+          font-size: 16px;
+          transition: all ease 0.2s;
+        }
+      }
+    }
+  }
+}

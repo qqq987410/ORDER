@@ -21,6 +21,12 @@
     radial-gradient(circle at right, #730e00 0%, transparent 100%),
     radial-gradient(circle at left, #703819 0%, transparent 100%),
     radial-gradient(circle at center, red 0%, transparent 100%);
+  .errorMessage {
+    color: #eb4d4b;
+    text-shadow: 5px 5px 12px black;
+    font-size: 40px;
+    text-align: center;
+  }
   .title {
     border: 2px dotted #70493c;
     color: #70493c;

@@ -22,8 +22,8 @@ function Menu(props) {
   let data = props.data;
   let restaurantObj = {};
 
-  console.log(menus);
-  console.log(cartList);
+  console.log("List=", cartList);
+
   data.forEach((doc) => {
     if (doc.id === queryStringAfterDecode) {
       restaurantObj = {
@@ -74,6 +74,19 @@ function Menu(props) {
       {restaurantObj?.businessHour?.[1]}
     </div>
   );
+  let totalPrice;
+  if (localStorage.getItem("cartList") !== null) {
+    totalPrice = 0;
+    JSON.parse(localStorage.getItem("cartList")).forEach((item) => {
+      totalPrice += item.price * item.qty;
+      return totalPrice;
+    });
+  } else {
+    return (totalPrice = 0);
+  }
+  function linkToOrderList() {
+    console.log("a");
+  }
   return (
     <>
       {mealPopupSwitch === true ? (
@@ -123,13 +136,17 @@ function Menu(props) {
                 />
               );
             })}
-            <div className={styles.cartBtn}>
-              <span>{cartList.length}</span>
+            <div className={styles.cartBtn} onClick={linkToOrderList}>
+              <span>
+                {localStorage.getItem("cartList") !== null
+                  ? JSON.parse(localStorage.getItem("cartList")).length
+                  : 0}
+              </span>
               <div className={styles.cart}>
                 <img src={cart} alt="cart" />
                 購物車
               </div>
-              <div className={styles.totalPrice}>1000</div>
+              <div className={styles.totalPrice}>{totalPrice}</div>
             </div>
           </div>
         </div>
@@ -141,7 +158,6 @@ function Meal({ setMealPopupSwitch, setMealPopupDetail, name, price }) {
   function mealPoppUp() {
     setMealPopupSwitch(true);
     setMealPopupDetail({ name: name, price: price, qty: 1 });
-    console.log(name, price);
   }
   return (
     <div className={styles.meal} onClick={mealPoppUp}>
@@ -150,19 +166,21 @@ function Meal({ setMealPopupSwitch, setMealPopupDetail, name, price }) {
     </div>
   );
 }
+
 let initQty = 1;
 function RenderMealPoppup({
   setMealPopupSwitch,
   setMealPopupDetail,
+  mealPopupDetail,
   setCartList,
   cartList,
-  mealPopupDetail,
 }) {
   // TODO:
-  console.log(mealPopupDetail.qty);
+  //  console.log("mealPopupDetail.qty=", mealPopupDetail.qty);
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
       setMealPopupSwitch(false);
+      initQty = 1;
     }
   }
   function counterQty(e) {
@@ -172,24 +190,34 @@ function RenderMealPoppup({
     } else {
       initQty += num;
     }
-    // console.log(initQty);
     setMealPopupDetail({
       name: mealPopupDetail.name,
       price: mealPopupDetail.price,
       qty: initQty,
     });
-    console.log(mealPopupDetail.qty);
   }
   function addToCart() {
-    setCartList([
-      ...cartList,
-      {
-        name: mealPopupDetail.name,
-        price: mealPopupDetail.price,
-        qty: mealPopupDetail.qty,
-      },
-    ]);
+    let newItem = {
+      name: mealPopupDetail.name,
+      price: mealPopupDetail.price,
+      qty: mealPopupDetail.qty,
+      id: nanoid(),
+    };
+    setCartList([...cartList, newItem]);
     setMealPopupSwitch(false);
+
+    if (localStorage.getItem("cartList") === null) {
+      localStorage.setItem("cartList", JSON.stringify([newItem]));
+    } else {
+      localStorage.setItem(
+        "cartList",
+        JSON.stringify([
+          ...JSON.parse(localStorage.getItem("cartList")),
+          newItem,
+        ])
+      );
+    }
+    initQty = 1;
   }
   return (
     <div className={styles.outer} id="outer" onClick={closeMealPopup}>
