@@ -54,11 +54,11 @@ function Main(props) {
   return (
     <div>
       <div className={styles.main}>
-        <LeftSide
+        <TopSide
           showRestaurant={showRestaurant}
           showRestaurantDetail={showRestaurantDetail}
         />
-        <RightSide
+        <DownSide
           showRestaurant={showRestaurant}
           setShowRestaurantDetail={setShowRestaurantDetail}
         />
@@ -66,7 +66,7 @@ function Main(props) {
     </div>
   );
 }
-function LeftSide({ showRestaurant, showRestaurantDetail }) {
+function TopSide({ showRestaurant, showRestaurantDetail }) {
   let sigleTime = <div> {showRestaurantDetail?.businessHour?.[0]}</div>;
   let doubleTime = (
     <div>
@@ -112,10 +112,10 @@ function LeftSide({ showRestaurant, showRestaurantDetail }) {
     </div>
   );
 }
-function RightSide({ showRestaurant, setShowRestaurantDetail }) {
+function DownSide({ showRestaurant, setShowRestaurantDetail }) {
   if (showRestaurant.length === 0) {
-    let rightSide = document.getElementsByClassName(styles.topSide);
-    // rightSide.style.width = "0vw";
+    let downSide = document.getElementsByClassName(styles.topSide);
+    // downSide.style.width = "0vw";
   }
   return (
     <div

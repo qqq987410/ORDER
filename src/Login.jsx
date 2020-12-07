@@ -3,7 +3,7 @@ import { facebookLogin, facebookLogout } from "./firebase";
 
 function Login() {
   return (
-    <div>
+    <div className={styles.outer}>
       <button onClick={facebookLogin}>FB Log in</button>
       <button onClick={facebookLogout}>FB Log out</button>
     </div>

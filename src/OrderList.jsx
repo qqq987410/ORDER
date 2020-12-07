@@ -1,13 +1,25 @@
 import styles from "./OrderList.module.scss";
 import { nanoid } from "nanoid";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 import head from "./image/head.jpg";
 import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
 
-let cartLists = JSON.parse(localStorage.getItem("cartList"));
-console.log(cartLists);
-
 function OrderList() {
+  let cartLists = JSON.parse(localStorage.getItem("cartList"));
+  console.log(cartLists);
+  let queryString = window.location.search.slice(14);
+  let queryStringAfterDecode = decodeURI(queryString);
+  let history = useHistory();
+  function previousPage() {
+    history.push(`./menu?restaurantID=${queryStringAfterDecode}`);
+  }
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
@@ -18,7 +30,7 @@ function OrderList() {
           </div>
           <div className={styles.totalPrice}>
             <img src={dollarSign} alt="money icon" />
-            <p>230</p>
+            <p>???</p>
           </div>
         </div>
         <div className={styles.middle}>
@@ -28,14 +40,16 @@ function OrderList() {
                 name={item.name}
                 price={item.price}
                 qty={item.qty}
-                id={nanoid()}
+                id={item.id}
                 key={nanoid()}
               />
             );
           })}
         </div>
         <div className={styles.footer}>
-          <button className={styles.keepBuying}>繼續購買</button>
+          <button className={styles.keepBuying} onClick={previousPage}>
+            繼續購買
+          </button>
           <button className={styles.checkout}>來去結帳</button>
         </div>
       </div>
@@ -43,14 +57,25 @@ function OrderList() {
   );
 }
 function Item({ name, price, qty, id }) {
-  console.log(id);
   function deleteItem(e) {
-    console.log(e.currentTarget.id);
     if (e.target.id === "trash") {
-      console.log(name, price, qty);
-      cartLists.filter((item) => {
-        console.log(item);
+      let cartLists = JSON.parse(localStorage.getItem("cartList"));
+      let newOrderList = [];
+      //  console.log(name, price, qty, id);
+      //  console.log(cartLists);
+      cartLists.forEach((item) => {
+        // console.log(item.id);
+        if (item.id !== id) {
+          newOrderList.push(item);
+          //    console.log(item);
+        }
       });
+      localStorage.removeItem("cartList");
+      localStorage.setItem("cartList", JSON.stringify(newOrderList));
+      console.log(newOrderList);
+      //  cartLists.filter((item) => {
+      //     console.log(item);
+      //  });
     }
   }
   return (

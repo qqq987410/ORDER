@@ -2,16 +2,24 @@ import styles from "./Menu.module.scss";
 import { db } from "./firebase";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 import time from "./image/time.svg";
 import phone from "./image/phone.svg";
 import location from "./image/location.svg";
 import eastern from "./image/menu_eastern.jpeg";
-import wastern from "./image/menu_wastern.jpeg";
+import western from "./image/menu_wastern.jpeg";
 import healthy from "./image/menu_healthy.png";
 import beverage from "./image/menu_beverage.jpg";
 import cart from "./image/cart.svg";
+
 function Menu(props) {
-  let [menus, setMenus] = useState({});
+  let [menus, setMenus] = useState([]);
   let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   let [mealPopupDetail, setMealPopupDetail] = useState({});
   let [cartList, setCartList] = useState([]);
@@ -22,8 +30,7 @@ function Menu(props) {
   let data = props.data;
   let restaurantObj = {};
 
-  console.log("List=", cartList);
-
+  console.log(mealPopupDetail);
   data.forEach((doc) => {
     if (doc.id === queryStringAfterDecode) {
       restaurantObj = {
@@ -36,29 +43,32 @@ function Menu(props) {
       };
     }
   });
+
   useEffect(() => {
     db.collection("restaurant")
       .doc(queryStringAfterDecode)
       .collection("menu")
+      .orderBy("title")
       .get()
       .then((res) => {
+        let newMenus = [];
         res.forEach((doc) => {
-          setMenus(doc.data());
+          let obj = doc.data();
+          obj.id = doc.id;
+          //  console.log(obj);
+          newMenus.push(obj);
         });
+        setMenus(newMenus);
       });
   }, []);
 
-  let newMenus = [];
-  for (let i in menus) {
-    newMenus.push({ name: i, price: menus[i] });
-  }
-  //  console.log(newMenus);
   function categoryPhoto(photo) {
+    console.log(photo);
     switch (photo) {
       case "eastern":
         return eastern;
-      case "wastern":
-        return wastern;
+      case "western":
+        return western;
       case "healthy":
         return healthy;
       case "beverage":
@@ -79,13 +89,13 @@ function Menu(props) {
     totalPrice = 0;
     JSON.parse(localStorage.getItem("cartList")).forEach((item) => {
       totalPrice += item.price * item.qty;
-      return totalPrice;
     });
   } else {
-    return (totalPrice = 0);
+    totalPrice = 0;
   }
+  let history = useHistory();
   function linkToOrderList() {
-    console.log("a");
+    history.push(`./orderList?restaurantID=${queryStringAfterDecode}`);
   }
   return (
     <>
@@ -121,15 +131,17 @@ function Menu(props) {
               </div>
             </div>
             <div className={styles.image}>
-              <img src={wastern} alt="photo" />
+              <img src={categoryPhoto(restaurantObj.category)} alt="photo" />
             </div>
           </header>
           <div className={styles.selectSpace}>
-            {newMenus.map((menu) => {
+            {menus.map((menu) => {
+              console.log(menu);
               return (
                 <Meal
-                  name={menu.name}
+                  name={menu.title}
                   price={menu.price}
+                  id={menu.id}
                   key={nanoid()}
                   setMealPopupSwitch={setMealPopupSwitch}
                   setMealPopupDetail={setMealPopupDetail}
@@ -154,10 +166,10 @@ function Menu(props) {
     </>
   );
 }
-function Meal({ setMealPopupSwitch, setMealPopupDetail, name, price }) {
+function Meal({ setMealPopupSwitch, setMealPopupDetail, name, price, id }) {
   function mealPoppUp() {
     setMealPopupSwitch(true);
-    setMealPopupDetail({ name: name, price: price, qty: 1 });
+    setMealPopupDetail({ name: name, price: price, qty: 1, id: id });
   }
   return (
     <div className={styles.meal} onClick={mealPoppUp}>
@@ -201,7 +213,7 @@ function RenderMealPoppup({
       name: mealPopupDetail.name,
       price: mealPopupDetail.price,
       qty: mealPopupDetail.qty,
-      id: nanoid(),
+      id: mealPopupDetail.id,
     };
     setCartList([...cartList, newItem]);
     setMealPopupSwitch(false);
