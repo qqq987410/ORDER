@@ -23,11 +23,11 @@ function Main(props) {
   });
   let queryString = window.location.search.slice(8);
   let queryStringAfterDecode = decodeURI(queryString);
-  let citiesRef = db.collection("restaurant");
+  let restaurantRef = db.collection("restaurant");
   let [showRestaurant, setShowRestaurant] = useState([]);
   let [showRestaurantDetail, setShowRestaurantDetail] = useState({});
   useEffect(function () {
-    citiesRef
+    restaurantRef
       .orderBy("title")
       .startAt(queryStringAfterDecode)
       .endAt(queryStringAfterDecode + "\uf8ff")
@@ -47,10 +47,21 @@ function Main(props) {
             id: doc.id,
           });
         });
-        setShowRestaurant([...newRestaurant]);
+        setShowRestaurant(newRestaurant);
+        setShowRestaurantDetail({
+          title: newRestaurant?.[0]?.title,
+          category: newRestaurant?.[0]?.category,
+          businessHour: newRestaurant?.[0]?.businessHour,
+          phoneNumber: newRestaurant?.[0]?.phoneNumber,
+          address: newRestaurant?.[0]?.address,
+          id: newRestaurant?.[0]?.id,
+          key: newRestaurant?.[0]?.id,
+        });
       });
   }, []);
-  console.log(showRestaurant);
+
+  // console.log(showRestaurant);
+  // console.log(showRestaurantDetail);
   return (
     <div>
       <div className={styles.main}>
@@ -113,10 +124,6 @@ function TopSide({ showRestaurant, showRestaurantDetail }) {
   );
 }
 function DownSide({ showRestaurant, setShowRestaurantDetail }) {
-  if (showRestaurant.length === 0) {
-    let downSide = document.getElementsByClassName(styles.topSide);
-    // downSide.style.width = "0vw";
-  }
   return (
     <div
       className={styles.downSide}

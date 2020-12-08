@@ -55,14 +55,13 @@ function facebookLogin() {
       let userEmail = result.additionalUserInfo.profile.email;
       let uid = result.user.uid;
       console.log("您被選中入宮當秀女囉", result);
-      // localStorage.setItem("accessToken", JSON.stringify(token));
 
       db.collection("users")
         .doc(uid)
         .set({
           userName: userName,
           userEmail: userEmail,
-          userHistoryOrder: "",
+          uid: uid,
         })
         .then(() => {
           console.log("Add successful");

@@ -69,66 +69,86 @@
     align-items: center;
     padding-bottom: 100px;
   }
-}
-.cartBtn {
-  width: 150px;
-  height: 60px;
-  border-radius: 6px;
-  background-color: #f9ca24;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-  transition: all ease 0.3s;
-  cursor: pointer;
-  &:hover {
-    box-shadow: 5px 5px 10px rgba(88, 85, 85, 0.418);
-    right: 35px;
-    bottom: 35px;
-  }
-  &:hover > span {
-    border-radius: 2px;
-    transform: rotate(360deg);
-    transition: all ease 0.6s;
-  }
-  &:not(:hover) > span {
-    transform: rotate(-360deg);
-    transition: all ease 0.6s;
-  }
-  span {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: rgb(242, 73, 69);
-    color: #ffffff;
-    text-align: center;
-    line-height: 20px;
-    position: absolute;
-    top: -5px;
-    right: -5px;
-  }
-  .cart {
+  .together {
+    width: 150px;
+    height: 60px;
+    border-radius: 6px;
+    background-color: #f9ca24;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
-    img {
-      width: 20px;
-      margin-right: 5px;
+    position: fixed;
+    right: 30px;
+    bottom: 120px;
+    transition: all ease 0.3s;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 5px 5px 10px rgba(88, 85, 85, 0.418);
+      right: 35px;
+      bottom: 125px;
     }
   }
-  .totalPrice {
-    color: #ffffff;
-    font-size: 12px;
-    &:before {
-      content: "$";
-      margin-right: 5px;
+  .cartBtn {
+    width: 150px;
+    height: 60px;
+    border-radius: 6px;
+    background-color: #f9ca24;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    transition: all ease 0.3s;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 5px 5px 10px rgba(88, 85, 85, 0.418);
+      right: 35px;
+      bottom: 35px;
+    }
+    &:hover > span {
+      border-radius: 2px;
+      transform: rotate(360deg);
+      transition: all ease 0.6s;
+    }
+    &:not(:hover) > span {
+      transform: rotate(-360deg);
+      transition: all ease 0.6s;
+    }
+    span {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: rgb(242, 73, 69);
       color: #ffffff;
+      text-align: center;
+      line-height: 20px;
+      position: absolute;
+      top: -5px;
+      right: -5px;
+    }
+    .cart {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      img {
+        width: 20px;
+        margin-right: 5px;
+      }
+    }
+    .totalPrice {
+      color: #ffffff;
+      font-size: 12px;
+      &:before {
+        content: "$";
+        margin-right: 5px;
+        color: #ffffff;
+      }
     }
   }
 }
+
 // <Meal />
 .meal {
   margin: 0;

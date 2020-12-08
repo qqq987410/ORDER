@@ -1,4 +1,6 @@
 import styles from "./OrderList.module.scss";
+import { db } from "./firebase";
+import firebase from "firebase";
 import { nanoid } from "nanoid";
 import {
   BrowserRouter as Router,
@@ -12,14 +14,28 @@ import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
 
 function OrderList() {
-  let cartLists = JSON.parse(localStorage.getItem("cartList"));
-  console.log(cartLists);
+  //    let cartLists = JSON.parse(localStorage.getItem("cartList"));
+  //    console.log(cartLists);
+
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      console.log("登錄success，uid=", user);
+    } else {
+      console.log("登錄false");
+    }
+  });
   let queryString = window.location.search.slice(14);
   let queryStringAfterDecode = decodeURI(queryString);
   let history = useHistory();
   function previousPage() {
     history.push(`./menu?restaurantID=${queryStringAfterDecode}`);
   }
+  let ref = db.collection("orderList");
+
+  ref.get().then((res) => {
+    res.forEach((doc) => {});
+  });
+
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
@@ -34,7 +50,7 @@ function OrderList() {
           </div>
         </div>
         <div className={styles.middle}>
-          {cartLists.map((item) => {
+          {/* {cartLists.map((item) => {
             return (
               <Item
                 name={item.name}
@@ -44,7 +60,7 @@ function OrderList() {
                 key={nanoid()}
               />
             );
-          })}
+          })} */}
         </div>
         <div className={styles.footer}>
           <button className={styles.keepBuying} onClick={previousPage}>

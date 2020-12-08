@@ -1,5 +1,6 @@
 import styles from "./Menu.module.scss";
 import { db } from "./firebase";
+import firebase from "firebase";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import {
@@ -18,7 +19,20 @@ import healthy from "./image/menu_healthy.png";
 import beverage from "./image/menu_beverage.jpg";
 import cart from "./image/cart.svg";
 
-function Menu(props) {
+function Menu({ data, setFacebookbStatus, facebookbStatus }) {
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      setFacebookbStatus({
+        status: true,
+        uid: user.uid,
+        displayName: user.displayName,
+        email: user.email,
+      });
+    } else {
+      setFacebookbStatus({ status: false });
+    }
+  });
+
   let [menus, setMenus] = useState([]);
   let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   let [mealPopupDetail, setMealPopupDetail] = useState({});
@@ -27,10 +41,8 @@ function Menu(props) {
   let queryString = window.location.search.slice(14);
   let queryStringAfterDecode = decodeURI(queryString);
 
-  let data = props.data;
   let restaurantObj = {};
 
-  console.log(mealPopupDetail);
   data.forEach((doc) => {
     if (doc.id === queryStringAfterDecode) {
       restaurantObj = {
@@ -48,14 +60,12 @@ function Menu(props) {
     db.collection("restaurant")
       .doc(queryStringAfterDecode)
       .collection("menu")
-      .orderBy("title")
       .get()
       .then((res) => {
         let newMenus = [];
         res.forEach((doc) => {
           let obj = doc.data();
           obj.id = doc.id;
-          //  console.log(obj);
           newMenus.push(obj);
         });
         setMenus(newMenus);
@@ -63,7 +73,6 @@ function Menu(props) {
   }, []);
 
   function categoryPhoto(photo) {
-    console.log(photo);
     switch (photo) {
       case "eastern":
         return eastern;
@@ -73,8 +82,6 @@ function Menu(props) {
         return healthy;
       case "beverage":
         return beverage;
-      default:
-        console.log("can't find photo");
     }
   }
   let sigleTime = <div> {restaurantObj?.businessHour?.[0]}</div>;
@@ -96,6 +103,26 @@ function Menu(props) {
   let history = useHistory();
   function linkToOrderList() {
     history.push(`./orderList?restaurantID=${queryStringAfterDecode}`);
+  }
+  function teamBuying() {
+    console.log(facebookbStatus);
+    if (facebookbStatus.status === true) {
+      let ref = db.collection("orderList");
+      ref.get().then((res) => {
+        res.forEach((doc) => {
+          console.log(doc.id);
+          if (
+            doc.data().uid === facebookbStatus.uid &&
+            doc.data().status === "ongoing"
+          ) {
+            console.log("YES");
+          }
+        });
+      });
+      let currentURL = window.location.href;
+      //  console.log(`currentURL${docID=}`);
+    }
+    TODO: console.log("URL=./");
   }
   return (
     <>
@@ -136,7 +163,6 @@ function Menu(props) {
           </header>
           <div className={styles.selectSpace}>
             {menus.map((menu) => {
-              console.log(menu);
               return (
                 <Meal
                   name={menu.title}
@@ -148,6 +174,9 @@ function Menu(props) {
                 />
               );
             })}
+            <div className={styles.together} onClick={teamBuying}>
+              揪團
+            </div>
             <div className={styles.cartBtn} onClick={linkToOrderList}>
               <span>
                 {localStorage.getItem("cartList") !== null
@@ -187,8 +216,8 @@ function RenderMealPoppup({
   setCartList,
   cartList,
 }) {
-  // TODO:
   //  console.log("mealPopupDetail.qty=", mealPopupDetail.qty);
+  //  TODO :
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
       setMealPopupSwitch(false);
@@ -218,17 +247,89 @@ function RenderMealPoppup({
     setCartList([...cartList, newItem]);
     setMealPopupSwitch(false);
 
-    if (localStorage.getItem("cartList") === null) {
-      localStorage.setItem("cartList", JSON.stringify([newItem]));
-    } else {
-      localStorage.setItem(
-        "cartList",
-        JSON.stringify([
-          ...JSON.parse(localStorage.getItem("cartList")),
-          newItem,
-        ])
-      );
-    }
+    // localStorage
+    // if (localStorage.getItem("cartList") === null) {
+    //    localStorage.setItem("cartList", JSON.stringify([newItem]));
+    // } else {
+    //    localStorage.setItem("cartList", JSON.stringify([...JSON.parse(localStorage.getItem("cartList")), newItem]));
+    // }
+
+    // firebase
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        console.log("登錄成功");
+        let ref = db.collection("orderList");
+        ref.get().then((res) => {
+          if (res.size === 0) {
+            ref.add({ status: "ongoing", uid: user.uid }).then((res) => {
+              ref.doc(res.id).set(
+                {
+                  id: res.id,
+                },
+                { merge: true }
+              );
+              ref
+                .doc(res.id)
+                .collection("records")
+                .add({
+                  name: mealPopupDetail.name,
+                  price: mealPopupDetail.price,
+                  qty: mealPopupDetail.qty,
+                  uid: user.uid,
+                  displayName: user.displayName,
+                  email: user.email,
+                })
+                .then((res_2) => {
+                  console.log(res_2.id);
+                  ref.doc(res.id).collection("records").doc(res_2.id).set(
+                    {
+                      id: res_2.id,
+                    },
+                    { merge: true }
+                  );
+                });
+            });
+          } else {
+            res.forEach((doc) => {
+              if (
+                doc.data().uid === user.uid &&
+                doc.data().status === "ongoing"
+              ) {
+                ref
+                  .doc(doc.id)
+                  .collection("records")
+                  .add({
+                    name: mealPopupDetail.name,
+                    price: mealPopupDetail.price,
+                    qty: mealPopupDetail.qty,
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                  })
+                  .then((res) => {
+                    console.log(res.id);
+                    ref
+                      .doc(doc.id)
+                      .collection("records")
+                      .doc(res.id)
+                      .set({ id: res.id }, { merge: true });
+                  });
+              }
+            });
+          }
+        });
+      } else {
+        alert("登錄失敗");
+      }
+    });
+
+    //  .collection("records")
+    //  .set({
+    //     name: mealPopupDetail.name,
+    //     price: mealPopupDetail.price,
+    //     qty: mealPopupDetail.qty,
+    //     id: mealPopupDetail.id,
+    //  });
     initQty = 1;
   }
   return (

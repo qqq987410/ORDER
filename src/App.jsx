@@ -11,6 +11,7 @@ import logo from "./image/Logo.svg";
 
 function App() {
   const [data, setData] = useState([]);
+  const [facebookbStatus, setFacebookbStatus] = useState({ status: false });
 
   useEffect(() => {
     createFakeData(setData);
@@ -39,7 +40,11 @@ function App() {
           <Main data={data} />
         </Route>
         <Route path="/menu">
-          <Menu data={data} />
+          <Menu
+            data={data}
+            setFacebookbStatus={setFacebookbStatus}
+            facebookbStatus={facebookbStatus}
+          />
         </Route>
         <Route path="/orderList">
           <OrderList />
