@@ -16,7 +16,6 @@ function App() {
   useEffect(() => {
     createFakeData(setData);
   }, []);
-
   // console.log(data);
   return (
     <Router>

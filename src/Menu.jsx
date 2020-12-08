@@ -20,23 +20,26 @@ import beverage from "./image/menu_beverage.jpg";
 import cart from "./image/cart.svg";
 
 function Menu({ data, setFacebookbStatus, facebookbStatus }) {
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      setFacebookbStatus({
-        status: true,
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-      });
-    } else {
-      setFacebookbStatus({ status: false });
-    }
-  });
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        setFacebookbStatus({
+          status: true,
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+        });
+      } else {
+        setFacebookbStatus({ status: false });
+      }
+    });
+  }, []);
 
   let [menus, setMenus] = useState([]);
   let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   let [mealPopupDetail, setMealPopupDetail] = useState({});
   let [cartList, setCartList] = useState([]);
+  let [teamBuyingPopup, setTeamBuyingPopup] = useState(true);
 
   let queryString = window.location.search.slice(14);
   let queryStringAfterDecode = decodeURI(queryString);
@@ -105,24 +108,48 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
     history.push(`./orderList?restaurantID=${queryStringAfterDecode}`);
   }
   function teamBuying() {
-    console.log(facebookbStatus);
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
         res.forEach((doc) => {
-          console.log(doc.id);
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
-            console.log("YES");
+            console.log(doc.id);
+            let urlParams = new URLSearchParams(window.location.search);
+            let restaurantID = urlParams.get("restaurantID");
+            console.log(restaurantID);
+            // console.log(`${currentURL}&docID=${doc.id}`);
           }
         });
       });
-      let currentURL = window.location.href;
-      //  console.log(`currentURL${docID=}`);
     }
-    TODO: console.log("URL=./");
+  }
+  function copyLink() {
+    let link = document.getElementById("link");
+    let range = document.createRange();
+    range.selectNode(link);
+    window.getSelection().addRange(range);
+    document.execCommand("copy");
+    // range.moveToElementText(link);
+    // range.select();
+  }
+  function SelectText(element) {
+    var text = document.getElementById("link");
+    var range;
+    var selection;
+    if (document.body.createTextRange) {
+      range = document.body.createTextRange();
+      range.moveToElementText(text);
+      range.select();
+    } else if (window.getSelection) {
+      selection = window.getSelection();
+      range = document.createRange();
+      range.selectNodeContents(text);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   }
   return (
     <>
@@ -135,62 +162,78 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
           mealPopupDetail={mealPopupDetail}
         />
       ) : (
-        <div className={styles.main}>
-          <header>
-            <div className={styles.detail}>
-              <div className={styles.title}> {restaurantObj.title}</div>
-              <div className={styles.miniDetail}>
-                <div>
-                  <div className={styles.time}>
-                    <img src={time} alt="time"></img>
-                    {restaurantObj?.businessHour?.[1] ? doubleTime : sigleTime}
+        <>
+          <div className={styles.main}>
+            <header>
+              <div className={styles.detail}>
+                <div className={styles.title}> {restaurantObj.title}</div>
+                <div className={styles.miniDetail}>
+                  <div>
+                    <div className={styles.time}>
+                      <img src={time} alt="time"></img>
+                      {restaurantObj?.businessHour?.[1]
+                        ? doubleTime
+                        : sigleTime}
+                    </div>
+                    <div className={styles.phone}>
+                      <img src={phone} alt="phone" />
+                      {restaurantObj.phoneNumber}
+                    </div>
+                    <div className={styles.address}>
+                      <img src={location} alt="location" />
+                      {restaurantObj.address}
+                    </div>
+                    <div>{restaurantObj.category}</div>
                   </div>
-                  <div className={styles.phone}>
-                    <img src={phone} alt="phone" />
-                    {restaurantObj.phoneNumber}
-                  </div>
-                  <div className={styles.address}>
-                    <img src={location} alt="location" />
-                    {restaurantObj.address}
-                  </div>
-                  <div>{restaurantObj.category}</div>
+                </div>
+              </div>
+              <div className={styles.image}>
+                <img src={categoryPhoto(restaurantObj.category)} alt="photo" />
+              </div>
+            </header>
+            <div className={styles.selectSpace}>
+              {menus.map((menu) => {
+                return (
+                  <Meal
+                    name={menu.title}
+                    price={menu.price}
+                    id={menu.id}
+                    key={nanoid()}
+                    setMealPopupSwitch={setMealPopupSwitch}
+                    setMealPopupDetail={setMealPopupDetail}
+                  />
+                );
+              })}
+              <div className={styles.together} onClick={teamBuying}>
+                揪團
+              </div>
+              <div className={styles.cartBtn} onClick={linkToOrderList}>
+                <span>
+                  {localStorage.getItem("cartList") !== null
+                    ? JSON.parse(localStorage.getItem("cartList")).length
+                    : 0}
+                </span>
+                <div className={styles.cart}>
+                  <img src={cart} alt="cart" />
+                  購物車
+                </div>
+                <div className={styles.totalPrice}>{totalPrice}</div>
+              </div>
+            </div>
+          </div>
+          {teamBuyingPopup === true ? (
+            <div className={styles.teamBuyingPopup}>
+              <div className={styles.teamBuyingPopupInner}>
+                <div className={styles.link} id="link">
+                  https://OMG/WTF
+                </div>
+                <div className={styles.copyLink} onClick={SelectText}>
+                  複製連結
                 </div>
               </div>
             </div>
-            <div className={styles.image}>
-              <img src={categoryPhoto(restaurantObj.category)} alt="photo" />
-            </div>
-          </header>
-          <div className={styles.selectSpace}>
-            {menus.map((menu) => {
-              return (
-                <Meal
-                  name={menu.title}
-                  price={menu.price}
-                  id={menu.id}
-                  key={nanoid()}
-                  setMealPopupSwitch={setMealPopupSwitch}
-                  setMealPopupDetail={setMealPopupDetail}
-                />
-              );
-            })}
-            <div className={styles.together} onClick={teamBuying}>
-              揪團
-            </div>
-            <div className={styles.cartBtn} onClick={linkToOrderList}>
-              <span>
-                {localStorage.getItem("cartList") !== null
-                  ? JSON.parse(localStorage.getItem("cartList")).length
-                  : 0}
-              </span>
-              <div className={styles.cart}>
-                <img src={cart} alt="cart" />
-                購物車
-              </div>
-              <div className={styles.totalPrice}>{totalPrice}</div>
-            </div>
-          </div>
-        </div>
+          ) : null}
+        </>
       )}
     </>
   );
