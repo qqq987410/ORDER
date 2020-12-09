@@ -18,36 +18,23 @@ import western from "./image/menu_wastern.jpeg";
 import healthy from "./image/menu_healthy.png";
 import beverage from "./image/menu_beverage.jpg";
 import cart from "./image/cart.svg";
+import Swal from "sweetalert2";
 
-function Menu({ data, setFacebookbStatus, facebookbStatus }) {
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        setFacebookbStatus({
-          status: true,
-          uid: user.uid,
-          displayName: user.displayName,
-          email: user.email,
-        });
-      } else {
-        setFacebookbStatus({ status: false });
-      }
-    });
-  }, []);
-
+function Menu({ data, facebookbStatus }) {
   let [menus, setMenus] = useState([]);
   let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   let [mealPopupDetail, setMealPopupDetail] = useState({});
   let [cartList, setCartList] = useState([]);
-  let [teamBuyingPopup, setTeamBuyingPopup] = useState(true);
+  let [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
+  let [URL, setURL] = useState();
 
-  let queryString = window.location.search.slice(14);
-  let queryStringAfterDecode = decodeURI(queryString);
+  let urlParams = new URLSearchParams(window.location.search);
+  let restaurantID = urlParams.get("restaurantID");
 
   let restaurantObj = {};
 
   data.forEach((doc) => {
-    if (doc.id === queryStringAfterDecode) {
+    if (doc.id === restaurantID) {
       restaurantObj = {
         address: doc.address,
         businessHour: [doc.businessHour[0], doc.businessHour[1]],
@@ -61,7 +48,7 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
 
   useEffect(() => {
     db.collection("restaurant")
-      .doc(queryStringAfterDecode)
+      .doc(restaurantID)
       .collection("menu")
       .get()
       .then((res) => {
@@ -75,6 +62,25 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
       });
   }, []);
 
+  let sigleTime = <div> {restaurantObj?.businessHour?.[0]}</div>;
+  let doubleTime = (
+    <div>
+      {restaurantObj?.businessHour?.[0]}&nbsp;&amp;&nbsp;
+      {restaurantObj?.businessHour?.[1]}
+    </div>
+  );
+  let totalPrice;
+
+  if (localStorage.getItem("cartList") !== null) {
+    totalPrice = 0;
+    JSON.parse(localStorage.getItem("cartList")).forEach((item) => {
+      totalPrice += item.price * item.qty;
+    });
+  } else {
+    totalPrice = 0;
+  }
+
+  let history = useHistory();
   function categoryPhoto(photo) {
     switch (photo) {
       case "eastern":
@@ -87,27 +93,7 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
         return beverage;
     }
   }
-  let sigleTime = <div> {restaurantObj?.businessHour?.[0]}</div>;
-  let doubleTime = (
-    <div>
-      {restaurantObj?.businessHour?.[0]}&nbsp;&amp;&nbsp;
-      {restaurantObj?.businessHour?.[1]}
-    </div>
-  );
-  let totalPrice;
-  if (localStorage.getItem("cartList") !== null) {
-    totalPrice = 0;
-    JSON.parse(localStorage.getItem("cartList")).forEach((item) => {
-      totalPrice += item.price * item.qty;
-    });
-  } else {
-    totalPrice = 0;
-  }
-  let history = useHistory();
   function linkToOrderList() {
-    history.push(`./orderList?restaurantID=${queryStringAfterDecode}`);
-  }
-  function teamBuying() {
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
@@ -116,40 +102,59 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
+            history.push(
+              `./orderList?restaurantID=${restaurantID}&docID=${doc.id}`
+            );
             console.log(doc.id);
-            let urlParams = new URLSearchParams(window.location.search);
-            let restaurantID = urlParams.get("restaurantID");
-            console.log(restaurantID);
-            // console.log(`${currentURL}&docID=${doc.id}`);
           }
         });
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "尚未登錄會員",
+      });
+    }
+  }
+  function teamBuying() {
+    if (facebookbStatus.status === true) {
+      setTeamBuyingPopup(true);
+      let ref = db.collection("orderList");
+      ref.get().then((res) => {
+        res.forEach((doc) => {
+          if (
+            doc.data().uid === facebookbStatus.uid &&
+            doc.data().status === "ongoing"
+          ) {
+            setURL(`${window.location.href}&docID=${doc.id}`);
+          }
+        });
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "尚未登錄會員",
       });
     }
   }
   function copyLink() {
     let link = document.getElementById("link");
-    let range = document.createRange();
-    range.selectNode(link);
-    window.getSelection().addRange(range);
+    link.select();
     document.execCommand("copy");
-    // range.moveToElementText(link);
-    // range.select();
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "複製成功",
+      showConfirmButton: false,
+      timer: 1500,
+    });
   }
-  function SelectText(element) {
-    var text = document.getElementById("link");
-    var range;
-    var selection;
-    if (document.body.createTextRange) {
-      range = document.body.createTextRange();
-      range.moveToElementText(text);
-      range.select();
-    } else if (window.getSelection) {
-      selection = window.getSelection();
-      range = document.createRange();
-      range.selectNodeContents(text);
-      selection.removeAllRanges();
-      selection.addRange(range);
+  function closeTeamBuyingPopup(e) {
+    console.log(e.target, e.currentTarget);
+    if (e.target.id === "teamBuyingPopup") {
+      setTeamBuyingPopup(false);
     }
+    // console.log(e.target.className);
   }
   return (
     <>
@@ -160,6 +165,7 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
           setCartList={setCartList}
           cartList={cartList}
           mealPopupDetail={mealPopupDetail}
+          facebookbStatus={facebookbStatus}
         />
       ) : (
         <>
@@ -222,12 +228,19 @@ function Menu({ data, setFacebookbStatus, facebookbStatus }) {
             </div>
           </div>
           {teamBuyingPopup === true ? (
-            <div className={styles.teamBuyingPopup}>
+            <div
+              className={styles.teamBuyingPopup}
+              id="teamBuyingPopup"
+              onClick={closeTeamBuyingPopup}
+            >
               <div className={styles.teamBuyingPopupInner}>
-                <div className={styles.link} id="link">
-                  https://OMG/WTF
-                </div>
-                <div className={styles.copyLink} onClick={SelectText}>
+                <input
+                  type="text"
+                  className={styles.link}
+                  id="link"
+                  defaultValue={URL}
+                />
+                <div className={styles.copyLink} onClick={copyLink}>
                   複製連結
                 </div>
               </div>
@@ -258,6 +271,7 @@ function RenderMealPoppup({
   mealPopupDetail,
   setCartList,
   cartList,
+  facebookbStatus,
 }) {
   //  console.log("mealPopupDetail.qty=", mealPopupDetail.qty);
   //  TODO :
@@ -281,98 +295,81 @@ function RenderMealPoppup({
     });
   }
   function addToCart() {
-    let newItem = {
-      name: mealPopupDetail.name,
-      price: mealPopupDetail.price,
-      qty: mealPopupDetail.qty,
-      id: mealPopupDetail.id,
-    };
-    setCartList([...cartList, newItem]);
-    setMealPopupSwitch(false);
+    if (facebookbStatus.status === true) {
+      console.log(facebookbStatus);
+      let newItem = {
+        name: mealPopupDetail.name,
+        price: mealPopupDetail.price,
+        qty: mealPopupDetail.qty,
+        id: mealPopupDetail.id,
+        uid: facebookbStatus.uid,
+        displayName: facebookbStatus.displayName,
+        email: facebookbStatus.email,
+      };
+      console.log(newItem);
+      //  setCartList([...cartList, newItem]);
 
-    // localStorage
-    // if (localStorage.getItem("cartList") === null) {
-    //    localStorage.setItem("cartList", JSON.stringify([newItem]));
-    // } else {
-    //    localStorage.setItem("cartList", JSON.stringify([...JSON.parse(localStorage.getItem("cartList")), newItem]));
-    // }
+      let ref = db.collection("orderList");
 
-    // firebase
-    firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        console.log("登錄成功");
-        let ref = db.collection("orderList");
-        ref.get().then((res) => {
-          if (res.size === 0) {
-            ref.add({ status: "ongoing", uid: user.uid }).then((res) => {
-              ref.doc(res.id).set(
-                {
-                  id: res.id,
-                },
-                { merge: true }
-              );
-              ref
-                .doc(res.id)
-                .collection("records")
-                .add({
-                  name: mealPopupDetail.name,
-                  price: mealPopupDetail.price,
-                  qty: mealPopupDetail.qty,
-                  uid: user.uid,
-                  displayName: user.displayName,
-                  email: user.email,
-                })
-                .then((res_2) => {
-                  console.log(res_2.id);
-                  ref.doc(res.id).collection("records").doc(res_2.id).set(
-                    {
-                      id: res_2.id,
-                    },
-                    { merge: true }
-                  );
-                });
-            });
-          } else {
-            res.forEach((doc) => {
-              if (
-                doc.data().uid === user.uid &&
-                doc.data().status === "ongoing"
-              ) {
-                ref
-                  .doc(doc.id)
-                  .collection("records")
-                  .add({
-                    name: mealPopupDetail.name,
-                    price: mealPopupDetail.price,
-                    qty: mealPopupDetail.qty,
-                    uid: user.uid,
-                    displayName: user.displayName,
-                    email: user.email,
-                  })
-                  .then((res) => {
-                    console.log(res.id);
-                    ref
-                      .doc(doc.id)
-                      .collection("records")
-                      .doc(res.id)
-                      .set({ id: res.id }, { merge: true });
-                  });
-              }
-            });
-          }
-        });
-      } else {
-        alert("登錄失敗");
-      }
-    });
+      //  ref.get().then((res) => {
+      //     if (res.size === 0) {
+      //        ref.add({ status: "ongoing", uid: user.uid }).then((res) => {
+      //           ref.doc(res.id).set(
+      //              {
+      //                 id: res.id,
+      //              },
+      //              { merge: true }
+      //           );
+      //           ref.doc(res.id)
+      //              .collection("records")
+      //              .add({
+      //                 name: mealPopupDetail.name,
+      //                 price: mealPopupDetail.price,
+      //                 qty: mealPopupDetail.qty,
+      //                 uid: user.uid,
+      //                 displayName: user.displayName,
+      //                 email: user.email,
+      //              })
+      //              .then((res_2) => {
+      //                 console.log(res_2.id);
+      //                 ref.doc(res.id).collection("records").doc(res_2.id).set(
+      //                    {
+      //                       id: res_2.id,
+      //                    },
+      //                    { merge: true }
+      //                 );
+      //              });
+      //        });
+      //     } else {
+      //        res.forEach((doc) => {
+      //           if (doc.data().uid === user.uid && doc.data().status === "ongoing") {
+      //              ref.doc(doc.id)
+      //                 .collection("records")
+      //                 .add({
+      //                    name: mealPopupDetail.name,
+      //                    price: mealPopupDetail.price,
+      //                    qty: mealPopupDetail.qty,
+      //                    uid: user.uid,
+      //                    displayName: user.displayName,
+      //                    email: user.email,
+      //                 })
+      //                 .then((res) => {
+      //                    console.log(res.id);
+      //                    ref.doc(doc.id).collection("records").doc(res.id).set({ id: res.id }, { merge: true });
+      //                 });
+      //           }
+      //        });
+      //     }
+      //  });
+      setMealPopupSwitch(false);
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "尚未登錄會員",
+      });
+    }
+    // WTF
 
-    //  .collection("records")
-    //  .set({
-    //     name: mealPopupDetail.name,
-    //     price: mealPopupDetail.price,
-    //     qty: mealPopupDetail.qty,
-    //     id: mealPopupDetail.id,
-    //  });
     initQty = 1;
   }
   return (

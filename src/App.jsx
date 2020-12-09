@@ -8,13 +8,31 @@ import Menu from "./Menu";
 import OrderList from "./OrderList";
 import Login from "./Login";
 import logo from "./image/Logo.svg";
+import firebase from "firebase/app";
+// import "firebase/auth";
+// import "firebase/firestore";
 
 function App() {
   const [data, setData] = useState([]);
   const [facebookbStatus, setFacebookbStatus] = useState({ status: false });
 
   useEffect(() => {
+    // 建立假資料
     createFakeData(setData);
+    //  判斷 FB 登錄狀態
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        console.log(user);
+        setFacebookbStatus({
+          status: true,
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+        });
+      } else {
+        setFacebookbStatus({ status: false });
+      }
+    });
   }, []);
   // console.log(data);
   return (
@@ -46,7 +64,7 @@ function App() {
           />
         </Route>
         <Route path="/orderList">
-          <OrderList />
+          <OrderList facebookbStatus={facebookbStatus} />
         </Route>
         <Route path="/login">
           <Login />

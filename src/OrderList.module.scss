@@ -70,10 +70,17 @@
           }
         }
         .right {
-          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .orderPeople {
+            color: #70493c;
+            margin-right: 15px;
+          }
           img {
             width: 30px;
             height: 30px;
+            cursor: pointer;
           }
         }
       }

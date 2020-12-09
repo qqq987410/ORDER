@@ -12,30 +12,77 @@ import {
 import head from "./image/head.jpg";
 import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
-function OrderList() {
-  //    let cartLists = JSON.parse(localStorage.getItem("cartList"));
-  //    console.log(cartLists);
+let urlParams = new URLSearchParams(window.location.search);
+let restaurantID = urlParams.get("restaurantID");
+let docID = urlParams.get("docID");
+let ref = db.collection("orderList");
 
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      console.log("登錄success，uid=", user);
-    } else {
-      console.log("登錄false");
-    }
-  });
-  let queryString = window.location.search.slice(14);
-  let queryStringAfterDecode = decodeURI(queryString);
+function OrderList({ facebookbStatus }) {
   let history = useHistory();
-  function previousPage() {
-    history.push(`./menu?restaurantID=${queryStringAfterDecode}`);
-  }
-  let ref = db.collection("orderList");
 
-  ref.get().then((res) => {
-    res.forEach((doc) => {});
+  let [cartLists, setCartLists] = useState([]);
+
+  useEffect(() => {
+    ref
+      .where("status", "==", "ongoing")
+      //  .where("id", "==", docID)
+      .get()
+      .then((res) => {
+        ref
+          .doc(docID)
+          .collection("records")
+          .onSnapshot((res_2) => {
+            let newCartLists = [];
+            res_2.forEach((doc) => {
+              console.log(doc.id);
+              newCartLists.push(doc.data());
+              console.log(doc.data());
+            });
+            setCartLists(newCartLists);
+          });
+      });
+  }, []);
+  console.log(cartLists);
+
+  let totalPrice = 0;
+  cartLists.forEach((item) => {
+    let p = item.price;
+    let q = item.qty;
+    totalPrice += p * q;
   });
-
+  function previousPage() {
+    history.push(`./menu?restaurantID=${restaurantID}&docID=${docID}`);
+  }
+  function checkout() {
+    if (facebookbStatus.status === true) {
+      Swal.fire({
+        title: "確定產生訂單嗎?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire("成功!", "訂單已產生", "success");
+          // 將 firebase 狀態由 ongoing => history
+          ref.doc(docID).set(
+            {
+              status: "history",
+            },
+            { merge: true }
+          );
+          console.log("1");
+          setCartLists([]);
+          console.log("2");
+        }
+      });
+    }
+  }
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
@@ -46,52 +93,59 @@ function OrderList() {
           </div>
           <div className={styles.totalPrice}>
             <img src={dollarSign} alt="money icon" />
-            <p>???</p>
+            <p>{totalPrice}</p>
           </div>
         </div>
         <div className={styles.middle}>
-          {/* {cartLists.map((item) => {
+          {cartLists.map((item) => {
             return (
               <Item
                 name={item.name}
                 price={item.price}
                 qty={item.qty}
                 id={item.id}
+                uid={item.uid}
+                displayName={item.displayName}
+                email={item.email}
                 key={nanoid()}
+                facebookbStatus={facebookbStatus}
               />
             );
-          })} */}
+          })}
         </div>
         <div className={styles.footer}>
           <button className={styles.keepBuying} onClick={previousPage}>
             繼續購買
           </button>
-          <button className={styles.checkout}>來去結帳</button>
+          <button className={styles.checkout} onClick={checkout}>
+            產生訂單
+          </button>
         </div>
       </div>
     </div>
   );
 }
-function Item({ name, price, qty, id }) {
+function Item({ name, price, qty, id, displayName, facebookbStatus }) {
   function deleteItem(e) {
-    if (e.target.id === "trash") {
-      let cartLists = JSON.parse(localStorage.getItem("cartList"));
-      let newOrderList = [];
-      //  console.log(name, price, qty, id);
-      //  console.log(cartLists);
-      cartLists.forEach((item) => {
-        // console.log(item.id);
-        if (item.id !== id) {
-          newOrderList.push(item);
-          //    console.log(item);
-        }
-      });
-      localStorage.removeItem("cartList");
-      localStorage.setItem("cartList", JSON.stringify(newOrderList));
-      console.log(newOrderList);
-      //  cartLists.filter((item) => {
-      //     console.log(item);
-      //  });
+    if (facebookbStatus.status === true) {
+      if (e.target.id === "trash") {
+        ref
+          .doc(docID)
+          .collection("records")
+          .get()
+          .then((res) => {
+            res.forEach((doc) => {
+              if (doc.id === id) {
+                ref
+                  .doc(docID)
+                  .collection("records")
+                  .doc(doc.id)
+                  .delete()
+                  .then("Delete Success");
+              }
+            });
+          });
+      }
     }
   }
   return (
@@ -103,6 +157,7 @@ function Item({ name, price, qty, id }) {
         </div>
       </div>
       <div className={styles.right}>
+        <div className={styles.orderPeople}>By&nbsp;{displayName}</div>
         <img src={trash} id="trash" alt="trash can" />
       </div>
     </div>
