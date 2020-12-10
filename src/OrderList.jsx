@@ -14,45 +14,79 @@ import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { restaurantID, docID } from "./Variable";
 
-let urlParams = new URLSearchParams(window.location.search);
-let restaurantID = urlParams.get("restaurantID");
-let docID = urlParams.get("docID");
 let ref = db.collection("orderList");
 
 function OrderList({ facebookbStatus }) {
+  let ref = db.collection("orderList");
   let history = useHistory();
-
   let [cartLists, setCartLists] = useState([]);
+  let [orderCartListTotalPrice, setOrderCartListTotalPrice] = useState(0);
 
-  useEffect(() => {
-    ref
-      .where("status", "==", "ongoing")
-      //  .where("id", "==", docID)
-      .get()
-      .then((res) => {
+  if (facebookbStatus.status === true) {
+    let orderTotalPrice = 0;
+    let ref = db.collection("orderList");
+    ref.get().then((res) => {
+      res.forEach((doc) => {
+        console.log(doc.id);
         ref
-          .doc(docID)
-          .collection("records")
-          .onSnapshot((res_2) => {
-            let newCartLists = [];
-            res_2.forEach((doc) => {
-              console.log(doc.id);
-              newCartLists.push(doc.data());
-              console.log(doc.data());
+          .where("uid", "==", facebookbStatus.uid)
+          .where("status", "==", "ongoing")
+          .get()
+          .then((res_2) => {
+            res_2.forEach((doc_2) => {
+              ref
+                .doc(doc_2.id)
+                .collection("records")
+                .get()
+                .then((res_3) => {
+                  // let newCartList = [];
+                  res_3.forEach((doc_3) => {
+                    orderTotalPrice += doc_3.data().price * doc_3.data().qty;
+                    console.log(doc_3.data());
+                    //  newCartList.push(doc_3.data());
+                  });
+                  setOrderCartListTotalPrice(orderTotalPrice);
+                  // setCartList(newCartList);
+                });
             });
-            setCartLists(newCartLists);
           });
       });
-  }, []);
+    });
+  }
+
+  useEffect(() => {
+    if (facebookbStatus.status === true) {
+      let newCartLists = [];
+      ref
+        .where("status", "==", "ongoing")
+        .where("uid", "==", facebookbStatus.uid)
+        .get()
+        .then((res) => {
+          res.forEach((doc) => {
+            ref
+              .doc(doc.id)
+              .collection("records")
+              .onSnapshot((onSnapshot) => {
+                onSnapshot.forEach((doc) => {
+                  newCartLists.push(doc.data());
+                });
+                setCartLists(newCartLists);
+              });
+          });
+        });
+    }
+  }, [facebookbStatus]);
+
   console.log(cartLists);
 
   let totalPrice = 0;
-  cartLists.forEach((item) => {
-    let p = item.price;
-    let q = item.qty;
-    totalPrice += p * q;
-  });
+  //   cartLists.forEach((item) => {
+  //     let p = item.price;
+  //     let q = item.qty;
+  //     totalPrice += p * q;
+  //   });
   function previousPage() {
     history.push(`./menu?restaurantID=${restaurantID}&docID=${docID}`);
   }
@@ -93,7 +127,7 @@ function OrderList({ facebookbStatus }) {
           </div>
           <div className={styles.totalPrice}>
             <img src={dollarSign} alt="money icon" />
-            <p>{totalPrice}</p>
+            <p>{orderCartListTotalPrice}</p>
           </div>
         </div>
         <div className={styles.middle}>
@@ -109,6 +143,7 @@ function OrderList({ facebookbStatus }) {
                 email={item.email}
                 key={nanoid()}
                 facebookbStatus={facebookbStatus}
+                setCartLists={setCartLists}
               />
             );
           })}
@@ -125,27 +160,37 @@ function OrderList({ facebookbStatus }) {
     </div>
   );
 }
-function Item({ name, price, qty, id, displayName, facebookbStatus }) {
+function Item({
+  name,
+  price,
+  qty,
+  id,
+  displayName,
+  facebookbStatus,
+  setCartLists,
+}) {
   function deleteItem(e) {
-    if (facebookbStatus.status === true) {
-      if (e.target.id === "trash") {
-        ref
-          .doc(docID)
-          .collection("records")
-          .get()
-          .then((res) => {
-            res.forEach((doc) => {
-              if (doc.id === id) {
-                ref
-                  .doc(docID)
-                  .collection("records")
-                  .doc(doc.id)
-                  .delete()
-                  .then("Delete Success");
-              }
-            });
+    if (facebookbStatus.status === true && e.target.id === "trash") {
+      ref
+        .doc(docID)
+        .collection("records")
+        .onSnapshot((onSnapshot) => {
+          let newCartListsForDelete = [];
+          //    console.log(onSnapshot);
+          onSnapshot.forEach((doc) => {
+            console.log(doc.data().id);
+            newCartListsForDelete.push(doc.data());
+            setCartLists(newCartListsForDelete);
           });
-      }
+        });
+      // .get()
+      // .then((res) => {
+      //    res.forEach((doc) => {
+      //       if (doc.id === id) {
+      //          ref.doc(docID).collection("records").doc(doc.id).delete().then("Delete Success");
+      //       }
+      //    });
+      // });
     }
   }
   return (

@@ -19,17 +19,22 @@ import healthy from "./image/menu_healthy.png";
 import beverage from "./image/menu_beverage.jpg";
 import cart from "./image/cart.svg";
 import Swal from "sweetalert2";
+// TODO:
+import { restaurantID, docID } from "./Variable";
 
 function Menu({ data, facebookbStatus }) {
+  let urlParams = new URLSearchParams(window.location.search);
+  let restaurantID = urlParams.get("restaurantID");
+  let docID = urlParams.get("docID");
+
   let [menus, setMenus] = useState([]);
   let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   let [mealPopupDetail, setMealPopupDetail] = useState({});
-  let [cartList, setCartList] = useState([]);
+  //  let [cartList, setCartList] = useState([]);
+  let [cartListLength, setCartListLength] = useState(0);
+  let [cartListTotalPrice, setCartListTotalPrice] = useState(0);
   let [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
   let [URL, setURL] = useState();
-
-  let urlParams = new URLSearchParams(window.location.search);
-  let restaurantID = urlParams.get("restaurantID");
 
   let restaurantObj = {};
 
@@ -60,8 +65,44 @@ function Menu({ data, facebookbStatus }) {
         });
         setMenus(newMenus);
       });
-  }, []);
+  }, [facebookbStatus]);
 
+  //  useEffect(() => {
+  if (facebookbStatus.status === true) {
+    let totalPrice = 0;
+    let ref = db.collection("orderList");
+    ref.get().then((res) => {
+      res.forEach((doc) => {
+        console.log(doc.id);
+        ref
+          .where("uid", "==", facebookbStatus.uid)
+          .where("status", "==", "ongoing")
+          .get()
+          .then((res_2) => {
+            res_2.forEach((doc_2) => {
+              ref
+                .doc(doc_2.id)
+                .collection("records")
+                .get()
+                .then((res_3) => {
+                  setCartListLength(res_3.size);
+                  // let newCartList = [];
+                  res_3.forEach((doc_3) => {
+                    totalPrice += doc_3.data().price * doc_3.data().qty;
+                    console.log(doc_3.data());
+                    //  newCartList.push(doc_3.data());
+                  });
+                  setCartListTotalPrice(totalPrice);
+                  // setCartList(newCartList);
+                });
+            });
+          });
+      });
+    });
+  }
+  //  }, [facebookbStatus]);
+
+  console.log(facebookbStatus.status);
   let sigleTime = <div> {restaurantObj?.businessHour?.[0]}</div>;
   let doubleTime = (
     <div>
@@ -69,16 +110,6 @@ function Menu({ data, facebookbStatus }) {
       {restaurantObj?.businessHour?.[1]}
     </div>
   );
-  let totalPrice;
-
-  if (localStorage.getItem("cartList") !== null) {
-    totalPrice = 0;
-    JSON.parse(localStorage.getItem("cartList")).forEach((item) => {
-      totalPrice += item.price * item.qty;
-    });
-  } else {
-    totalPrice = 0;
-  }
 
   let history = useHistory();
   function categoryPhoto(photo) {
@@ -118,18 +149,51 @@ function Menu({ data, facebookbStatus }) {
   }
   function teamBuying() {
     if (facebookbStatus.status === true) {
+      console.log("1");
       setTeamBuyingPopup(true);
       let ref = db.collection("orderList");
       ref.get().then((res) => {
-        res.forEach((doc) => {
-          if (
-            doc.data().uid === facebookbStatus.uid &&
-            doc.data().status === "ongoing"
-          ) {
-            setURL(`${window.location.href}&docID=${doc.id}`);
-          }
-        });
+        console.log(res);
+        if (res.size !== 0) {
+          res.forEach((doc) => {
+            console.log(doc.id);
+            if (
+              doc.data().uid === facebookbStatus.uid &&
+              doc.data().status === "ongoing"
+            ) {
+              console.log("2");
+              setURL(`${window.location.href}&docID=${doc.id}`);
+            } else {
+              console.log("3");
+              setURL(`${window.location.href}&docID=${docID}`);
+              //  ref.add({
+              //     status: "ongoing",
+              //     uid: facebookbStatus.uid,
+              //  }).then((res) => {
+              //     console.log(res);
+              //  });
+            }
+          });
+        } else {
+          ref
+            .add({
+              status: "ongoing",
+              uid: facebookbStatus.uid,
+            })
+            .then((res) => {
+              console.log(res.id);
+              ref.doc(res.id).set({ id: res.id }, { merge: true });
+              setURL(`${window.location.href}&docID=${res.id}`);
+            });
+        }
       });
+      //  ref.get().then((res) => {
+      //     res.forEach((doc) => {
+      //        if (doc.data().uid === facebookbStatus.uid && doc.data().status === "ongoing") {
+      //           setURL(`${window.location.href}&docID=${doc.id}`);
+      //        }
+      //     });
+      //  });
     } else {
       Swal.fire({
         icon: "error",
@@ -162,8 +226,8 @@ function Menu({ data, facebookbStatus }) {
         <RenderMealPoppup
           setMealPopupSwitch={setMealPopupSwitch}
           setMealPopupDetail={setMealPopupDetail}
-          setCartList={setCartList}
-          cartList={cartList}
+          //  setCartList={setCartList}
+          //  cartList={cartList}
           mealPopupDetail={mealPopupDetail}
           facebookbStatus={facebookbStatus}
         />
@@ -214,16 +278,12 @@ function Menu({ data, facebookbStatus }) {
                 揪團
               </div>
               <div className={styles.cartBtn} onClick={linkToOrderList}>
-                <span>
-                  {localStorage.getItem("cartList") !== null
-                    ? JSON.parse(localStorage.getItem("cartList")).length
-                    : 0}
-                </span>
+                <span>{cartListLength}</span>
                 <div className={styles.cart}>
                   <img src={cart} alt="cart" />
                   購物車
                 </div>
-                <div className={styles.totalPrice}>{totalPrice}</div>
+                <div className={styles.totalPrice}>{cartListTotalPrice}</div>
               </div>
             </div>
           </div>
@@ -269,7 +329,7 @@ function RenderMealPoppup({
   setMealPopupSwitch,
   setMealPopupDetail,
   mealPopupDetail,
-  setCartList,
+  //  setCartList,
   cartList,
   facebookbStatus,
 }) {
@@ -296,7 +356,7 @@ function RenderMealPoppup({
   }
   function addToCart() {
     if (facebookbStatus.status === true) {
-      console.log(facebookbStatus);
+      //  console.log(facebookbStatus);
       let newItem = {
         name: mealPopupDetail.name,
         price: mealPopupDetail.price,
@@ -306,61 +366,76 @@ function RenderMealPoppup({
         displayName: facebookbStatus.displayName,
         email: facebookbStatus.email,
       };
-      console.log(newItem);
+      //  console.log(newItem);
       //  setCartList([...cartList, newItem]);
 
       let ref = db.collection("orderList");
-
-      //  ref.get().then((res) => {
-      //     if (res.size === 0) {
-      //        ref.add({ status: "ongoing", uid: user.uid }).then((res) => {
-      //           ref.doc(res.id).set(
-      //              {
-      //                 id: res.id,
-      //              },
-      //              { merge: true }
-      //           );
-      //           ref.doc(res.id)
-      //              .collection("records")
-      //              .add({
-      //                 name: mealPopupDetail.name,
-      //                 price: mealPopupDetail.price,
-      //                 qty: mealPopupDetail.qty,
-      //                 uid: user.uid,
-      //                 displayName: user.displayName,
-      //                 email: user.email,
-      //              })
-      //              .then((res_2) => {
-      //                 console.log(res_2.id);
-      //                 ref.doc(res.id).collection("records").doc(res_2.id).set(
-      //                    {
-      //                       id: res_2.id,
-      //                    },
-      //                    { merge: true }
-      //                 );
-      //              });
-      //        });
-      //     } else {
-      //        res.forEach((doc) => {
-      //           if (doc.data().uid === user.uid && doc.data().status === "ongoing") {
-      //              ref.doc(doc.id)
-      //                 .collection("records")
-      //                 .add({
-      //                    name: mealPopupDetail.name,
-      //                    price: mealPopupDetail.price,
-      //                    qty: mealPopupDetail.qty,
-      //                    uid: user.uid,
-      //                    displayName: user.displayName,
-      //                    email: user.email,
-      //                 })
-      //                 .then((res) => {
-      //                    console.log(res.id);
-      //                    ref.doc(doc.id).collection("records").doc(res.id).set({ id: res.id }, { merge: true });
-      //                 });
-      //           }
-      //        });
-      //     }
-      //  });
+      ref.get().then((res) => {
+        if (res.size === 0) {
+          console.log("res.size=", res.size);
+          ref
+            .add({ status: "ongoing", uid: facebookbStatus.uid })
+            .then((res) => {
+              ref.doc(res.id).set(
+                {
+                  id: res.id,
+                },
+                { merge: true }
+              );
+              ref
+                .doc(res.id)
+                .collection("records")
+                .add({
+                  name: mealPopupDetail.name,
+                  price: mealPopupDetail.price,
+                  qty: mealPopupDetail.qty,
+                  uid: facebookbStatus.uid,
+                  displayName: facebookbStatus.displayName,
+                  email: facebookbStatus.email,
+                })
+                .then((res_2) => {
+                  console.log(res_2.id);
+                  ref.doc(res.id).collection("records").doc(res_2.id).set(
+                    {
+                      id: res_2.id,
+                    },
+                    { merge: true }
+                  );
+                });
+            });
+        } else {
+          console.log("res.size=", res.size);
+          res.forEach((doc) => {
+            if (
+              doc.data().uid === facebookbStatus.uid ||
+              (docID && doc.data().status === "ongoing")
+            ) {
+              ref
+                .doc(doc.id)
+                .collection("records")
+                .add({
+                  name: mealPopupDetail.name,
+                  price: mealPopupDetail.price,
+                  qty: mealPopupDetail.qty,
+                  uid: facebookbStatus.uid,
+                  displayName: facebookbStatus.displayName,
+                  email: facebookbStatus.email,
+                })
+                // .onSnapShot((onSnapShot) => {
+                //    console.log(onSnapShot);
+                // });
+                .then((res) => {
+                  console.log(res.id);
+                  ref
+                    .doc(doc.id)
+                    .collection("records")
+                    .doc(res.id)
+                    .set({ id: res.id }, { merge: true });
+                });
+            }
+          });
+        }
+      });
       setMealPopupSwitch(false);
     } else {
       Swal.fire({
@@ -368,8 +443,6 @@ function RenderMealPoppup({
         title: "尚未登錄會員",
       });
     }
-    // WTF
-
     initQty = 1;
   }
   return (
