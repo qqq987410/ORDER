@@ -19,10 +19,10 @@ import healthy from "./image/menu_healthy.png";
 import beverage from "./image/menu_beverage.jpg";
 import cart from "./image/cart.svg";
 import Swal from "sweetalert2";
-// TODO:
-import { restaurantID, docID } from "./Variable";
+import getVariable from "./Variable";
 
-function Menu({ data, facebookbStatus }) {
+function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
+  getVariable();
   let urlParams = new URLSearchParams(window.location.search);
   let restaurantID = urlParams.get("restaurantID");
   let docID = urlParams.get("docID");
@@ -30,9 +30,6 @@ function Menu({ data, facebookbStatus }) {
   let [menus, setMenus] = useState([]);
   let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   let [mealPopupDetail, setMealPopupDetail] = useState({});
-  //  let [cartList, setCartList] = useState([]);
-  let [cartListLength, setCartListLength] = useState(0);
-  let [cartListTotalPrice, setCartListTotalPrice] = useState(0);
   let [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
   let [URL, setURL] = useState();
 
@@ -50,7 +47,6 @@ function Menu({ data, facebookbStatus }) {
       };
     }
   });
-
   useEffect(() => {
     db.collection("restaurant")
       .doc(restaurantID)
@@ -65,44 +61,8 @@ function Menu({ data, facebookbStatus }) {
         });
         setMenus(newMenus);
       });
-  }, [facebookbStatus]);
+  }, []);
 
-  //  useEffect(() => {
-  if (facebookbStatus.status === true) {
-    let totalPrice = 0;
-    let ref = db.collection("orderList");
-    ref.get().then((res) => {
-      res.forEach((doc) => {
-        console.log(doc.id);
-        ref
-          .where("uid", "==", facebookbStatus.uid)
-          .where("status", "==", "ongoing")
-          .get()
-          .then((res_2) => {
-            res_2.forEach((doc_2) => {
-              ref
-                .doc(doc_2.id)
-                .collection("records")
-                .get()
-                .then((res_3) => {
-                  setCartListLength(res_3.size);
-                  // let newCartList = [];
-                  res_3.forEach((doc_3) => {
-                    totalPrice += doc_3.data().price * doc_3.data().qty;
-                    console.log(doc_3.data());
-                    //  newCartList.push(doc_3.data());
-                  });
-                  setCartListTotalPrice(totalPrice);
-                  // setCartList(newCartList);
-                });
-            });
-          });
-      });
-    });
-  }
-  //  }, [facebookbStatus]);
-
-  console.log(facebookbStatus.status);
   let sigleTime = <div> {restaurantObj?.businessHour?.[0]}</div>;
   let doubleTime = (
     <div>
@@ -129,6 +89,7 @@ function Menu({ data, facebookbStatus }) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
         res.forEach((doc) => {
+          console.log("=======", facebookbStatus.status);
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
@@ -137,6 +98,8 @@ function Menu({ data, facebookbStatus }) {
               `./orderList?restaurantID=${restaurantID}&docID=${doc.id}`
             );
             console.log(doc.id);
+          } else {
+            Swal.fire("尚未加入餐點！");
           }
         });
       });
@@ -333,6 +296,7 @@ function RenderMealPoppup({
   cartList,
   facebookbStatus,
 }) {
+  getVariable();
   //  console.log("mealPopupDetail.qty=", mealPopupDetail.qty);
   //  TODO :
   function closeMealPopup(e) {
@@ -356,19 +320,6 @@ function RenderMealPoppup({
   }
   function addToCart() {
     if (facebookbStatus.status === true) {
-      //  console.log(facebookbStatus);
-      let newItem = {
-        name: mealPopupDetail.name,
-        price: mealPopupDetail.price,
-        qty: mealPopupDetail.qty,
-        id: mealPopupDetail.id,
-        uid: facebookbStatus.uid,
-        displayName: facebookbStatus.displayName,
-        email: facebookbStatus.email,
-      };
-      //  console.log(newItem);
-      //  setCartList([...cartList, newItem]);
-
       let ref = db.collection("orderList");
       ref.get().then((res) => {
         if (res.size === 0) {
@@ -405,11 +356,14 @@ function RenderMealPoppup({
             });
         } else {
           console.log("res.size=", res.size);
+          let switcher = true;
           res.forEach((doc) => {
             if (
-              doc.data().uid === facebookbStatus.uid ||
-              (docID && doc.data().status === "ongoing")
+              (doc.data().uid === facebookbStatus.uid || docID !== null) &&
+              doc.data().status === "ongoing"
             ) {
+              switcher = false;
+              console.log("AAA");
               ref
                 .doc(doc.id)
                 .collection("records")
@@ -421,9 +375,6 @@ function RenderMealPoppup({
                   displayName: facebookbStatus.displayName,
                   email: facebookbStatus.email,
                 })
-                // .onSnapShot((onSnapShot) => {
-                //    console.log(onSnapShot);
-                // });
                 .then((res) => {
                   console.log(res.id);
                   ref
@@ -434,6 +385,36 @@ function RenderMealPoppup({
                 });
             }
           });
+          if (switcher) {
+            console.log("BBB");
+            ref
+              .add({
+                status: "ongoing",
+                uid: facebookbStatus.uid,
+              })
+              .then((response) => {
+                console.log(response.id);
+                ref.doc(response.id).set({ id: response.id }, { merge: true });
+                ref
+                  .doc(response.id)
+                  .collection("records")
+                  .add({
+                    name: mealPopupDetail.name,
+                    price: mealPopupDetail.price,
+                    qty: mealPopupDetail.qty,
+                    uid: facebookbStatus.uid,
+                    displayName: facebookbStatus.displayName,
+                    email: facebookbStatus.email,
+                  })
+                  .then((response_2) => {
+                    ref
+                      .doc(response.id)
+                      .collection("records")
+                      .doc(response_2.id)
+                      .set({ id: response_2.id }, { merge: true });
+                  });
+              });
+          }
         }
       });
       setMealPopupSwitch(false);

@@ -14,51 +14,16 @@ import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { restaurantID, docID } from "./Variable";
+// import { restaurantID, docID } from "./Variable";
+import getVariable from "./Variable";
 
-let ref = db.collection("orderList");
-
-function OrderList({ facebookbStatus }) {
+function OrderList({ facebookbStatus, cartListTotalPrice }) {
   let ref = db.collection("orderList");
   let history = useHistory();
   let [cartLists, setCartLists] = useState([]);
-  let [orderCartListTotalPrice, setOrderCartListTotalPrice] = useState(0);
-
-  if (facebookbStatus.status === true) {
-    let orderTotalPrice = 0;
-    let ref = db.collection("orderList");
-    ref.get().then((res) => {
-      res.forEach((doc) => {
-        console.log(doc.id);
-        ref
-          .where("uid", "==", facebookbStatus.uid)
-          .where("status", "==", "ongoing")
-          .get()
-          .then((res_2) => {
-            res_2.forEach((doc_2) => {
-              ref
-                .doc(doc_2.id)
-                .collection("records")
-                .get()
-                .then((res_3) => {
-                  // let newCartList = [];
-                  res_3.forEach((doc_3) => {
-                    orderTotalPrice += doc_3.data().price * doc_3.data().qty;
-                    console.log(doc_3.data());
-                    //  newCartList.push(doc_3.data());
-                  });
-                  setOrderCartListTotalPrice(orderTotalPrice);
-                  // setCartList(newCartList);
-                });
-            });
-          });
-      });
-    });
-  }
 
   useEffect(() => {
     if (facebookbStatus.status === true) {
-      let newCartLists = [];
       ref
         .where("status", "==", "ongoing")
         .where("uid", "==", facebookbStatus.uid)
@@ -69,6 +34,7 @@ function OrderList({ facebookbStatus }) {
               .doc(doc.id)
               .collection("records")
               .onSnapshot((onSnapshot) => {
+                let newCartLists = [];
                 onSnapshot.forEach((doc) => {
                   newCartLists.push(doc.data());
                 });
@@ -79,16 +45,14 @@ function OrderList({ facebookbStatus }) {
     }
   }, [facebookbStatus]);
 
-  console.log(cartLists);
+  console.log("cartLists=", cartLists);
 
-  let totalPrice = 0;
-  //   cartLists.forEach((item) => {
-  //     let p = item.price;
-  //     let q = item.qty;
-  //     totalPrice += p * q;
-  //   });
   function previousPage() {
-    history.push(`./menu?restaurantID=${restaurantID}&docID=${docID}`);
+    history.push(
+      `./menu?restaurantID=${getVariable().restaurantID}&docID=${
+        getVariable().docID
+      }`
+    );
   }
   function checkout() {
     if (facebookbStatus.status === true) {
@@ -104,30 +68,33 @@ function OrderList({ facebookbStatus }) {
         if (result.isConfirmed) {
           Swal.fire("成功!", "訂單已產生", "success");
           // 將 firebase 狀態由 ongoing => history
-          ref.doc(docID).set(
+          ref.doc(getVariable().docID).set(
             {
               status: "history",
             },
             { merge: true }
           );
-          console.log("1");
-          setCartLists([]);
-          console.log("2");
+          //將狀態清空
+          //    setCartLists([]);
+          // 導轉至 History Page
+          console.log();
+          history.push(`./history?docID=${getVariable().docID}`);
         }
       });
     }
   }
+  console.log(cartListTotalPrice);
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
         <div className={styles.header}>
           <div className={styles.user}>
             <img src={head} alt="head photo" />
-            <p>許家瑋</p>
+            <p>{facebookbStatus.displayName}</p>
           </div>
           <div className={styles.totalPrice}>
             <img src={dollarSign} alt="money icon" />
-            <p>{orderCartListTotalPrice}</p>
+            <p>{cartListTotalPrice}</p>
           </div>
         </div>
         <div className={styles.middle}>
@@ -169,28 +136,27 @@ function Item({
   facebookbStatus,
   setCartLists,
 }) {
+  let ref = db.collection("orderList");
   function deleteItem(e) {
     if (facebookbStatus.status === true && e.target.id === "trash") {
       ref
-        .doc(docID)
+        .doc(getVariable().docID)
         .collection("records")
-        .onSnapshot((onSnapshot) => {
-          let newCartListsForDelete = [];
-          //    console.log(onSnapshot);
+        .get()
+        .then((onSnapshot) => {
           onSnapshot.forEach((doc) => {
-            console.log(doc.data().id);
-            newCartListsForDelete.push(doc.data());
-            setCartLists(newCartListsForDelete);
+            if (doc.data().id === id) {
+              ref
+                .doc(getVariable().docID)
+                .collection("records")
+                .doc(doc.data().id)
+                .delete()
+                .then(() => {
+                  console.log("刪除此筆菜單");
+                });
+            }
           });
         });
-      // .get()
-      // .then((res) => {
-      //    res.forEach((doc) => {
-      //       if (doc.id === id) {
-      //          ref.doc(docID).collection("records").doc(doc.id).delete().then("Delete Success");
-      //       }
-      //    });
-      // });
     }
   }
   return (

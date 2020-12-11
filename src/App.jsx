@@ -6,6 +6,7 @@ import Home from "./Home";
 import Main from "./Main";
 import Menu from "./Menu";
 import OrderList from "./OrderList";
+import History from "./History";
 import Login from "./Login";
 import logo from "./image/Logo.svg";
 import firebase from "firebase/app";
@@ -16,39 +17,38 @@ import { db } from "./firebase";
 function App() {
   const [data, setData] = useState([]);
   const [facebookbStatus, setFacebookbStatus] = useState({ status: false });
-  //
-  // let [cartListLength, setCartListLength] = useState(0);
-  // let [cartListTotalPrice, setCartListTotalPrice] = useState(0);
-  // if (facebookbStatus.status === true) {
-  //    let totalPrice = 0;
-  //    let ref = db.collection("orderList");
-  //    ref.get().then((res) => {
-  //       res.forEach((doc) => {
-  //          console.log(doc.id);
-  //          ref.where("uid", "==", facebookbStatus.uid)
-  //             .where("status", "==", "ongoing")
-  //             .get()
-  //             .then((res_2) => {
-  //                res_2.forEach((doc_2) => {
-  //                   ref.doc(doc_2.id)
-  //                      .collection("records")
-  //                      .get()
-  //                      .then((res_3) => {
-  //                         setCartListLength(res_3.size);
-  //                         // let newCartList = [];
-  //                         res_3.forEach((doc_3) => {
-  //                            totalPrice += doc_3.data().price * doc_3.data().qty;
-  //                            console.log(doc_3.data());
-  //                            //  newCartList.push(doc_3.data());
-  //                         });
-  //                         setCartListTotalPrice(totalPrice);
-  //                         // setCartList(newCartList);
-  //                      });
-  //                });
-  //             });
-  //       });
-  //    });
-  // }
+  const [cartListLength, setCartListLength] = useState(0);
+  const [cartListTotalPrice, setCartListTotalPrice] = useState(0);
+  useEffect(() => {
+    if (facebookbStatus.status === true) {
+      //  let totalPrice = 0;
+      let ref = db.collection("orderList");
+      ref.onSnapshot((onSnapshot) => {
+        // console.log("3 &", "facebookbStatus.status=", facebookbStatus.status);
+        ref
+          .where("uid", "==", facebookbStatus.uid)
+          .where("status", "==", "ongoing")
+          .get()
+          .then((res) => {
+            // console.log(res.size); // 之後會有東西
+            res.forEach((doc) => {
+              ref
+                .doc(doc.id)
+                .collection("records")
+                .onSnapshot((onSnapshot_2) => {
+                  let totalPrice = 0;
+                  setCartListLength(onSnapshot_2.size);
+                  onSnapshot_2.forEach((doc_2) => {
+                    totalPrice += doc_2.data().price * doc_2.data().qty;
+                  });
+                  setCartListTotalPrice(totalPrice);
+                });
+            });
+          });
+      });
+    }
+  }, [facebookbStatus]);
+
   useEffect(() => {
     // 建立假資料
     createFakeData(setData);
@@ -79,6 +79,7 @@ function App() {
         <Link to="/menu">Menu</Link>
         <Link to="/orderList">OrderList</Link>
         <Link to="/login">Login</Link>
+        <Link to="/history">History</Link>
       </nav>
 
       <Switch>
@@ -93,12 +94,22 @@ function App() {
             data={data}
             setFacebookbStatus={setFacebookbStatus}
             facebookbStatus={facebookbStatus}
+            cartListLength={cartListLength}
+            cartListTotalPrice={cartListTotalPrice}
             // cartListLength={cartListLength}
             // cartListTotalPrice={cartListTotalPrice}
           />
         </Route>
         <Route path="/orderList">
           <OrderList
+            facebookbStatus={facebookbStatus}
+            cartListTotalPrice={cartListTotalPrice}
+            // cartListLength={cartListLength}
+            // cartListTotalPrice={cartListTotalPrice}
+          />
+        </Route>
+        <Route path="/history">
+          <History
             facebookbStatus={facebookbStatus}
             // cartListLength={cartListLength}
             // cartListTotalPrice={cartListTotalPrice}
