@@ -22,11 +22,6 @@ import Swal from "sweetalert2";
 import getVariable from "./Variable";
 
 function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
-  getVariable();
-  let urlParams = new URLSearchParams(window.location.search);
-  let restaurantID = urlParams.get("restaurantID");
-  let docID = urlParams.get("docID");
-
   let [menus, setMenus] = useState([]);
   let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   let [mealPopupDetail, setMealPopupDetail] = useState({});
@@ -36,7 +31,7 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
   let restaurantObj = {};
 
   data.forEach((doc) => {
-    if (doc.id === restaurantID) {
+    if (doc.id === getVariable().restaurantID) {
       restaurantObj = {
         address: doc.address,
         businessHour: [doc.businessHour[0], doc.businessHour[1]],
@@ -49,7 +44,7 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
   });
   useEffect(() => {
     db.collection("restaurant")
-      .doc(restaurantID)
+      .doc(getVariable().restaurantID)
       .collection("menu")
       .get()
       .then((res) => {
@@ -88,20 +83,25 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
+        let controller = true;
+        console.log(res.size);
         res.forEach((doc) => {
-          console.log("=======", facebookbStatus.status);
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
             history.push(
-              `./orderList?restaurantID=${restaurantID}&docID=${doc.id}`
+              `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
+                doc.id
+              }`
             );
-            console.log(doc.id);
-          } else {
-            Swal.fire("尚未加入餐點！");
+            controller = false;
+            TODO: console.log(doc.id, doc);
           }
         });
+        if (controller === true) {
+          Swal.fire("尚未加入餐點！");
+        }
       });
     } else {
       Swal.fire({
@@ -112,11 +112,9 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
   }
   function teamBuying() {
     if (facebookbStatus.status === true) {
-      console.log("1");
       setTeamBuyingPopup(true);
       let ref = db.collection("orderList");
       ref.get().then((res) => {
-        console.log(res);
         if (res.size !== 0) {
           res.forEach((doc) => {
             console.log(doc.id);
@@ -124,17 +122,9 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
               doc.data().uid === facebookbStatus.uid &&
               doc.data().status === "ongoing"
             ) {
-              console.log("2");
               setURL(`${window.location.href}&docID=${doc.id}`);
             } else {
-              console.log("3");
-              setURL(`${window.location.href}&docID=${docID}`);
-              //  ref.add({
-              //     status: "ongoing",
-              //     uid: facebookbStatus.uid,
-              //  }).then((res) => {
-              //     console.log(res);
-              //  });
+              setURL(`${window.location.href}&docID=${getVariable().docID}`);
             }
           });
         } else {
@@ -150,13 +140,6 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
             });
         }
       });
-      //  ref.get().then((res) => {
-      //     res.forEach((doc) => {
-      //        if (doc.data().uid === facebookbStatus.uid && doc.data().status === "ongoing") {
-      //           setURL(`${window.location.href}&docID=${doc.id}`);
-      //        }
-      //     });
-      //  });
     } else {
       Swal.fire({
         icon: "error",
@@ -359,7 +342,8 @@ function RenderMealPoppup({
           let switcher = true;
           res.forEach((doc) => {
             if (
-              (doc.data().uid === facebookbStatus.uid || docID !== null) &&
+              (doc.data().uid === facebookbStatus.uid ||
+                getVariable().docID !== null) &&
               doc.data().status === "ongoing"
             ) {
               switcher = false;
