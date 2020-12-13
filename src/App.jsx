@@ -21,10 +21,8 @@ function App() {
   const [cartListTotalPrice, setCartListTotalPrice] = useState(0);
   useEffect(() => {
     if (facebookbStatus.status === true) {
-      //  let totalPrice = 0;
       let ref = db.collection("orderList");
       ref.onSnapshot((onSnapshot) => {
-        // console.log("3 &", "facebookbStatus.status=", facebookbStatus.status);
         ref
           .where("uid", "==", facebookbStatus.uid)
           .where("status", "==", "ongoing")
@@ -75,11 +73,17 @@ function App() {
             <img src={logo} alt="logo" />
           </Link>
         </div>
-        <Link to="/main">Main</Link>
-        <Link to="/menu">Menu</Link>
-        <Link to="/orderList">OrderList</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/history">History</Link>
+        <div className={styles.right}>
+          <div className={styles.mainPage}>
+            <Link to="/main">所有餐廳</Link>
+          </div>
+          <div className={styles.historyPage}>
+            <Link to="/history">歷史訂單</Link>
+          </div>
+          <div className={styles.loginPage}>
+            <Link to="/login">登入</Link>
+          </div>
+        </div>
       </nav>
 
       <Switch>

@@ -80,26 +80,39 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
     }
   }
   function linkToOrderList() {
+    console.log("start");
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
+      let controller = true;
       ref.get().then((res) => {
-        let controller = true;
-        console.log(res.size);
+        // console.log(res.size);
         res.forEach((doc) => {
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
-            history.push(
-              `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
-                doc.id
-              }`
-            );
-            controller = false;
-            TODO: console.log(doc.id, doc);
+            ref
+              .doc(doc.data().id)
+              .collection("records")
+              .onSnapshot((shot) => {
+                // console.log(shot.size);
+                if (shot.size === 0) {
+                  console.log("111");
+                  controller = true;
+                } else if (shot.size > 0) {
+                  console.log("222");
+                  history.push(
+                    `./orderList?restaurantID=${
+                      getVariable().restaurantID
+                    }&docID=${doc.id}`
+                  );
+                  controller = false;
+                }
+              });
           }
         });
-        if (controller === true) {
+        if (controller) {
+          console.log("333");
           Swal.fire("尚未加入餐點！");
         }
       });

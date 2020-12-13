@@ -3,8 +3,12 @@
   height: 60px;
   background-color: #6f3112;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: fixed;
   top: 0;
+  padding-right: 20px;
+  padding-left: 20px;
   .logo {
     padding: 0 10px;
     width: 100px;
@@ -14,6 +18,39 @@
       width: 100%;
       height: 100%;
       cursor: pointer;
+    }
+  }
+  .right {
+    display: flex;
+    color: #ffffff;
+    .mainPage {
+      border: 1px solid #fff;
+      border-radius: 6px;
+      padding: 2px 10px;
+      a {
+        color: #ffffff;
+        text-decoration: none;
+      }
+    }
+    .historyPage {
+      margin-left: 20px;
+      border: 1px solid #fff;
+      border-radius: 6px;
+      padding: 2px 10px;
+      a {
+        color: #ffffff;
+        text-decoration: none;
+      }
+    }
+    .loginPage {
+      margin-left: 20px;
+      border: 1px solid #fff;
+      border-radius: 6px;
+      padding: 2px 10px;
+      a {
+        color: #ffffff;
+        text-decoration: none;
+      }
     }
   }
 }

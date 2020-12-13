@@ -71,19 +71,17 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           ref.doc(getVariable().docID).set(
             {
               status: "history",
+              endTime: new Date(),
             },
             { merge: true }
           );
-          //將狀態清空
-          //    setCartLists([]);
           // 導轉至 History Page
-          console.log();
-          history.push(`./history?docID=${getVariable().docID}`);
+          history.push(`./history`);
         }
       });
     }
   }
-  console.log(cartListTotalPrice);
+  //    console.log(cartListTotalPrice);
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
