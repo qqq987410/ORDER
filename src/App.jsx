@@ -10,7 +10,7 @@ import History from "./History";
 import Login from "./Login";
 import logo from "./image/Logo.svg";
 import firebase from "firebase/app";
-import { db } from "./firebase";
+import { db, facebookLogout } from "./firebase";
 // import "firebase/auth";
 // import "firebase/firestore";
 
@@ -82,6 +82,9 @@ function App() {
           </div>
           <div className={styles.loginPage}>
             <Link to="/login">登入</Link>
+          </div>
+          <div className={styles.logoutPage} onClick={facebookLogout}>
+            登出
           </div>
         </div>
       </nav>

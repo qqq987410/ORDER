@@ -2,6 +2,7 @@ import firebase from "firebase/app";
 // import "firebase/analytics";
 import "firebase/auth";
 import "firebase/firestore";
+// import { BrowserRouter as Router, Switch, Route, Link, useHistory } from "react-router-dom";
 // import { useCallback } from "react";
 // import { useParams } from "react-router-dom";
 
@@ -72,6 +73,7 @@ function facebookLogin() {
     });
 }
 function facebookLogout() {
+  //  let history = useHistory();
   firebase
     .auth()
     .signOut()
@@ -79,5 +81,6 @@ function facebookLogout() {
       localStorage.removeItem("accessToken");
       console.log("您被逐出紫禁城了");
     });
+  //  history.push("./home");
 }
 export { createFakeData, facebookLogin, facebookLogout, db };
