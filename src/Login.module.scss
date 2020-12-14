@@ -27,6 +27,8 @@
       justify-content: center;
       align-items: center;
       transition: all ease-in-out 0.8s;
+      position: relative;
+      z-index: 5;
       .greeting {
         color: #fff;
         font-size: 30px;
@@ -34,6 +36,7 @@
       }
       .signinBtn {
         margin-bottom: 20px;
+        transition: all ease 0.6s;
       }
       .signinBtn,
       .signoutBtn {
@@ -67,6 +70,7 @@
         color: rgb(43, 24, 19);
         font-size: 30px;
         margin-bottom: 50px;
+        transition: all ease 0.6s;
       }
       .input {
         width: 50%;
