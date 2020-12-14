@@ -1,7 +1,8 @@
 import styles from "./Login.module.scss";
 import { facebookLogin, facebookLogout } from "./firebase";
 import { useState } from "react";
-
+import fbIcon from "./image/fbIcon.svg";
+import googleIcon from "./image/googleIcon.svg";
 function Login() {
   const [trigger, setTrigger] = useState(false);
   function signin() {
@@ -45,6 +46,14 @@ function Login() {
         <div className={styles.max} id="max">
           <div className={styles.titel} id="title">
             Create Account
+          </div>
+          <div className={styles.icon} id="icon">
+            <div className={styles.fb} id="fbIcon">
+              <img src={fbIcon} alt="FBIcon" />
+            </div>
+            <div className={styles.google} id="googleIcon">
+              <img src={googleIcon} alt="GoogleIcon" />
+            </div>
           </div>
           <div className={styles.input}>
             <div className={styles.name}>
