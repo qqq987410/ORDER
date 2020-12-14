@@ -9,18 +9,21 @@ function Login() {
     let max = document.getElementById("max");
     let signInUp = document.getElementById("signInUp");
     let title = document.getElementById("title");
+    let greeting = document.getElementById("greeting");
 
     if (trigger) {
       min.style.transform = "translateX(0%)";
       max.style.transform = "translateX(0%)";
       signInUp.textContent = "SIGN IN";
       title.textContent = " Create Account";
+      greeting.textContent = "Welcome Back !";
       setTrigger(false);
     } else {
       min.style.transform = "translateX(185.714286%)";
       max.style.transform = "translateX(-53.846154%)";
       signInUp.textContent = "SIGN UP";
       title.textContent = "Sign in to Order";
+      greeting.textContent = "Hello, Friend !";
       setTrigger(true);
     }
   }
@@ -28,7 +31,9 @@ function Login() {
     <div className={styles.outer}>
       <div className={styles.inner}>
         <div className={styles.min} id="min">
-          <div className={styles.greeting}>Welcome Back !</div>
+          <div className={styles.greeting} id="greeting">
+            Welcome Back !
+          </div>
           <div className={styles.signinBtn} id="signInUp" onClick={signin}>
             SIGN IN
           </div>
