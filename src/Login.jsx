@@ -11,6 +11,10 @@ function Login() {
     let signInUp = document.getElementById("signInUp");
     let title = document.getElementById("title");
     let greeting = document.getElementById("greeting");
+    let icon = document.getElementById("icon");
+    let nameInput = document.getElementById("nameInput");
+    let signUp = document.getElementById("signUp");
+    let signIn = document.getElementById("signIn");
 
     if (trigger) {
       min.style.transform = "translateX(0%)";
@@ -18,6 +22,10 @@ function Login() {
       signInUp.textContent = "SIGN IN";
       title.textContent = " Create Account";
       greeting.textContent = "Welcome Back !";
+      icon.style.display = "none";
+      nameInput.style.display = "block";
+      signUp.style.display = "block";
+      signIn.style.display = "none";
       setTrigger(false);
     } else {
       min.style.transform = "translateX(185.714286%)";
@@ -25,6 +33,11 @@ function Login() {
       signInUp.textContent = "SIGN UP";
       title.textContent = "Sign in to Order";
       greeting.textContent = "Hello, Friend !";
+      icon.style.display = "flex";
+      nameInput.style.display = "none";
+      signUp.style.display = "none";
+      signIn.style.display = "block";
+
       setTrigger(true);
     }
   }
@@ -38,17 +51,13 @@ function Login() {
           <div className={styles.signinBtn} id="signInUp" onClick={signin}>
             SIGN IN
           </div>
-          <div className={styles.signoutBtn} onClick={facebookLogout}>
-            SIGN OUT
-          </div>
-          <button onClick={facebookLogin}>FB Log in</button>
         </div>
         <div className={styles.max} id="max">
           <div className={styles.titel} id="title">
             Create Account
           </div>
           <div className={styles.icon} id="icon">
-            <div className={styles.fb} id="fbIcon">
+            <div className={styles.fb} id="fbIcon" onClick={facebookLogin}>
               <img src={fbIcon} alt="FBIcon" />
             </div>
             <div className={styles.google} id="googleIcon">
@@ -56,7 +65,7 @@ function Login() {
             </div>
           </div>
           <div className={styles.input}>
-            <div className={styles.name}>
+            <div className={styles.name} id="nameInput">
               <input type="text" placeholder="Name" />
             </div>
             <div className={styles.account}>
@@ -65,7 +74,12 @@ function Login() {
             <div className={styles.password}>
               <input type="text" placeholder="Password" />
             </div>
-            <button>SIGN UP</button>
+            <button className={styles.signUp} id="signUp">
+              SIGN UP
+            </button>
+            <button className={styles.signIn} id="signIn">
+              SIGN IN
+            </button>
           </div>
         </div>
       </div>
@@ -76,49 +90,3 @@ function SignIn() {
   return <div className={styles.inner}></div>;
 }
 export default Login;
-
-// function Login() {
-// return (
-// <div className={styles.outer}>
-//   <div className={styles.inner}>
-//     <div className={styles.login}>
-//       <div className={styles.text}>登錄</div>
-//       <div className={styles.typing}>
-//         <div className={styles.account}>
-//           帳號：
-//           <input type="text" />
-//         </div>
-//         <div className={styles.password}>
-//           密碼：
-//           <input type="text" />
-//         </div>
-//         <div className={styles.fbLogin} onClick={facebookLogin}>
-//           FaceBook 登錄
-//         </div>
-//         <button>登錄</button>
-//       </div>
-//     </div>
-//     <div className={styles.signin}>
-//       <div className={styles.typing}>
-//         <div className={styles.name}>
-//           姓名：
-//           <input type="text" />
-//         </div>
-//         <div className={styles.account}>
-//           帳號：
-//           <input type="text" />
-//         </div>
-//         <div className={styles.password}>
-//           密碼：
-//           <input type="text" />
-//         </div>
-//         <button>註冊</button>
-//       </div>
-//       <div className={styles.text}>註冊</div>
-//     </div>
-// {/* <button onClick={facebookLogin}>FB Log in</button> */}
-// {/* <button onClick={facebookLogout}>FB Log out</button> */}
-//     </div>
-//   </div>
-// );
-// }

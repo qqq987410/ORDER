@@ -63,7 +63,7 @@ function History({ facebookbStatus }) {
   return (
     <div className={styles.out}>
       <div className={styles.in}>
-        <div className={styles.historyTitle}>歷史訂單</div>
+        <div className={styles.historyTitle}>History Order</div>
         {bundle.map((unit) => {
           return (
             <Unit

@@ -1,6 +1,12 @@
 import styles from "./App.module.scss";
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 import { createFakeData } from "./firebase";
 import Home from "./Home";
 import Main from "./Main";
@@ -10,7 +16,7 @@ import History from "./History";
 import Login from "./Login";
 import logo from "./image/Logo.svg";
 import firebase from "firebase/app";
-import { db, facebookLogout } from "./firebase";
+import { db } from "./firebase";
 // import "firebase/auth";
 // import "firebase/firestore";
 
@@ -19,6 +25,9 @@ function App() {
   const [facebookbStatus, setFacebookbStatus] = useState({ status: false });
   const [cartListLength, setCartListLength] = useState(0);
   const [cartListTotalPrice, setCartListTotalPrice] = useState(0);
+
+  let history = useHistory();
+
   useEffect(() => {
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
@@ -65,6 +74,17 @@ function App() {
     });
   }, []);
   // console.log(data);
+  function facebookLogout() {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        localStorage.removeItem("accessToken");
+        console.log("您被逐出紫禁城了");
+        // TODO:
+        history.push("/");
+      });
+  }
   return (
     <Router>
       <nav className={styles.navbar}>
@@ -80,9 +100,19 @@ function App() {
           <div className={styles.historyPage}>
             <Link to="/history">歷史訂單</Link>
           </div>
-          <div className={styles.loginPage}>
-            <Link to="/login">登入</Link>
-          </div>
+          {facebookbStatus.status ? (
+            <div
+              className={styles.logOutPage}
+              id="logOut"
+              onClick={facebookLogout}
+            >
+              登出
+            </div>
+          ) : (
+            <div className={styles.loginPage} id="logIn">
+              <Link to="/login">登入</Link>
+            </div>
+          )}
         </div>
       </nav>
 

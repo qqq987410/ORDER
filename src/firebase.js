@@ -2,7 +2,13 @@ import firebase from "firebase/app";
 // import "firebase/analytics";
 import "firebase/auth";
 import "firebase/firestore";
-// import { BrowserRouter as Router, Switch, Route, Link, useHistory } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 // import { useCallback } from "react";
 // import { useParams } from "react-router-dom";
 
@@ -57,16 +63,11 @@ function facebookLogin() {
       let uid = result.user.uid;
       console.log("您被選中入宮當秀女囉", result);
 
-      db.collection("users")
-        .doc(uid)
-        .set({
-          userName: userName,
-          userEmail: userEmail,
-          uid: uid,
-        })
-        .then(() => {
-          console.log("Add successful");
-        });
+      db.collection("users").doc(uid).set({
+        userName: userName,
+        userEmail: userEmail,
+        uid: uid,
+      });
     })
     .catch(function (error) {
       console.log("登入失敗", error);
@@ -80,7 +81,7 @@ function facebookLogout() {
     .then(() => {
       localStorage.removeItem("accessToken");
       console.log("您被逐出紫禁城了");
+      //  history.push("./home");
     });
-  //  history.push("./home");
 }
 export { createFakeData, facebookLogin, facebookLogout, db };
