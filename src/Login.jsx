@@ -6,13 +6,15 @@ function Login() {
   const [trigger, setTrigger] = useState(false);
   function signin() {
     let min = document.getElementById("min");
-    // min.style.position = "absolute";
-    // min.style.right = "0";
-    min.style.transform = "translateX(185.714286%)";
-    // min.style.transition = "all ease 0.3s";
+    let max = document.getElementById("max");
+
     if (trigger) {
+      min.style.transform = "translateX(0%)";
+      max.style.transform = "translateX(0%)";
       setTrigger(false);
     } else {
+      min.style.transform = "translateX(185.714286%)";
+      max.style.transform = "translateX(-53.846154%)";
       setTrigger(true);
     }
   }
@@ -47,6 +49,9 @@ function Login() {
       </div>
     </div>
   );
+}
+function SignIn() {
+  return <div className={styles.inner}></div>;
 }
 export default Login;
 

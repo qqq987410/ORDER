@@ -15,7 +15,6 @@
     border-radius: 6px;
     display: flex;
     align-items: center;
-    position: relative;
     .min {
       background-image: url("./image/brown.jpeg");
       background-size: cover;
@@ -56,12 +55,14 @@
       }
     }
     .max {
+      //  border: 1px solid red;
       width: 65%;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-top: 50px;
+      transition: all ease-in-out 0.8s;
       .titel {
         color: rgb(43, 24, 19);
         font-size: 30px;
