@@ -83,9 +83,6 @@ function App() {
           <div className={styles.loginPage}>
             <Link to="/login">登入</Link>
           </div>
-          <div className={styles.logoutPage} onClick={facebookLogout}>
-            登出
-          </div>
         </div>
       </nav>
 
