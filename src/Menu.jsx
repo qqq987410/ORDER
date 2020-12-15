@@ -83,16 +83,13 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
     console.log("start");
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
-      let controller = true;
       ref.get().then((res) => {
-        // console.log(res.size);
         res.forEach((doc) => {
           console.log("1A1");
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
-            console.log("success");
             ref
               .doc(doc.data().id)
               .collection("records")
@@ -101,7 +98,6 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
                 console.log(shot.size);
                 if (shot.size === 0) {
                   Swal.fire("尚未加入餐點！");
-                  //  controller = true;
                 } else {
                   history.push(
                     `./orderList?restaurantID=${
@@ -109,27 +105,12 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
                     }&docID=${doc.id}`
                   );
                 }
-                // shot.forEach((docu) => {
-                //    if (shot.size === 0) {
-                //       console.log("111");
-                //       controller = true;
-                //       // Swal.fire("尚未加入餐點！");
-                //    } else if (shot.size > 0) {
-                //       console.log("222");
-                //       history.push(`./orderList?restaurantID=${getVariable().restaurantID}&docID=${doc.id}`);
-                //       controller = false;
-                //    }
-                // });
               })
               .then(() => {});
           } else {
             console.log("fail");
           }
         });
-        // if (controller) {
-        //    console.log("333");
-        //    //  Swal.fire("尚未加入餐點！");
-        // }
       }); //endLine
     } else {
       Swal.fire({

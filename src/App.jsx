@@ -17,8 +17,30 @@ import Login from "./Login";
 import logo from "./image/Logo.svg";
 import firebase from "firebase/app";
 import { db } from "./firebase";
+import data from "./data";
 // import "firebase/auth";
 // import "firebase/firestore";
+
+// let ref = db.collection("test");
+// data.forEach((item) => {
+//    ref.add({
+//       address: item.address,
+//       businessHour: [item.businessHour[0], item.businessHour[1]],
+//       category: item.category,
+//       phoneNumber: item.phoneNumber,
+//       title: item.title,
+//    }).then((res) => {
+//       item.menu.forEach((meal) => {
+//          ref.doc(res.id).set({ id: res.id }, { merge: true });
+//          ref.doc(res.id)
+//             .collection("menu")
+//             .add({ price: meal.price, title: meal.name })
+//             .then((result) => {
+//                ref.doc(res.id).collection("menu").doc(result.id).set({ id: result.id }, { merge: true });
+//             });
+//       });
+//    });
+// });
 
 function App() {
   const [data, setData] = useState([]);
