@@ -87,35 +87,50 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
       ref.get().then((res) => {
         // console.log(res.size);
         res.forEach((doc) => {
+          console.log("1A1");
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
+            console.log("success");
             ref
               .doc(doc.data().id)
               .collection("records")
-              .onSnapshot((shot) => {
-                // console.log(shot.size);
+              .get()
+              .then((shot) => {
+                console.log(shot.size);
                 if (shot.size === 0) {
-                  console.log("111");
-                  controller = true;
-                } else if (shot.size > 0) {
-                  console.log("222");
+                  Swal.fire("尚未加入餐點！");
+                  //  controller = true;
+                } else {
                   history.push(
                     `./orderList?restaurantID=${
                       getVariable().restaurantID
                     }&docID=${doc.id}`
                   );
-                  controller = false;
                 }
-              });
+                // shot.forEach((docu) => {
+                //    if (shot.size === 0) {
+                //       console.log("111");
+                //       controller = true;
+                //       // Swal.fire("尚未加入餐點！");
+                //    } else if (shot.size > 0) {
+                //       console.log("222");
+                //       history.push(`./orderList?restaurantID=${getVariable().restaurantID}&docID=${doc.id}`);
+                //       controller = false;
+                //    }
+                // });
+              })
+              .then(() => {});
+          } else {
+            console.log("fail");
           }
         });
-        if (controller) {
-          console.log("333");
-          Swal.fire("尚未加入餐點！");
-        }
-      });
+        // if (controller) {
+        //    console.log("333");
+        //    //  Swal.fire("尚未加入餐點！");
+        // }
+      }); //endLine
     } else {
       Swal.fire({
         icon: "error",
@@ -129,18 +144,42 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
         if (res.size !== 0) {
+          console.log("1");
+          let ctrl = true;
+          let docIDExixt = true;
+          let historyStatusLength = 0;
           res.forEach((doc) => {
-            console.log(doc.id);
-            if (
-              doc.data().uid === facebookbStatus.uid &&
-              doc.data().status === "ongoing"
-            ) {
-              setURL(`${window.location.href}&docID=${doc.id}`);
-            } else {
+            if (getVariable().docID) {
+              console.log("3");
+              ctrl = false;
+              docIDExixt = false;
               setURL(`${window.location.href}&docID=${getVariable().docID}`);
+            } else if (
+              doc.data().uid === facebookbStatus.uid &&
+              doc.data().status === "ongoing" &&
+              docIDExixt
+            ) {
+              console.log("2");
+              ctrl = false;
+              setURL(`${window.location.href}&docID=${doc.id}`);
+            } else if (doc.data().status === "history") {
+              historyStatusLength++;
+              if (historyStatusLength === res.size) {
+                console.log("4");
+                ref
+                  .add({
+                    status: "ongoing",
+                    uid: facebookbStatus.uid,
+                  })
+                  .then((res) => {
+                    ref.doc(res.id).set({ id: res.id }, { merge: true });
+                    setURL(`${window.location.href}&docID=${res.id}`);
+                  });
+              }
             }
           });
         } else {
+          console.log("2");
           ref
             .add({
               status: "ongoing",

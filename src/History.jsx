@@ -1,55 +1,96 @@
 import { facebookLogin } from "./firebase";
 import styles from "./History.module.scss";
 import { db } from "./firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { nanoid } from "nanoid";
 
 function History({ facebookbStatus }) {
   let [bundle, setBundle] = useState([]);
+  let [subBundle, setSubBundle] = useState([]);
+  const latestProps = useRef(bundle);
 
   useEffect(() => {
     if (facebookbStatus.status) {
       let ref = db.collection("orderList");
       ref.onSnapshot((onSnapshot) => {
         onSnapshot.forEach((doc) => {
-          //    console.log("團號=", doc.id);
-          // 團號次數
+          // 主揪
           ref
+            .where("uid", "==", facebookbStatus.uid)
             .where("status", "==", "history")
             .get()
             .then((res) => {
               let historyOrderLists = [];
-              res.forEach((doc_1) => {
-                // console.log("狀態為history的團號＝", doc.id);
-                // console.log("狀態為history的團號＝", doc_1.data());
-                historyOrderLists.push({
-                  endTime: doc_1.data().endTime,
-                  orderLists: [],
-                });
-                // console.log(historyOrderLists);
+
+              res.forEach((a_doc) => {
+                // ===start
                 ref
-                  .doc(doc_1.id)
+                  .doc(a_doc.id)
+                  .collection("records")
+                  .get()
+                  .then((a_res) => {
+                    let orderLists = [];
+
+                    a_res.forEach((b_doc) => {
+                      // 1.
+                      orderLists.push({
+                        name: b_doc.data().name,
+                        price: b_doc.data().price,
+                        qty: b_doc.data().qty,
+                        displayName: b_doc.data().displayName,
+                      });
+                    });
+                    // 2.
+                    historyOrderLists.push({
+                      endTime: a_doc.data().endTime,
+                      orderLists: orderLists,
+                    });
+                    // 3.
+                    let newHistoryOrderLists = [...historyOrderLists];
+                    setBundle(newHistoryOrderLists);
+                    return newHistoryOrderLists;
+                  });
+              }); // ===end
+            })
+            .then((result) => {
+              console.log(bundle);
+            });
+
+          // 副揪
+          ref
+            .where("uid", "!=", facebookbStatus.uid)
+            .where("status", "==", "history")
+            .get()
+            .then((res) => {
+              let historyLists = [];
+              res.forEach((doc) => {
+                // doc.data().endTime
+                ref
+                  .doc(doc.id)
                   .collection("records")
                   .where("uid", "==", facebookbStatus.uid)
                   .get()
-                  .then((res_1) => {
-                    //   console.log(res_1.size);
+                  .then((b_res) => {
+                    console.log("b_res", b_res); //size=0
                     let orderLists = [];
-                    res_1.forEach((doc_2) => {
-                      //  console.log(doc_2.data());
-
+                    b_res.forEach((b_doc) => {
+                      // 1.
                       orderLists.push({
-                        name: doc_2.data().name,
-                        price: doc_2.data().price,
-                        qty: doc_2.data().qty,
-                        displayName: doc_2.data().displayName,
+                        name: b_doc.data().name,
+                        price: b_doc.data().price,
+                        qty: b_doc.data().qty,
+                        displayName: b_doc.data().displayName,
                       });
-                      let i = res_1.size;
-                      historyOrderLists[i - 1].orderLists = orderLists;
-                      //  console.log(historyOrderLists[i - 1].orderLists);
-
-                      setBundle(historyOrderLists);
                     });
+                    // 2.
+                    historyLists.push({
+                      endTime: doc.data().endTime,
+                      orderLists: orderLists,
+                    });
+                    console.log(historyLists);
+                    // 3.
+                    let newHistoryLists = [...historyLists];
+                    setSubBundle(newHistoryLists);
                   });
               });
             });
@@ -65,6 +106,15 @@ function History({ facebookbStatus }) {
       <div className={styles.in}>
         <div className={styles.historyTitle}>History Order</div>
         {bundle.map((unit) => {
+          return (
+            <Unit
+              endTime={unit.endTime}
+              orderLists={unit.orderLists}
+              key={nanoid()}
+            />
+          );
+        })}{" "}
+        {subBundle.map((unit) => {
           return (
             <Unit
               endTime={unit.endTime}
