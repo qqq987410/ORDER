@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 // import { useCallback } from "react";
 // import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnIZz9XKePiURWd1lArnKnZqgcHDk0xkQ",
@@ -32,18 +33,37 @@ function createFakeData(callback) {
     .get()
     .then((item) => {
       item.forEach((doc) => {
-        // console.log(doc.collection("menu"));
-        fakeData.push({
-          address: doc.data().address,
-          businessHour: [
-            doc.data().businessHour[0],
-            doc.data().businessHour[1],
-          ],
-          category: doc.data().category,
-          phoneNumber: doc.data().phoneNumber,
-          title: doc.data().title,
-          id: doc.id,
-        });
+        ref
+          .doc(doc.id)
+          .collection("menu")
+          .get()
+          .then((res) => {
+            let menu = [];
+            res.forEach((document) => {
+              menu.push({
+                class: document.data().class,
+                ice: document.data().ice,
+                id: document.data().id,
+                price: document.data().price,
+                sizeAndPrice: document.data().sizeAndPrice,
+                sizeOption: document.data().sizeOption,
+                sugar: document.data().sugar,
+                name: document.data().title,
+              });
+            });
+            fakeData.push({
+              address: doc.data().address,
+              businessHour: [
+                doc.data().businessHour[0],
+                doc.data().businessHour[1],
+              ],
+              category: doc.data().category,
+              phoneNumber: doc.data().phoneNumber,
+              title: doc.data().title,
+              id: doc.id,
+              menu: menu,
+            });
+          });
       });
       return fakeData;
     })
@@ -57,11 +77,10 @@ function facebookLogin() {
     .auth()
     .signInWithPopup(provider)
     .then(function (result) {
-      let token = result.credential.accessToken;
       let userName = result.additionalUserInfo.profile.name;
       let userEmail = result.additionalUserInfo.profile.email;
       let uid = result.user.uid;
-      console.log("您被選中入宮當秀女囉", result);
+      console.log("您被選中入宮當秀女");
 
       db.collection("users").doc(uid).set({
         userName: userName,
@@ -69,8 +88,11 @@ function facebookLogin() {
         uid: uid,
       });
     })
-    .catch(function (error) {
-      console.log("登入失敗", error);
+    .catch(function () {
+      Swal.fire({
+        icon: "error",
+        title: "登入失敗，請重新登錄",
+      });
     });
 }
 function facebookLogout() {

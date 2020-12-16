@@ -80,12 +80,10 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
     }
   }
   function linkToOrderList() {
-    console.log("start");
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
         res.forEach((doc) => {
-          console.log("1A1");
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
@@ -95,7 +93,6 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
               .collection("records")
               .get()
               .then((shot) => {
-                console.log(shot.size);
                 if (shot.size === 0) {
                   Swal.fire("尚未加入餐點！");
                 } else {
@@ -107,11 +104,9 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
                 }
               })
               .then(() => {});
-          } else {
-            console.log("fail");
           }
         });
-      }); //endLine
+      });
     } else {
       Swal.fire({
         icon: "error",
@@ -125,13 +120,11 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
         if (res.size !== 0) {
-          console.log("1");
           let ctrl = true;
           let docIDExixt = true;
           let historyStatusLength = 0;
           res.forEach((doc) => {
             if (getVariable().docID) {
-              console.log("3");
               ctrl = false;
               docIDExixt = false;
               setURL(`${window.location.href}&docID=${getVariable().docID}`);
@@ -140,13 +133,11 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
               doc.data().status === "ongoing" &&
               docIDExixt
             ) {
-              console.log("2");
               ctrl = false;
               setURL(`${window.location.href}&docID=${doc.id}`);
             } else if (doc.data().status === "history") {
               historyStatusLength++;
               if (historyStatusLength === res.size) {
-                console.log("4");
                 ref
                   .add({
                     status: "ongoing",
@@ -160,7 +151,6 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
             }
           });
         } else {
-          console.log("2");
           ref
             .add({
               status: "ongoing",
@@ -193,7 +183,6 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
     });
   }
   function closeTeamBuyingPopup(e) {
-    console.log(e.target, e.currentTarget);
     if (e.target.id === "teamBuyingPopup") {
       setTeamBuyingPopup(false);
     }
@@ -371,7 +360,6 @@ function RenderMealPoppup({
                 });
             });
         } else {
-          console.log("res.size=", res.size);
           let switcher = true;
           res.forEach((doc) => {
             if (
@@ -380,7 +368,6 @@ function RenderMealPoppup({
               doc.data().status === "ongoing"
             ) {
               switcher = false;
-              console.log("AAA");
               ref
                 .doc(doc.id)
                 .collection("records")
@@ -393,7 +380,6 @@ function RenderMealPoppup({
                   email: facebookbStatus.email,
                 })
                 .then((res) => {
-                  console.log(res.id);
                   ref
                     .doc(doc.id)
                     .collection("records")

@@ -8,6 +8,7 @@ import {
   useHistory,
 } from "react-router-dom";
 import { createFakeData } from "./firebase";
+import Navbar from "./Navbar";
 import Home from "./Home";
 import Main from "./Main";
 import Menu from "./Menu";
@@ -21,25 +22,36 @@ import data from "./data";
 // import "firebase/auth";
 // import "firebase/firestore";
 
-// let ref = db.collection("test");
+// let reff = db.collection("restaurant");
 // data.forEach((item) => {
-//    ref.add({
-//       address: item.address,
-//       businessHour: [item.businessHour[0], item.businessHour[1]],
-//       category: item.category,
-//       phoneNumber: item.phoneNumber,
-//       title: item.title,
-//    }).then((res) => {
-//       item.menu.forEach((meal) => {
-//          ref.doc(res.id).set({ id: res.id }, { merge: true });
-//          ref.doc(res.id)
-//             .collection("menu")
-//             .add({ price: meal.price, title: meal.name })
-//             .then((result) => {
-//                ref.doc(res.id).collection("menu").doc(result.id).set({ id: result.id }, { merge: true });
-//             });
+//    reff
+//       .add({
+//          address: item.address,
+//          businessHour: item.businessHour,
+//          category: item.category,
+//          phoneNumber: item.phoneNumber,
+//          title: item.title,
+//       })
+//       .then((res) => {
+//          item.menu.forEach((meal) => {
+//             reff.doc(res.id).set({ id: res.id }, { merge: true });
+//             reff
+//                .doc(res.id)
+//                .collection("menu")
+//                .add({
+//                   price: meal.price,
+//                   title: meal.name,
+//                   class: meal.class,
+//                   sizeOption: meal.sizeOption,
+//                   sizeAndPrice: meal.sizeAndPrice,
+//                   suger: meal.suger === undefined ? null : meal.suger,
+//                   ice: meal.ice === undefined ? null : meal.ice,
+//                })
+//                .then((result) => {
+//                   reff.doc(res.id).collection("menu").doc(result.id).set({ id: result.id }, { merge: true });
+//                });
+//          });
 //       });
-//    });
 // });
 
 function App() {
@@ -47,8 +59,6 @@ function App() {
   const [facebookbStatus, setFacebookbStatus] = useState({ status: false });
   const [cartListLength, setCartListLength] = useState(0);
   const [cartListTotalPrice, setCartListTotalPrice] = useState(0);
-
-  let history = useHistory();
 
   useEffect(() => {
     if (facebookbStatus.status === true) {
@@ -96,55 +106,19 @@ function App() {
     });
   }, []);
   // console.log(data);
-  function facebookLogout() {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        localStorage.removeItem("accessToken");
-        console.log("您被逐出紫禁城了");
-        // TODO:
-        history.push("/");
-      });
-  }
-  return (
-    <Router>
-      <nav className={styles.navbar}>
-        <div className={styles.logo}>
-          <Link to="/">
-            <img src={logo} alt="logo" />
-          </Link>
-        </div>
-        <div className={styles.right}>
-          <div className={styles.mainPage}>
-            <Link to="/main">所有餐廳</Link>
-          </div>
-          <div className={styles.historyPage}>
-            <Link to="/history">歷史訂單</Link>
-          </div>
-          {facebookbStatus.status ? (
-            <div
-              className={styles.logOutPage}
-              id="logOut"
-              onClick={facebookLogout}
-            >
-              登出
-            </div>
-          ) : (
-            <div className={styles.loginPage} id="logIn">
-              <Link to="/login">登入</Link>
-            </div>
-          )}
-        </div>
-      </nav>
 
+  return (
+    <>
+      <Navbar facebookbStatus={facebookbStatus} />
       <Switch>
         <Route exact path="/">
           <Home />
         </Route>
+
         <Route path="/main">
           <Main data={data} />
         </Route>
+
         <Route path="/menu">
           <Menu
             data={data}
@@ -152,30 +126,22 @@ function App() {
             facebookbStatus={facebookbStatus}
             cartListLength={cartListLength}
             cartListTotalPrice={cartListTotalPrice}
-            // cartListLength={cartListLength}
-            // cartListTotalPrice={cartListTotalPrice}
           />
         </Route>
         <Route path="/orderList">
           <OrderList
             facebookbStatus={facebookbStatus}
             cartListTotalPrice={cartListTotalPrice}
-            // cartListLength={cartListLength}
-            // cartListTotalPrice={cartListTotalPrice}
           />
         </Route>
         <Route path="/history">
-          <History
-            facebookbStatus={facebookbStatus}
-            // cartListLength={cartListLength}
-            // cartListTotalPrice={cartListTotalPrice}
-          />
+          <History facebookbStatus={facebookbStatus} />
         </Route>
         <Route path="/login">
           <Login />
         </Route>
       </Switch>
-    </Router>
+    </>
   );
 }
 export default App;

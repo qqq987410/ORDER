@@ -8,6 +8,7 @@ import {
   useHistory,
 } from "react-router-dom";
 import styles from "./Home.module.scss";
+import "animate.css";
 
 function Home() {
   let [keyWord, setKeyWord] = useState("");
@@ -24,7 +25,7 @@ function Home() {
     <div className={styles.main}>
       <div className={styles.theme}>
         <div className={styles.target1}>
-          <h2>今天來點...？</h2>
+          <h2 className="animate__animated animate__bounce">今天來點...？</h2>
           <form onSubmit={submitHandler}>
             <input
               type="text"

@@ -45,8 +45,6 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
     }
   }, [facebookbStatus]);
 
-  console.log("cartLists=", cartLists);
-
   function previousPage() {
     history.push(
       `./menu?restaurantID=${getVariable().restaurantID}&docID=${
@@ -81,7 +79,6 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
       });
     }
   }
-  //    console.log(cartListTotalPrice);
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
@@ -148,10 +145,7 @@ function Item({
                 .doc(getVariable().docID)
                 .collection("records")
                 .doc(doc.data().id)
-                .delete()
-                .then(() => {
-                  console.log("刪除此筆菜單");
-                });
+                .delete();
             }
           });
         });
