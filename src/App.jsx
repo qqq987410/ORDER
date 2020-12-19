@@ -7,7 +7,6 @@ import {
   Link,
   useHistory,
 } from "react-router-dom";
-// import { createData } from "./firebase";
 import Navbar from "./Navbar";
 import Home from "./Home";
 import Main from "./Main";
@@ -68,7 +67,7 @@ function App() {
       }
     });
   }, []);
-  //  console.log(data);
+
   return (
     <>
       <Navbar facebookbStatus={facebookbStatus} />
@@ -82,7 +81,6 @@ function App() {
         <Route path="/menu">
           <Menu
             data={data}
-            setFacebookbStatus={setFacebookbStatus}
             facebookbStatus={facebookbStatus}
             cartListLength={cartListLength}
             cartListTotalPrice={cartListTotalPrice}

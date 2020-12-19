@@ -1,5 +1,3 @@
-import { nanoid } from "nanoid";
-
 import storeImg_1 from "./image/storeImg/storeImg_1.jpeg";
 import storeImg_2 from "./image/storeImg/storeImg_2.jpeg";
 import storeImg_3 from "./image/storeImg/storeImg_3.jpeg";
@@ -226,6 +224,45 @@ const data = [
     photo: storeImg_2,
     id: "AAA0002",
     menu: [
+      {
+        name: "百香雙Q果",
+        price: null,
+        class: "鮮果茶飲",
+        sizeOption: true,
+        sizeAndPrice: [
+          { size: "L", price: 160, canChooseIce: true },
+          { size: "Bottle", price: 190, canChooseIce: true },
+        ],
+        suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
+        ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0001",
+      },
+      {
+        name: "百香雙Q果",
+        price: null,
+        class: "鮮果茶飲",
+        sizeOption: true,
+        sizeAndPrice: [
+          { size: "L", price: 60, canChooseIce: true },
+          { size: "Bottle", price: 90, canChooseIce: true },
+        ],
+        suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
+        ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0001",
+      },
+      {
+        name: "百香雙Q果",
+        price: null,
+        class: "鮮果茶飲",
+        sizeOption: true,
+        sizeAndPrice: [
+          { size: "L", price: 60, canChooseIce: true },
+          { size: "Bottle", price: 90, canChooseIce: true },
+        ],
+        suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
+        ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0001",
+      },
       {
         name: "卡哩卡哩雞腿沙拉",
         price: 200,

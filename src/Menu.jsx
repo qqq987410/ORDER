@@ -10,13 +10,9 @@ import {
   Link,
   useHistory,
 } from "react-router-dom";
-import time from "./image/time.svg";
-import phone from "./image/phone.svg";
-import location from "./image/location.svg";
-import eastern from "./image/menu_eastern.jpeg";
-import western from "./image/menu_wastern.jpeg";
-import healthy from "./image/menu_healthy.png";
-import beverage from "./image/menu_beverage.jpg";
+import { ReactComponent as Time } from "./image/time.svg";
+import { ReactComponent as Phone } from "./image/phone.svg";
+import { ReactComponent as Location } from "./image/location.svg";
 import cart from "./image/cart.svg";
 import Swal from "sweetalert2";
 import getVariable from "./Variable";
@@ -28,57 +24,32 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
   let [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
   let [URL, setURL] = useState();
 
-  let restaurantObj = {};
-
+  let restaurantDetail;
   data.forEach((doc) => {
     if (doc.id === getVariable().restaurantID) {
-      restaurantObj = {
-        address: doc.address,
-        businessHour: [doc.businessHour[0], doc.businessHour[1]],
-        category: doc.category,
-        phoneNumber: doc.phoneNumber,
-        title: doc.title,
-        id: doc.id,
-      };
+      restaurantDetail = doc;
+      console.log("This餐廳資訊＝", restaurantDetail);
     }
   });
-  useEffect(() => {
-    db.collection("restaurant")
-      .doc(getVariable().restaurantID)
-      .collection("menu")
-      .get()
-      .then((res) => {
-        let newMenus = [];
-        res.forEach((doc) => {
-          let obj = doc.data();
-          obj.id = doc.id;
-          newMenus.push(obj);
-        });
-        setMenus(newMenus);
-      });
-  }, []);
 
-  let sigleTime = <div> {restaurantObj?.businessHour?.[0]}</div>;
+  // 從 Data 中找出有幾種 category 並組合成 Array
+  let kindOfClass = [];
+  restaurantDetail.menu.forEach((item) => {
+    if (!kindOfClass.includes(item.class)) {
+      kindOfClass.push(item.class);
+    }
+  });
+  console.log("kindOfClass=", kindOfClass);
+
+  let sigleTime = <div> {restaurantDetail.businessHour[0]}</div>;
   let doubleTime = (
     <div>
-      {restaurantObj?.businessHour?.[0]}&nbsp;&amp;&nbsp;
-      {restaurantObj?.businessHour?.[1]}
+      {restaurantDetail.businessHour[0]}&nbsp;&amp;&nbsp;
+      {restaurantDetail.businessHour[1]}
     </div>
   );
-
   let history = useHistory();
-  function categoryPhoto(photo) {
-    switch (photo) {
-      case "eastern":
-        return eastern;
-      case "western":
-        return western;
-      case "healthy":
-        return healthy;
-      case "beverage":
-        return beverage;
-    }
-  }
+
   function linkToOrderList() {
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
@@ -202,58 +173,50 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
       ) : (
         <>
           <div className={styles.main}>
-            <header>
+            <div className={styles.header}>
               <div className={styles.detail}>
-                <div className={styles.title}> {restaurantObj.title}</div>
-                <div className={styles.miniDetail}>
-                  <div>
-                    <div className={styles.time}>
-                      <img src={time} alt="time"></img>
-                      {restaurantObj?.businessHour?.[1]
-                        ? doubleTime
-                        : sigleTime}
-                    </div>
-                    <div className={styles.phone}>
-                      <img src={phone} alt="phone" />
-                      {restaurantObj.phoneNumber}
-                    </div>
-                    <div className={styles.address}>
-                      <img src={location} alt="location" />
-                      {restaurantObj.address}
-                    </div>
-                    <div>{restaurantObj.category}</div>
+                <div className={styles.title}>{restaurantDetail.title}</div>
+                <div className={styles.subTitle}>
+                  <div className={styles.time}>
+                    <Time className={styles.timeIcon} />
+                    {restaurantDetail.businessHour[1] ? doubleTime : sigleTime}
+                  </div>
+                  <div className={styles.phone}>
+                    <Phone className={styles.phoneIcon} />
+                    {restaurantDetail.phoneNumber}
+                  </div>
+                  <div className={styles.address}>
+                    <Location className={styles.addressIcon} />
+                    {restaurantDetail.address}
                   </div>
                 </div>
               </div>
-              <div className={styles.image}>
-                <img src={categoryPhoto(restaurantObj.category)} alt="photo" />
-              </div>
-            </header>
-            <div className={styles.selectSpace}>
-              {menus.map((menu) => {
+            </div>
+            <div className={styles.menuSpace}>
+              <div className={styles.folloeWho}>XXX 開的團</div>
+              {kindOfClass.map((item) => {
                 return (
-                  <Meal
-                    name={menu.title}
-                    price={menu.price}
-                    id={menu.id}
+                  <Class
+                    restaurantDetail={restaurantDetail}
+                    classTitle={item}
                     key={nanoid()}
-                    setMealPopupSwitch={setMealPopupSwitch}
-                    setMealPopupDetail={setMealPopupDetail}
                   />
                 );
               })}
-              <div className={styles.together} onClick={teamBuying}>
-                揪團
-              </div>
-              <div className={styles.cartBtn} onClick={linkToOrderList}>
-                <span>{cartListLength}</span>
-                <div className={styles.cart}>
-                  <img src={cart} alt="cart" />
-                  購物車
-                </div>
-                <div className={styles.totalPrice}>{cartListTotalPrice}</div>
-              </div>
             </div>
+            {/* <div className={styles.selectSpace}>
+                     <div className={styles.together} onClick={teamBuying}>
+                        揪團
+                     </div>
+                     <div className={styles.cartBtn} onClick={linkToOrderList}>
+                        <span>{cartListLength}</span>
+                        <div className={styles.cart}>
+                           <img src={cart} alt="cart" />
+                           購物車
+                        </div>
+                        <div className={styles.totalPrice}>{cartListTotalPrice}</div>
+                     </div>
+                  </div> */}
           </div>
           {teamBuyingPopup === true ? (
             <div
@@ -279,19 +242,57 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
     </>
   );
 }
-function Meal({ setMealPopupSwitch, setMealPopupDetail, name, price, id }) {
+function Meal({
+  detail,
+  setMealPopupSwitch,
+  setMealPopupDetail,
+  name,
+  price,
+  id,
+}) {
   function mealPoppUp() {
-    setMealPopupSwitch(true);
-    setMealPopupDetail({ name: name, price: price, qty: 1, id: id });
+    // setMealPopupSwitch(true);
+    // setMealPopupDetail({ name: name, price: price, qty: 1, id: id });
   }
+  //  console.log(detail);
   return (
     <div className={styles.meal} onClick={mealPoppUp}>
-      <div className={styles.name}>{name}</div>
-      <div className={styles.price}> {price}</div>
+      <div className={styles.name}>{detail.name}</div>
+      {detail.sizeOption ? (
+        <div className={styles.sizePriceOuter}>
+          {detail.sizeAndPrice.map((item) => {
+            return (
+              <div className={styles.sizePriceInner}>
+                <div className={styles.innerSize}>{item.size}</div>
+                <div className={styles.innerPrice}>{item.price}</div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className={styles.price}>{detail.price}</div>
+      )}
     </div>
   );
 }
-
+function Class({ restaurantDetail, classTitle }) {
+  let classMenu = [];
+  restaurantDetail.menu.map((item) => {
+    if (item.class === classTitle) {
+      classMenu.push(item);
+    }
+  });
+  return (
+    <div className={styles.class}>
+      <div className={styles.classTitle}>{classTitle}</div>
+      <div className={styles.classContent}>
+        {classMenu.map((item) => {
+          return <Meal detail={item} key={nanoid()} />;
+        })}
+      </div>
+    </div>
+  );
+}
 let initQty = 1;
 function RenderMealPoppup({
   setMealPopupSwitch,
