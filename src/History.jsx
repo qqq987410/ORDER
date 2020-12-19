@@ -1,4 +1,4 @@
-import { facebookLogin } from "./firebase";
+// import { facebookLogin } from "./firebase";
 import styles from "./History.module.scss";
 import { db } from "./firebase";
 import { useEffect, useState, useRef } from "react";

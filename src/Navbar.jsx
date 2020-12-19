@@ -5,19 +5,24 @@ import {
   Route,
   Link,
   useHistory,
+  useLocation,
 } from "react-router-dom";
 import firebase from "firebase/app";
 import logo from "./image/Logo.svg";
 import Swal from "sweetalert2";
 import "animate.css";
+import { useEffect } from "react";
 
 function Navbar({ facebookbStatus }) {
   let history = useHistory();
+
   function facebookLogout() {
     firebase
       .auth()
       .signOut()
       .then(() => {
+        console.log("您被逐出紫禁城了");
+        // 1. Sweet alert
         Swal.fire({
           title: "已登出",
           showClass: {
@@ -27,13 +32,11 @@ function Navbar({ facebookbStatus }) {
             popup: "animate__animated animate__fadeOutUp",
           },
         });
+        // 2. 跳轉至首頁
         history.push("/");
       });
   }
-  function logInHandler() {
-    let preURL = window.location.href;
-    console.log(preURL);
-  }
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
@@ -57,7 +60,7 @@ function Navbar({ facebookbStatus }) {
             登出
           </div>
         ) : (
-          <div className={styles.loginPage} id="logIn" onClick={logInHandler}>
+          <div className={styles.loginPage} id="logIn">
             <Link to="/login">登入</Link>
           </div>
         )}

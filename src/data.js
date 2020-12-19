@@ -1,4 +1,17 @@
-// import圖片
+import { nanoid } from "nanoid";
+
+import storeImg_1 from "./image/storeImg/storeImg_1.jpeg";
+import storeImg_2 from "./image/storeImg/storeImg_2.jpeg";
+import storeImg_3 from "./image/storeImg/storeImg_3.jpeg";
+import storeImg_4 from "./image/storeImg/storeImg_4.jpeg";
+import storeImg_5 from "./image/storeImg/storeImg_5.jpg";
+import storeImg_6 from "./image/storeImg/storeImg_6.jpg";
+import storeImg_7 from "./image/storeImg/storeImg_7.jpeg";
+import storeImg_8 from "./image/storeImg/storeImg_8.jpg";
+import storeImg_9 from "./image/storeImg/storeImg_9.jpg";
+import storeImg_10 from "./image/storeImg/storeImg_10.jpeg";
+import storeImg_11 from "./image/storeImg/storeImg_11.jpg";
+import storeImg_12 from "./image/storeImg/storeImg_12.jpg";
 
 const data = [
   {
@@ -7,7 +20,8 @@ const data = [
     category: "healthy",
     phoneNumber: "+886227207471",
     title: "橄欖油健康餐盒",
-    photo: "id",
+    photo: storeImg_1,
+    id: "AAA0001",
     menu: [
       {
         name: "舒肥墨西哥烤",
@@ -15,6 +29,7 @@ const data = [
         class: "經典舒肥系列",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0001",
       },
       {
         name: "法式舒肥櫻桃鴨胸",
@@ -22,6 +37,7 @@ const data = [
         class: "經典舒肥系列",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0002",
       },
       {
         name: "舒肥雞肉輕食餐",
@@ -29,6 +45,7 @@ const data = [
         class: "經典舒肥系列",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0003",
       },
       {
         name: "舒肥牛小排輕食餐",
@@ -36,6 +53,7 @@ const data = [
         class: "經典舒肥系列",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0004",
       },
       {
         name: "舒肥鮭魚菲力輕食餐",
@@ -43,6 +61,7 @@ const data = [
         class: "經典舒肥系列",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0005",
       },
       {
         name: "紅酒燉牛肋條",
@@ -50,6 +69,7 @@ const data = [
         class: "燉肉餐盒",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0006",
       },
       {
         name: "獵人燉雞腿",
@@ -57,6 +77,7 @@ const data = [
         class: "燉肉餐盒",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0007",
       },
       {
         name: "DELI法式櫻桃鴨沙拉",
@@ -64,6 +85,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0008",
       },
       {
         name: "DELI墨西哥烤豬沙拉",
@@ -71,6 +93,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0009",
       },
       {
         name: "DELI 水果生菜沙拉",
@@ -78,6 +101,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0010",
       },
       {
         name: "DELI 雞胸肉沙拉",
@@ -85,6 +109,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0011",
       },
       {
         name: "DELI 牛小排沙拉",
@@ -92,6 +117,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0012",
       },
       {
         name: "DELI 鮭魚沙拉",
@@ -99,6 +125,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0013",
       },
       {
         name: "地中海風味當季時蔬",
@@ -106,6 +133,7 @@ const data = [
         class: "素食餐盒",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0014",
       },
       {
         name: "南瓜濃湯",
@@ -113,6 +141,7 @@ const data = [
         class: "湯品",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0015",
       },
       {
         name: "義式蔬菜湯（素）",
@@ -120,6 +149,7 @@ const data = [
         class: "湯品",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0016",
       },
       {
         name: "法式洋蔥湯",
@@ -127,6 +157,7 @@ const data = [
         class: "湯品",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0017",
       },
       {
         name: "美式咖啡",
@@ -134,6 +165,7 @@ const data = [
         class: "飲料",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0018",
       },
       {
         name: "甜菊紅茶",
@@ -141,6 +173,7 @@ const data = [
         class: "飲料",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0019",
       },
       {
         name: "蜂蜜檸檬汁（冰）",
@@ -148,6 +181,7 @@ const data = [
         class: "飲料",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0020",
       },
       {
         name: "水煮蛋",
@@ -155,6 +189,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0021",
       },
       {
         name: "低溫雞胸肉",
@@ -162,6 +197,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0022",
       },
       {
         name: "低溫牛小排",
@@ -169,6 +205,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0023",
       },
       {
         name: "低溫鮭魚菲力",
@@ -176,6 +213,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0001_0024",
       },
     ],
   },
@@ -185,6 +223,8 @@ const data = [
     category: "western",
     phoneNumber: "+886227531881",
     title: "一直是晴天",
+    photo: storeImg_2,
+    id: "AAA0002",
     menu: [
       {
         name: "卡哩卡哩雞腿沙拉",
@@ -192,6 +232,7 @@ const data = [
         class: "早午餐、沙拉餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0001",
       },
       {
         name: "碳烤牛肉沙拉",
@@ -199,6 +240,7 @@ const data = [
         class: "早午餐、沙拉餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0002",
       },
       {
         name: "手工蔥餅佐醬燒牛肉",
@@ -206,6 +248,7 @@ const data = [
         class: "早午餐、沙拉餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0003",
       },
       {
         name: "香煎松阪豬沙拉",
@@ -213,6 +256,7 @@ const data = [
         class: "早午餐、沙拉餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0004",
       },
       {
         name: "煎烤牛小排沙拉",
@@ -220,6 +264,7 @@ const data = [
         class: "早午餐、沙拉餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0005",
       },
       {
         name: "義式炒海鮮沙拉",
@@ -227,6 +272,7 @@ const data = [
         class: "早午餐、沙拉餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0006",
       },
       {
         name: "檸香雞腿飯",
@@ -234,6 +280,7 @@ const data = [
         class: "吃飯飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0007",
       },
       {
         name: "碳烤牛肉飯",
@@ -241,6 +288,7 @@ const data = [
         class: "吃飯飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0008",
       },
       {
         name: "塔香咕咕雞",
@@ -248,6 +296,7 @@ const data = [
         class: "吃飯飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0009",
       },
       {
         name: "煎烤牛小排飯",
@@ -255,6 +304,7 @@ const data = [
         class: "吃飯飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0010",
       },
       {
         name: "鮮蔬什錦丼飯",
@@ -262,6 +312,7 @@ const data = [
         class: "吃飯飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0011",
       },
       {
         name: "時蔬衝爆牛肉飯",
@@ -269,6 +320,7 @@ const data = [
         class: "吃飯飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0012",
       },
       {
         name: "香煎松阪豬佐時蔬",
@@ -276,6 +328,7 @@ const data = [
         class: "吃飯飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0013",
       },
       {
         name: "招牌蕃茄肉醬義大利麵",
@@ -283,6 +336,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0014",
       },
       {
         name: "和風柚香鮮蔬義大利麵",
@@ -290,6 +344,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0015",
       },
       {
         name: "辣味轟炸雞義大利麵",
@@ -297,6 +352,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0016",
       },
       {
         name: "蒜香煎烤雞肉義大利麵",
@@ -304,6 +360,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0017",
       },
       {
         name: "義式雪花牛肉義大利麵",
@@ -311,6 +368,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0018",
       },
       {
         name: "酥炸花枝蒜辣義大利麵",
@@ -318,6 +376,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0019",
       },
       {
         name: "蒜香煎烤牛小排義大利麵",
@@ -325,6 +384,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0020",
       },
       {
         name: "爆蒜辣炒海鮮義大利麵",
@@ -332,6 +392,7 @@ const data = [
         class: "吃麵麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0002_0021",
       },
     ],
   },
@@ -341,6 +402,8 @@ const data = [
     category: "western",
     phoneNumber: "8786-8858",
     title: "角窩美式餐酒館",
+    photo: storeImg_3,
+    id: "AAA0003",
     menu: [
       {
         name: "凱薩沙拉",
@@ -348,6 +411,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0001",
       },
       {
         name: "雞肉沙拉",
@@ -355,6 +419,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0002",
       },
       {
         name: "⽜肉沙拉",
@@ -362,6 +427,7 @@ const data = [
         class: "沙拉",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0003",
       },
       {
         name: "醬烤雞胸古巴三明治",
@@ -369,6 +435,7 @@ const data = [
         class: "古巴三明治",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0004",
       },
       {
         name: "黑咖⼿撕豬古巴三明治",
@@ -376,6 +443,7 @@ const data = [
         class: "古巴三明治",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0005",
       },
       {
         name: "悶烤⽜胸古巴三明治",
@@ -383,6 +451,7 @@ const data = [
         class: "古巴三明治",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0006",
       },
       {
         name: "工人放飯",
@@ -390,6 +459,7 @@ const data = [
         class: "角窩鍋飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0007",
       },
       {
         name: "工頭開飯",
@@ -397,6 +467,7 @@ const data = [
         class: "角窩鍋飯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0008",
       },
       {
         name: "加州海鮮比薩",
@@ -404,6 +475,7 @@ const data = [
         class: "8寸比薩",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0009",
       },
       {
         name: "夏威夷比薩",
@@ -411,6 +483,7 @@ const data = [
         class: "8寸比薩",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0010",
       },
       {
         name: "墨西哥臘腸比",
@@ -418,6 +491,7 @@ const data = [
         class: "8寸比薩",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0011",
       },
       {
         name: "燻烤豬肋排",
@@ -425,6 +499,7 @@ const data = [
         class: "排餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0012",
       },
       {
         name: "加州風味雞腿排",
@@ -432,6 +507,7 @@ const data = [
         class: "排餐",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0003_0013",
       },
     ],
   },
@@ -441,6 +517,8 @@ const data = [
     category: "healthy",
     phoneNumber: "+886227669669",
     title: "給力盒子",
+    photo: storeImg_4,
+    id: "AAA0004",
     menu: [
       {
         name: "墨西哥火烤雞胸",
@@ -448,6 +526,7 @@ const data = [
         class: "人氣精選",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0004_0001",
       },
       {
         name: "蒜泥低脂豬肉片",
@@ -455,6 +534,7 @@ const data = [
         class: "人氣精選",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0004_0002",
       },
       {
         name: "香蒜水煮雞胸",
@@ -462,6 +542,7 @@ const data = [
         class: "人氣精選",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0004_0003",
       },
       {
         name: "義式香草烤雞腿排",
@@ -469,6 +550,7 @@ const data = [
         class: "人氣精選",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0004_0004",
       },
       {
         name: "肉多多特餐",
@@ -476,6 +558,7 @@ const data = [
         class: "人氣精選",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0004_0005",
       },
     ],
   },
@@ -485,6 +568,8 @@ const data = [
     category: "beverage",
     phoneNumber: "+886227680808",
     title: "可不可",
+    photo: storeImg_5,
+    id: "AAA0005",
     menu: [
       {
         name: "熟成紅茶",
@@ -497,6 +582,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0001",
       },
       {
         name: "麗春紅茶",
@@ -509,6 +595,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0002",
       },
       {
         name: "太妃紅茶",
@@ -521,6 +608,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0003",
       },
       {
         name: "胭脂紅茶",
@@ -533,6 +621,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0004",
       },
       {
         name: "雪藏紅茶",
@@ -545,6 +634,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0005",
       },
       {
         name: "熟成冷露",
@@ -557,6 +647,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0006",
       },
       {
         name: "雪花冷露",
@@ -569,6 +660,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0007",
       },
       {
         name: "春芽冷露",
@@ -581,6 +673,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0008",
       },
       {
         name: "春芽綠茶",
@@ -593,6 +686,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0009",
       },
       {
         name: "春梅冰茶",
@@ -605,6 +699,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0010",
       },
       {
         name: "冷露歐蕾",
@@ -617,6 +712,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0011",
       },
       {
         name: "熟成歐蕾",
@@ -629,6 +725,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0012",
       },
       {
         name: "白玉歐蕾",
@@ -641,6 +738,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0013",
       },
       {
         name: "黃玉歐蕾",
@@ -653,6 +751,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0014",
       },
       {
         name: "胭脂多多",
@@ -665,6 +764,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0015",
       },
       {
         name: "雪藏末茶",
@@ -677,6 +777,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+        id: "AAA0005_0016",
       },
     ],
   },
@@ -686,6 +787,8 @@ const data = [
     category: "eastern",
     phoneNumber: "+886227493472",
     title: "味家魯肉飯",
+    photo: storeImg_6,
+    id: "AAA0006",
     menu: [
       {
         name: "舌頭肉",
@@ -693,6 +796,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0001",
       },
       {
         name: "豬舌頭",
@@ -700,6 +804,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0002",
       },
       {
         name: "豬肝𦟪",
@@ -707,6 +812,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0003",
       },
       {
         name: "滷蛋",
@@ -714,6 +820,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0004",
       },
       {
         name: "油豆腐",
@@ -721,6 +828,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0005",
       },
       {
         name: "白菜滷",
@@ -728,6 +836,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0006",
       },
       {
         name: "筍絲",
@@ -735,6 +844,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0007",
       },
       {
         name: "燙青菜",
@@ -742,6 +852,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0008",
       },
       {
         name: "肉燥乾油麵",
@@ -749,6 +860,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0009",
       },
       {
         name: "肉燥乾米粉",
@@ -756,6 +868,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0010",
       },
       {
         name: "肉羹麵",
@@ -763,6 +876,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0011",
       },
       {
         name: "肉羹米粉",
@@ -770,6 +884,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0012",
       },
       {
         name: "肉羹冬粉",
@@ -777,6 +892,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0013",
       },
       {
         name: "肉羹",
@@ -784,6 +900,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0014",
       },
       {
         name: "排骨酥湯麵",
@@ -791,6 +908,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0015",
       },
       {
         name: "排骨酥湯米粉",
@@ -798,6 +916,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0016",
       },
       {
         name: "排骨酥湯冬粉",
@@ -805,6 +924,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0017",
       },
       {
         name: "鳳梨苦瓜雞湯",
@@ -812,6 +932,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0018",
       },
       {
         name: "蛤仔雞湯",
@@ -819,6 +940,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0019",
       },
       {
         name: "排骨酥湯",
@@ -826,6 +948,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0020",
       },
       {
         name: "筒仔米糕",
@@ -833,6 +956,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0021",
       },
       {
         name: "控肉飯",
@@ -840,6 +964,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0022",
       },
       {
         name: "魯肉飯便當",
@@ -847,6 +972,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0023",
       },
       {
         name: "魯肉飯（大）",
@@ -854,6 +980,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0024",
       },
       {
         name: "魯肉飯（小）",
@@ -861,6 +988,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0006_0025",
       },
     ],
   },
@@ -870,6 +998,8 @@ const data = [
     category: "eastern",
     phoneNumber: "+886227458198",
     title: "台灣阿誠現炒菜",
+    photo: storeImg_7,
+    id: "AAA0007",
     menu: [
       {
         name: "牛肉蛋炒飯",
@@ -877,6 +1007,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0001",
       },
       {
         name: "蝦仁肉絲蛋炒飯",
@@ -884,6 +1015,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0002",
       },
       {
         name: "海鮮什錦炒麵",
@@ -891,6 +1023,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0003",
       },
       {
         name: "牛肉炒麵",
@@ -898,6 +1031,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0004",
       },
       {
         name: "肉絲炒麵",
@@ -905,6 +1039,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0005",
       },
       {
         name: "招牌煎蛋",
@@ -912,6 +1047,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0006",
       },
       {
         name: "菜脯煎蛋",
@@ -919,6 +1055,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0007",
       },
       {
         name: "蝦仁煎蛋",
@@ -926,6 +1063,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0008",
       },
       {
         name: "蔥花煎蛋",
@@ -933,6 +1071,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0009",
       },
       {
         name: "番茄炒蛋",
@@ -940,6 +1079,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0007_0010",
       },
     ],
   },
@@ -949,6 +1089,8 @@ const data = [
     category: "eastern",
     phoneNumber: "+886227466212",
     title: "二代福林福州乾拌麵",
+    photo: storeImg_8,
+    id: "AAA0008",
     menu: [
       {
         name: "乾拌麵(小)",
@@ -956,6 +1098,7 @@ const data = [
         class: "麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0001",
       },
       {
         name: "乾拌麵(大)",
@@ -963,6 +1106,7 @@ const data = [
         class: "麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0002",
       },
       {
         name: "餛飩湯",
@@ -970,6 +1114,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0003",
       },
       {
         name: "魚丸湯",
@@ -977,6 +1122,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0004",
       },
       {
         name: "餛飩蛋包湯",
@@ -984,6 +1130,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0005",
       },
       {
         name: "魚丸蛋包湯",
@@ -991,6 +1138,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0006",
       },
       {
         name: "餛飩魚丸湯",
@@ -998,6 +1146,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0007",
       },
       {
         name: "綜合湯",
@@ -1005,6 +1154,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0008",
       },
       {
         name: "蛋包湯",
@@ -1012,6 +1162,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0009",
       },
       {
         name: "紫菜湯",
@@ -1019,6 +1170,7 @@ const data = [
         class: "湯",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0010",
       },
       {
         name: "餛飩湯麵",
@@ -1026,6 +1178,7 @@ const data = [
         class: "湯麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0011",
       },
       {
         name: "魚丸湯麵",
@@ -1033,6 +1186,7 @@ const data = [
         class: "湯麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0012",
       },
       {
         name: "餛飩蛋包湯麵",
@@ -1040,6 +1194,7 @@ const data = [
         class: "湯麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0013",
       },
       {
         name: "魚丸蛋包湯麵",
@@ -1047,6 +1202,7 @@ const data = [
         class: "湯麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0014",
       },
       {
         name: "餛飩魚丸湯麵",
@@ -1054,6 +1210,7 @@ const data = [
         class: "湯麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0015",
       },
       {
         name: "綜合湯麵",
@@ -1061,6 +1218,7 @@ const data = [
         class: "湯麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0016",
       },
       {
         name: "蛋包湯麵",
@@ -1068,6 +1226,7 @@ const data = [
         class: "湯麵",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0017",
       },
       {
         name: "紅油抄手",
@@ -1075,6 +1234,7 @@ const data = [
         class: "抄手",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0018",
       },
       {
         name: "燙青菜-高麗菜",
@@ -1082,6 +1242,7 @@ const data = [
         class: "青菜",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0019",
       },
       {
         name: "燙青菜-大陸妹",
@@ -1089,6 +1250,7 @@ const data = [
         class: "青菜",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0020",
       },
       {
         name: "小菜",
@@ -1096,6 +1258,7 @@ const data = [
         class: "青菜",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0021",
       },
       {
         name: "紅油抄手麵",
@@ -1103,6 +1266,7 @@ const data = [
         class: "抄手",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0008_0022",
       },
     ],
   },
@@ -1112,6 +1276,8 @@ const data = [
     category: "eastern",
     phoneNumber: "+886227471433",
     title: "一記水餃牛肉麵店",
+    photo: storeImg_9,
+    id: "AAA0009",
     menu: [
       {
         name: "肉燥乾麵",
@@ -1119,6 +1285,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0001",
       },
       {
         name: "肉燥湯麵",
@@ -1126,6 +1293,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0002",
       },
       {
         name: "牛肉麵",
@@ -1133,6 +1301,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0003",
       },
       {
         name: "牛肉湯麵",
@@ -1140,6 +1309,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0004",
       },
       {
         name: "牛肉乾拌麵",
@@ -1147,6 +1317,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0005",
       },
       {
         name: "榨菜肉絲麵",
@@ -1154,6 +1325,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0006",
       },
       {
         name: "酸辣麵",
@@ -1161,6 +1333,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0007",
       },
       {
         name: "酸辣湯餃(10粒)",
@@ -1168,6 +1341,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0008",
       },
       {
         name: "牛肉湯餃(10粒)",
@@ -1175,6 +1349,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0009",
       },
       {
         name: "高麗菜水餃",
@@ -1182,6 +1357,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0010",
       },
       {
         name: "韭菜水餃",
@@ -1189,6 +1365,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0011",
       },
       {
         name: "牛肉水餃",
@@ -1196,6 +1373,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0012",
       },
       {
         name: "蝦仁水餃",
@@ -1203,6 +1381,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0013",
       },
       {
         name: "酸辣湯",
@@ -1210,6 +1389,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0014",
       },
       {
         name: "綜合丸子湯",
@@ -1217,6 +1397,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0015",
       },
       {
         name: "蔬菜湯",
@@ -1224,6 +1405,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0016",
       },
       {
         name: "牛肉湯(含菜)",
@@ -1231,6 +1413,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0009_0017",
       },
     ],
   },
@@ -1240,6 +1423,8 @@ const data = [
     category: "western",
     phoneNumber: "+886227666766",
     title: "真芳信義店",
+    photo: storeImg_10,
+    id: "AAA0010",
     menu: [
       {
         name: "真芳三明治",
@@ -1247,6 +1432,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0001",
       },
       {
         name: "豬肉蛋起司",
@@ -1254,6 +1440,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0002",
       },
       {
         name: "起司起司蛋",
@@ -1261,6 +1448,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0003",
       },
       {
         name: "真芳蛋餅",
@@ -1268,6 +1456,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0004",
       },
       {
         name: "辣肉蛋起司",
@@ -1275,6 +1464,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0005",
       },
       {
         name: "金瓜薯泥",
@@ -1282,6 +1472,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0006",
       },
       {
         name: "豬肉蛋",
@@ -1289,6 +1480,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0007",
       },
       {
         name: "花生花生",
@@ -1296,6 +1488,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0008",
       },
       {
         name: "煉乳起司",
@@ -1303,6 +1496,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0009",
       },
       {
         name: "榛果巧克力",
@@ -1310,6 +1504,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0010",
       },
       {
         name: "巧克力花生",
@@ -1317,6 +1512,7 @@ const data = [
         class: "單點",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0011",
       },
       {
         name: "真芳紅茶",
@@ -1324,6 +1520,7 @@ const data = [
         class: "飲料",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0012",
       },
       {
         name: "紅茶牛奶",
@@ -1331,6 +1528,7 @@ const data = [
         class: "飲料",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0013",
       },
       {
         name: "美式咖啡",
@@ -1338,6 +1536,7 @@ const data = [
         class: "飲料",
         sizeOption: false,
         sizeAndPrice: null,
+        id: "AAA0010_0014",
       },
     ],
   },
@@ -1347,6 +1546,8 @@ const data = [
     category: "beverage",
     phoneNumber: "+886227557655",
     title: "麻古茶坊",
+    photo: storeImg_11,
+    id: "AAA0011",
     menu: [
       {
         name: "百香雙Q果",
@@ -1359,6 +1560,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0001",
       },
       {
         name: "百香綠茶",
@@ -1371,6 +1573,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0002",
       },
       {
         name: "百香多多",
@@ -1380,6 +1583,7 @@ const data = [
         sizeAndPrice: [{ size: "L", price: 65, canChooseIce: true }],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0003",
       },
       {
         name: "翡翠香橙",
@@ -1392,6 +1596,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0004",
       },
       {
         name: "翡翠柳橙",
@@ -1404,6 +1609,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0005",
       },
       {
         name: "冰萃檸檬",
@@ -1416,6 +1622,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0006",
       },
       {
         name: "檸檬綠茶/紅茶",
@@ -1428,6 +1635,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0007",
       },
       {
         name: "蜂蜜檸檬",
@@ -1440,6 +1648,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0008",
       },
       {
         name: "檸檬多多",
@@ -1449,6 +1658,7 @@ const data = [
         sizeAndPrice: [{ size: "L", price: 60, canChooseIce: true }],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0009",
       },
       {
         name: "檸檬梅子",
@@ -1461,6 +1671,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0010",
       },
       {
         name: "楊枝甘露2.0",
@@ -1470,6 +1681,7 @@ const data = [
         sizeAndPrice: [{ size: "L(碎冰沙)", price: 75, canChooseIce: false }],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0011",
       },
       {
         name: "芝芝芒果果粒",
@@ -1479,6 +1691,7 @@ const data = [
         sizeAndPrice: [{ size: "L(碎冰沙)", price: 90, canChooseIce: false }],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0012",
       },
       {
         name: "芝芝草莓果粒",
@@ -1488,6 +1701,7 @@ const data = [
         sizeAndPrice: [{ size: "L(冰沙)", price: 90, canChooseIce: false }],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0013",
       },
       {
         name: "芝芝葡萄果粒",
@@ -1497,6 +1711,7 @@ const data = [
         sizeAndPrice: [{ size: "L(冰沙)", price: 85, canChooseIce: false }],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0014",
       },
       {
         name: "香橙果粒茶",
@@ -1509,6 +1724,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0015",
       },
       {
         name: "柳橙果粒茶",
@@ -1521,6 +1737,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0016",
       },
       {
         name: "葡萄柚果粒茶",
@@ -1533,6 +1750,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0017",
       },
       {
         name: "葡萄柚果粒蜜茶",
@@ -1545,6 +1763,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0018",
       },
       {
         name: "葡萄柚果粒多多",
@@ -1554,6 +1773,7 @@ const data = [
         sizeAndPrice: [{ size: "L", price: 65, canChooseIce: true }],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0019",
       },
       {
         name: "奇異果果粒茶",
@@ -1566,6 +1786,7 @@ const data = [
         ],
         suger: ["無糖", "一分糖", "三分糖", "半糖", "八分糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0011_0020",
       },
     ],
   },
@@ -1575,6 +1796,8 @@ const data = [
     category: "beverage",
     phoneNumber: "+886227668608",
     title: "約翰紅茶",
+    photo: storeImg_12,
+    id: "AAA0012",
     menu: [
       {
         name: "康提紅茶",
@@ -1587,6 +1810,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0001",
       },
       {
         name: "雨果紅茶",
@@ -1600,6 +1824,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0002",
       },
       {
         name: "曼非紅茶",
@@ -1613,6 +1838,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0003",
       },
       {
         name: "茶中香檳",
@@ -1626,6 +1852,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0004",
       },
       {
         name: "錫金紅茶",
@@ -1635,6 +1862,7 @@ const data = [
         sizeAndPrice: [{ size: "M", price: 45, canChooseIce: true }],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0005",
       },
       {
         name: "夢幻紅茶",
@@ -1644,6 +1872,7 @@ const data = [
         sizeAndPrice: [{ size: "M", price: 50, canChooseIce: true }],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0006",
       },
       {
         name: "珍珠那提",
@@ -1656,6 +1885,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0007",
       },
       {
         name: "雨果那提",
@@ -1669,6 +1899,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0008",
       },
       {
         name: "曼非那提",
@@ -1682,6 +1913,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0009",
       },
       {
         name: "烏瓦那提",
@@ -1695,6 +1927,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0010",
       },
       {
         name: "抹茶那提",
@@ -1707,6 +1940,7 @@ const data = [
         ],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0011",
       },
       {
         name: "煮濃那提",
@@ -1716,6 +1950,7 @@ const data = [
         sizeAndPrice: [{ size: "M", price: 60, canChooseIce: true }],
         suger: ["無糖", "微糖", "半糖", "少糖", "正常糖"],
         ice: ["去冰", "微冰", "少冰", "正常冰"],
+        id: "AAA0012_0012",
       },
     ],
   },
