@@ -84,6 +84,7 @@ function App() {
             facebookbStatus={facebookbStatus}
             cartListLength={cartListLength}
             cartListTotalPrice={cartListTotalPrice}
+            setCartListTotalPrice={setCartListTotalPrice}
           />
         </Route>
         <Route path="/orderList">
@@ -129,13 +130,13 @@ data.forEach((item) => {
                   class: meal.class,
                   sizeOption: meal.sizeOption,
                   sizeAndPrice: meal.sizeAndPrice,
-                  suger: meal.suger === undefined ? null : meal.suger,
+                  sugar: meal.sugar === undefined ? null : meal.sugar,
                   ice: meal.ice === undefined ? null : meal.ice,
                   id: meal.id,
                });
          });
       });
-}); 
+});
 =====================================*/
 /*===============Old===================
 let reff = db.collection("restaurant");
@@ -161,7 +162,7 @@ data.forEach((item) => {
                   class: meal.class,
                   sizeOption: meal.sizeOption,
                   sizeAndPrice: meal.sizeAndPrice,
-                  suger: meal.suger === undefined ? null : meal.suger,
+                  sugar: meal.sugar === undefined ? null : meal.sugar,
                   ice: meal.ice === undefined ? null : meal.ice,
                })
                .then((result) => {

@@ -1,7 +1,7 @@
 import styles from "./Menu.module.scss";
 import { db } from "./firebase";
 import firebase from "firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { nanoid } from "nanoid";
 import {
   BrowserRouter as Router,
@@ -17,13 +17,21 @@ import cart from "./image/cart.svg";
 import Swal from "sweetalert2";
 import getVariable from "./Variable";
 
-function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
-  let [menus, setMenus] = useState([]);
-  let [mealPopupSwitch, setMealPopupSwitch] = useState(false);
-  let [mealPopupDetail, setMealPopupDetail] = useState({});
-  let [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
-  let [URL, setURL] = useState();
+function Menu({
+  data,
+  facebookbStatus,
+  cartListLength,
+  cartListTotalPrice,
+  setCartListTotalPrice,
+}) {
+  const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
+  const [mealPopupDetail, setMealPopupDetail] = useState({});
+  const [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
+  const [iceOption, setIceOption] = useState(false);
+  const [URL, setURL] = useState();
+  const history = useHistory();
 
+  // 1. 單一餐廳資訊
   let restaurantDetail;
   data.forEach((doc) => {
     if (doc.id === getVariable().restaurantID) {
@@ -32,15 +40,15 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
     }
   });
 
-  // 從 Data 中找出有幾種 category 並組合成 Array
+  // 2. 從Data中找出有幾種category，並組合成Array
   let kindOfClass = [];
   restaurantDetail.menu.forEach((item) => {
     if (!kindOfClass.includes(item.class)) {
       kindOfClass.push(item.class);
     }
   });
-  console.log("kindOfClass=", kindOfClass);
 
+  // 3. 營業時間差異
   let sigleTime = <div> {restaurantDetail.businessHour[0]}</div>;
   let doubleTime = (
     <div>
@@ -48,7 +56,6 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
       {restaurantDetail.businessHour[1]}
     </div>
   );
-  let history = useHistory();
 
   function linkToOrderList() {
     if (facebookbStatus.status === true) {
@@ -161,50 +168,42 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
   }
   return (
     <>
-      {mealPopupSwitch === true ? (
-        <RenderMealPoppup
-          setMealPopupSwitch={setMealPopupSwitch}
-          setMealPopupDetail={setMealPopupDetail}
-          //  setCartList={setCartList}
-          //  cartList={cartList}
-          mealPopupDetail={mealPopupDetail}
-          facebookbStatus={facebookbStatus}
-        />
-      ) : (
-        <>
-          <div className={styles.main}>
-            <div className={styles.header}>
-              <div className={styles.detail}>
-                <div className={styles.title}>{restaurantDetail.title}</div>
-                <div className={styles.subTitle}>
-                  <div className={styles.time}>
-                    <Time className={styles.timeIcon} />
-                    {restaurantDetail.businessHour[1] ? doubleTime : sigleTime}
-                  </div>
-                  <div className={styles.phone}>
-                    <Phone className={styles.phoneIcon} />
-                    {restaurantDetail.phoneNumber}
-                  </div>
-                  <div className={styles.address}>
-                    <Location className={styles.addressIcon} />
-                    {restaurantDetail.address}
-                  </div>
-                </div>
+      <div className={styles.main}>
+        <div className={styles.header}>
+          <div className={styles.detail}>
+            <div className={styles.title}>{restaurantDetail.title}</div>
+            <div className={styles.subTitle}>
+              <div className={styles.time}>
+                <Time className={styles.timeIcon} />
+                {restaurantDetail.businessHour[1] ? doubleTime : sigleTime}
+              </div>
+              <div className={styles.phone}>
+                <Phone className={styles.phoneIcon} />
+                {restaurantDetail.phoneNumber}
+              </div>
+              <div className={styles.address}>
+                <Location className={styles.addressIcon} />
+                {restaurantDetail.address}
               </div>
             </div>
-            <div className={styles.menuSpace}>
-              <div className={styles.folloeWho}>XXX 開的團</div>
-              {kindOfClass.map((item) => {
-                return (
-                  <Class
-                    restaurantDetail={restaurantDetail}
-                    classTitle={item}
-                    key={nanoid()}
-                  />
-                );
-              })}
-            </div>
-            {/* <div className={styles.selectSpace}>
+          </div>
+        </div>
+        <div className={styles.menuSpace}>
+          <div className={styles.folloeWho}>XXX 開的團</div>
+          {kindOfClass.map((item) => {
+            return (
+              <Class
+                restaurantDetail={restaurantDetail}
+                classTitle={item}
+                setMealPopupSwitch={setMealPopupSwitch}
+                setMealPopupDetail={setMealPopupDetail}
+                setIceOption={setIceOption}
+                key={nanoid()}
+              />
+            );
+          })}
+        </div>
+        {/* <div className={styles.selectSpace}>
                      <div className={styles.together} onClick={teamBuying}>
                         揪團
                      </div>
@@ -217,52 +216,92 @@ function Menu({ data, facebookbStatus, cartListLength, cartListTotalPrice }) {
                         <div className={styles.totalPrice}>{cartListTotalPrice}</div>
                      </div>
                   </div> */}
-          </div>
-          {teamBuyingPopup === true ? (
-            <div
-              className={styles.teamBuyingPopup}
-              id="teamBuyingPopup"
-              onClick={closeTeamBuyingPopup}
-            >
-              <div className={styles.teamBuyingPopupInner}>
-                <input
-                  type="text"
-                  className={styles.link}
-                  id="link"
-                  defaultValue={URL}
-                />
-                <div className={styles.copyLink} onClick={copyLink}>
-                  複製連結
-                </div>
-              </div>
+      </div>
+      {mealPopupSwitch ? (
+        <MealPoppup
+          setMealPopupSwitch={setMealPopupSwitch}
+          mealPopupDetail={mealPopupDetail}
+          setMealPopupDetail={setMealPopupDetail}
+          iceOption={iceOption}
+          setIceOption={setIceOption}
+          cartListTotalPrice={cartListTotalPrice}
+          setCartListTotalPrice={setCartListTotalPrice}
+          facebookbStatus={facebookbStatus}
+        />
+      ) : null}
+      {teamBuyingPopup === true ? (
+        <div
+          className={styles.teamBuyingPopup}
+          id="teamBuyingPopup"
+          onClick={closeTeamBuyingPopup}
+        >
+          <div className={styles.teamBuyingPopupInner}>
+            <input
+              type="text"
+              className={styles.link}
+              id="link"
+              defaultValue={URL}
+            />
+            <div className={styles.copyLink} onClick={copyLink}>
+              複製連結
             </div>
-          ) : null}
-        </>
-      )}
+          </div>
+        </div>
+      ) : null}
     </>
+  );
+}
+function Class({
+  restaurantDetail,
+  classTitle,
+  setMealPopupSwitch,
+  setMealPopupDetail,
+  setIceOption,
+}) {
+  let classMenu = [];
+  restaurantDetail.menu.map((item) => {
+    if (item.class === classTitle) {
+      classMenu.push(item);
+    }
+  });
+  return (
+    <div className={styles.class}>
+      <div className={styles.classTitle}>{classTitle}</div>
+      <div className={styles.classContent}>
+        {classMenu.map((item) => {
+          return (
+            <Meal
+              detail={item}
+              setMealPopupSwitch={setMealPopupSwitch}
+              setMealPopupDetail={setMealPopupDetail}
+              setIceOption={setIceOption}
+              key={nanoid()}
+            />
+          );
+        })}
+      </div>
+    </div>
   );
 }
 function Meal({
   detail,
   setMealPopupSwitch,
   setMealPopupDetail,
-  name,
-  price,
-  id,
+  setIceOption,
 }) {
-  function mealPoppUp() {
-    // setMealPopupSwitch(true);
-    // setMealPopupDetail({ name: name, price: price, qty: 1, id: id });
+  function checkDish() {
+    setMealPopupSwitch(true);
+    setMealPopupDetail(detail);
+    setIceOption(false);
   }
-  //  console.log(detail);
   return (
-    <div className={styles.meal} onClick={mealPoppUp}>
+    <div className={styles.meal} onClick={checkDish}>
       <div className={styles.name}>{detail.name}</div>
       {detail.sizeOption ? (
         <div className={styles.sizePriceOuter}>
           {detail.sizeAndPrice.map((item) => {
             return (
-              <div className={styles.sizePriceInner}>
+              <div className={styles.sizePriceInner} key={nanoid()}>
                 <div className={styles.innerSize}>{item.size}</div>
                 <div className={styles.innerPrice}>{item.price}</div>
               </div>
@@ -275,54 +314,97 @@ function Meal({
     </div>
   );
 }
-function Class({ restaurantDetail, classTitle }) {
-  let classMenu = [];
-  restaurantDetail.menu.map((item) => {
-    if (item.class === classTitle) {
-      classMenu.push(item);
-    }
-  });
-  return (
-    <div className={styles.class}>
-      <div className={styles.classTitle}>{classTitle}</div>
-      <div className={styles.classContent}>
-        {classMenu.map((item) => {
-          return <Meal detail={item} key={nanoid()} />;
-        })}
-      </div>
-    </div>
-  );
-}
-let initQty = 1;
-function RenderMealPoppup({
+
+function MealPoppup({
   setMealPopupSwitch,
-  setMealPopupDetail,
   mealPopupDetail,
-  //  setCartList,
-  cartList,
+  setMealPopupDetail,
+  iceOption,
+  setIceOption,
+  cartListTotalPrice,
+  setCartListTotalPrice,
   facebookbStatus,
 }) {
-  getVariable();
-  //  console.log("mealPopupDetail.qty=", mealPopupDetail.qty);
-  //  TODO :
+  console.log("mealPopupDetail=", mealPopupDetail);
+  const sizeContentRef = useRef(null);
+  const iceContentRef = useRef(null);
+  const sugarContentRef = useRef(null);
+  const sizeRef = useRef(null);
+  const iceRef = useRef(null);
+  const sugarRef = useRef(null);
+  const [bgRecord, setBgRecord] = useState({});
+  const [qtyRealTime, setQtyRealTime] = useState(1);
+  const [priceRealTime, setPriceRealTime] = useState(
+    mealPopupDetail.sizeOption
+      ? mealPopupDetail.sizeAndPrice[0].price
+      : mealPopupDetail.price
+  );
+  console.log("bgRecord=", bgRecord);
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
       setMealPopupSwitch(false);
-      initQty = 1;
     }
   }
-  function counterQty(e) {
-    let num = Number(e.currentTarget.getAttribute("data"));
-    if (initQty === 1 && num == -1) {
-      initQty = 1;
-    } else {
-      initQty += num;
+  function chooseQty(e) {
+    let numberClicked = Number(e.currentTarget.getAttribute("data"));
+    if (!(qtyRealTime === 1 && numberClicked < 0)) {
+      setQtyRealTime(qtyRealTime + numberClicked);
+      bgRecord.qty = qtyRealTime + numberClicked;
+      setBgRecord(bgRecord);
     }
-    setMealPopupDetail({
-      name: mealPopupDetail.name,
-      price: mealPopupDetail.price,
-      qty: initQty,
+  }
+  function chooseSize(e) {
+    // 1. 切換顏色
+    sizeContentRef.current.childNodes.forEach((item) => {
+      console.log(item);
+
+      if (item.className === e.target.className) {
+        // item.style.backgroundColor = "#d9c8b8";
+        // item.style.color = "#877a6d";
+        // e.target.style.backgroundColor = "#4c686f";
+        // e.target.style.color = "#fff";
+        bgRecord.size = e.target.textContent;
+        mealPopupDetail.sizeAndPrice.forEach((item) => {
+          if (item.size === e.target.textContent) {
+            bgRecord.price = item.price;
+            setBgRecord(bgRecord);
+          }
+        });
+      }
     });
+    // 2. 如果點選到的size可選冰度 => Render Ice Option
+    if (e.target.style.backgroundColor) {
+      mealPopupDetail.sizeAndPrice.forEach((item) => {
+        if (item.size === e.target.textContent && item.canChooseIce) {
+          setIceOption(true);
+          setPriceRealTime(item.price);
+        }
+      });
+    }
+  }
+  function chooseIce(e) {
+    // 1. 切換顏色
+    iceContentRef.current.childNodes.forEach((item) => {
+      if (item.className === e.target.className) {
+        // item.style.backgroundColor = "#d9c8b8";
+        // item.style.color = "#877a6d";
+        // e.target.style.backgroundColor = "#4c686f";
+        // e.target.style.color = "#fff";
+        bgRecord.ice = e.target.textContent;
+        setBgRecord(bgRecord);
+      }
+    });
+  }
+  function chooseSuagr(e) {
+    // bgRecord.sugar = e.target.textContent;
+    // setBgRecord(bgRecord);
+    console.log(sugarRef);
+    // console.log(sugarRef.current.textContent, e.target.textContent);
+    // sugarContentRef.current.childNodes.forEach((item) => {
+    //    if (item.className === e.target.className) {
+    //       // console.log(e.target.textContent);
+    //    }
+    // });
   }
   function addToCart() {
     if (facebookbStatus.status === true) {
@@ -428,23 +510,83 @@ function RenderMealPoppup({
         title: "尚未登錄會員",
       });
     }
-    initQty = 1;
+    // initQty = 1;
   }
+  console.log(mealPopupDetail);
+
   return (
     <div className={styles.outer} id="outer" onClick={closeMealPopup}>
       <div className={styles.inner}>
         <div className={styles.name}>{mealPopupDetail.name}</div>
         <div className={styles.qty}>
-          <div className={styles.minus} data={-1} onClick={counterQty}>
+          <div className={styles.minus} data={-1} onClick={chooseQty}>
             -
           </div>
-          <div className={styles.number}>{mealPopupDetail.qty}</div>
-          <div className={styles.add} data={+1} onClick={counterQty}>
+          <div className={styles.number}>{qtyRealTime}</div>
+          <div className={styles.add} data={+1} onClick={chooseQty}>
             +
           </div>
         </div>
+        {mealPopupDetail.sizeOption ? (
+          <>
+            <div className={styles.sizeBlock}>
+              <div className={styles.sizeTitle}>Size</div>
+              <div
+                className={styles.sizeContent}
+                ref={sizeContentRef}
+                onClick={chooseSize}
+              >
+                {mealPopupDetail.sizeAndPrice.map((item) => {
+                  return (
+                    <div className={styles.size} key={nanoid()}>
+                      {item.size}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        ) : null}
+        {iceOption ? (
+          <div className={styles.iceBlock}>
+            <div className={styles.iceTitle}>Ice</div>
+            <div
+              className={styles.iceContent}
+              ref={iceContentRef}
+              onClick={chooseIce}
+            >
+              {mealPopupDetail.ice.map((item) => {
+                return (
+                  <div className={styles.ice} key={nanoid()}>
+                    {item}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+        {mealPopupDetail.sugar ? (
+          <div className={styles.sugarBlock}>
+            <div className={styles.sugarTitle}>Sugar</div>
+            <div className={styles.sugarContent} ref={sugarContentRef}>
+              {mealPopupDetail.sugar.map((item) => {
+                return (
+                  <div
+                    className={styles.sugar}
+                    ref={sugarRef}
+                    key={nanoid()}
+                    onClick={chooseSuagr}
+                  >
+                    {item}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+        {/* <div className={styles.subTotal}>總金額：{mealPopupDetail.price * mealPopupDetail.qty}</div> */}
         <div className={styles.subTotal}>
-          總金額：{mealPopupDetail.price * mealPopupDetail.qty}
+          總金額：{qtyRealTime * priceRealTime}
         </div>
         <button className={styles.addCartBtn} onClick={addToCart}>
           加入購物車
