@@ -16,9 +16,12 @@ import googleIcon from "./image/googleIcon.svg";
 import Swal from "sweetalert2";
 
 function Login() {
-  let provider = new firebase.auth.FacebookAuthProvider();
   const [trigger, setTrigger] = useState(false);
-  let history = useHistory();
+  const [name, setName] = useState("");
+  const [account, setAccount] = useState("");
+  const [password, setPassword] = useState("");
+
+  const history = useHistory();
 
   function signInAnimation() {
     let min = document.getElementById("min");
@@ -39,7 +42,7 @@ function Login() {
       greeting.textContent = "Welcome Back !";
       icon.style.display = "none";
       nameInput.style.display = "block";
-      signUp.style.display = "block";
+      signUp.style.display = "flex";
       signIn.style.display = "none";
       setTrigger(false);
     } else {
@@ -51,20 +54,22 @@ function Login() {
       icon.style.display = "flex";
       nameInput.style.display = "none";
       signUp.style.display = "none";
-      signIn.style.display = "block";
+      signIn.style.display = "flex";
 
       setTrigger(true);
     }
   }
   function fbSignInHandler() {
+    let provider = new firebase.auth.FacebookAuthProvider();
     firebase
       .auth()
       .signInWithPopup(provider)
       .then(function (result) {
-        let userName = result.additionalUserInfo.profile.name;
-        let userEmail = result.additionalUserInfo.profile.email;
+        let userName = result.user.displayName;
+        let userEmail = result.user.email;
         let uid = result.user.uid;
-        console.log("您被選中入宮當秀女");
+        console.log(userName, userEmail, uid);
+        console.log("您被選中入宮當秀女 FaceBook");
         // 紀錄在 db
         db.collection("users").doc(uid).set({
           userName: userName,
@@ -81,10 +86,75 @@ function Login() {
           title: "登入失敗，請重新登錄",
         });
       });
-    // facebookLogin.then(() => {
-    //    history.goBack();
-    // });
   }
+  function googleSignInHandler() {
+    let provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: "select_account",
+    });
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(function (result) {
+        let userName = result.user.displayName;
+        let userEmail = result.user.email;
+        let uid = result.user.uid;
+        console.log(userName, userEmail, uid);
+        console.log("您被選中入宮當秀女 Google");
+        // 紀錄在 db
+        db.collection("users").doc(uid).set({
+          userName: userName,
+          userEmail: userEmail,
+          uid: uid,
+        });
+        // 跳轉至前一頁
+        history.goBack();
+      })
+      .catch(function (error) {
+        console.log(error.message);
+        Swal.fire({
+          icon: "error",
+          title: "登入失敗，請重新登錄",
+        });
+      });
+  }
+  function nativeSignUp() {
+    console.log("AA");
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(account, password)
+      .then((user) => {
+        console.log(user);
+        // 紀錄在 db
+        let userRef = db.collection("users");
+        userRef
+          .doc(firebase.auth().currentUser.uid)
+          .set({
+            userName: name,
+            userEmail: account,
+            uid: firebase.auth().currentUser.uid,
+          });
+        // 跳轉至前一頁
+        history.goBack();
+      })
+      .catch((error) => {
+        console.log("Fail", error.message);
+        Swal.fire({
+          icon: "error",
+          title: "登入失敗，請重新登錄",
+        });
+      });
+  }
+  function nameHandler(e) {
+    setName(e.target.value);
+  }
+  function accountHandler(e) {
+    setAccount(e.target.value);
+  }
+  function passwordHandler(e) {
+    setPassword(e.target.value);
+  }
+  console.log(name, account, password);
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
@@ -108,26 +178,45 @@ function Login() {
             <div className={styles.fb} id="fbIcon" onClick={fbSignInHandler}>
               <img src={fbIcon} alt="FBIcon" />
             </div>
-            <div className={styles.google} id="googleIcon">
+            <div
+              className={styles.google}
+              id="googleIcon"
+              onClick={googleSignInHandler}
+            >
               <img src={googleIcon} alt="GoogleIcon" />
             </div>
           </div>
           <div className={styles.input}>
             <div className={styles.name} id="nameInput">
-              <input type="text" placeholder="Name" />
+              <input
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={nameHandler}
+              />
             </div>
             <div className={styles.account}>
-              <input type="text" placeholder="Account" />
+              <input
+                type="text"
+                placeholder="Account"
+                value={account}
+                onChange={accountHandler}
+              />
             </div>
             <div className={styles.password}>
-              <input type="text" placeholder="Password" />
+              <input
+                type="text"
+                placeholder="Password"
+                value={password}
+                onChange={passwordHandler}
+              />
             </div>
-            <button className={styles.signUp} id="signUp">
+            <div className={styles.signUp} id="signUp" onClick={nativeSignUp}>
               SIGN UP
-            </button>
-            <button className={styles.signIn} id="signIn">
+            </div>
+            <div className={styles.signIn} id="signIn">
               SIGN IN
-            </button>
+            </div>
           </div>
         </div>
       </div>

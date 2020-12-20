@@ -16,7 +16,7 @@ import { useEffect } from "react";
 function Navbar({ facebookbStatus }) {
   let history = useHistory();
 
-  function facebookLogout() {
+  function signOut() {
     firebase
       .auth()
       .signOut()
@@ -52,11 +52,7 @@ function Navbar({ facebookbStatus }) {
           <Link to="/history">歷史訂單</Link>
         </div>
         {facebookbStatus.status ? (
-          <div
-            className={styles.logOutPage}
-            id="logOut"
-            onClick={facebookLogout}
-          >
+          <div className={styles.logOutPage} id="logOut" onClick={signOut}>
             登出
           </div>
         ) : (

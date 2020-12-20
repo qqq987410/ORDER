@@ -329,9 +329,13 @@ function MealPoppup({
   const sizeContentRef = useRef(null);
   const iceContentRef = useRef(null);
   const sugarContentRef = useRef(null);
-  const sizeRef = useRef(null);
-  const iceRef = useRef(null);
-  const sugarRef = useRef(null);
+
+  let minSizeRef = useRef(null);
+  let iceRef = useRef(null);
+  let sugarRef = useRef(null);
+
+  //  const checkbox = useRef(null);
+
   const [bgRecord, setBgRecord] = useState({});
   const [qtyRealTime, setQtyRealTime] = useState(1);
   const [priceRealTime, setPriceRealTime] = useState(
@@ -340,6 +344,7 @@ function MealPoppup({
       : mealPopupDetail.price
   );
   console.log("bgRecord=", bgRecord);
+  console.log(minSizeRef);
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
       setMealPopupSwitch(false);
@@ -354,10 +359,9 @@ function MealPoppup({
     }
   }
   function chooseSize(e) {
+    console.log(sizeRef);
     // 1. 切換顏色
     sizeContentRef.current.childNodes.forEach((item) => {
-      console.log(item);
-
       if (item.className === e.target.className) {
         // item.style.backgroundColor = "#d9c8b8";
         // item.style.color = "#877a6d";
@@ -395,17 +399,7 @@ function MealPoppup({
       }
     });
   }
-  function chooseSuagr(e) {
-    // bgRecord.sugar = e.target.textContent;
-    // setBgRecord(bgRecord);
-    console.log(sugarRef);
-    // console.log(sugarRef.current.textContent, e.target.textContent);
-    // sugarContentRef.current.childNodes.forEach((item) => {
-    //    if (item.className === e.target.className) {
-    //       // console.log(e.target.textContent);
-    //    }
-    // });
-  }
+  function chooseSuagr() {}
   function addToCart() {
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
@@ -538,7 +532,11 @@ function MealPoppup({
               >
                 {mealPopupDetail.sizeAndPrice.map((item) => {
                   return (
-                    <div className={styles.size} key={nanoid()}>
+                    <div
+                      className={styles.size}
+                      key={nanoid()}
+                      ref={minSizeRef}
+                    >
                       {item.size}
                     </div>
                   );
@@ -573,7 +571,6 @@ function MealPoppup({
                 return (
                   <div
                     className={styles.sugar}
-                    ref={sugarRef}
                     key={nanoid()}
                     onClick={chooseSuagr}
                   >

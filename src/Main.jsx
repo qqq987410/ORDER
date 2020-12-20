@@ -18,13 +18,17 @@ import { nanoid } from "nanoid";
 function Main({ data }) {
   const [showRestaurant, setShowRestaurant] = useState([]);
   const [categoryBox, setCategoryBox] = useState([]);
+  console.log("長度=", categoryBox.length);
 
   useEffect(() => {
+    console.log(categoryBox);
     if (categoryBox.length > 0) {
       let latestCategory = [];
       categoryBox.forEach((item) => {
         data.forEach((dt) => {
-          if (item.current.id === dt.category) {
+          console.log(categoryBox);
+          console.log(item);
+          if (item.current?.id === dt.category) {
             latestCategory.push(dt);
           }
         });
@@ -63,6 +67,8 @@ function Main({ data }) {
 
   const addRef = (value) => {
     let newArray = [...categoryBox, value];
+    console.log("YES_2");
+    console.log(value);
     setCategoryBox(newArray);
   };
   const removeRef = (value) => {
@@ -145,19 +151,26 @@ function SigleRestaurant({ detail }) {
 
 function Category({ categoryTitle, addBox, removeBox }) {
   const checkbox = useRef(null);
-
+  console.log(checkbox);
   function checkBox(e) {
+    console.log(e.currentTarget.style);
     // 1. checkBox toggle
     if (e.currentTarget.style.backgroundImage) {
       e.currentTarget.style.backgroundImage = "";
+      console.log("NO");
     } else {
+      console.log("YES");
+
       e.currentTarget.style.backgroundImage = `url(${check})`;
     }
     // 2.
     if (checkbox.current.style.backgroundImage) {
+      console.log(checkbox);
       addBox(checkbox);
+      console.log("YES_1");
     } else {
       removeBox(checkbox);
+      console.log("NO_1");
     }
   }
   return (

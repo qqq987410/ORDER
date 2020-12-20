@@ -150,6 +150,9 @@
           border: none;
           background-color: rgb(67, 24, 22);
           color: #fff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           cursor: pointer;
           &:hover {
             border: 2px solid rgb(67, 24, 22);
@@ -159,6 +162,8 @@
         }
         .signIn {
           display: none;
+          justify-content: center;
+          align-items: center;
           width: 100px;
           height: 36px;
           border-radius: 18px;
