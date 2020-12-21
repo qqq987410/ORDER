@@ -42,11 +42,11 @@ function Navbar({ facebookbStatus }) {
     <nav className={styles.navbar}>
       <div className={styles.logo}>
         {getVariable().special ? (
-          <Link to="/?special=true">
+          <Link to="/main?special=true">
             <img src={logo} alt="logo" />
           </Link>
         ) : (
-          <Link to="/">
+          <Link to="/main">
             <img src={logo} alt="logo" />
           </Link>
         )}

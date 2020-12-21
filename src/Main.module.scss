@@ -13,6 +13,17 @@
     background-image: url("./image/brown.jpeg");
     background-size: cover;
     background-position: right;
+    form {
+      margin-bottom: 50px;
+      input {
+        width: 200px;
+        height: 40px;
+        border-radius: 20px;
+        border: none;
+        font-size: 15px;
+        padding-left: 20px;
+      }
+    }
     .categoryContainer {
       border: 2px solid #fff;
       border-radius: 6px;
@@ -68,6 +79,8 @@
     display: flex;
     flex-wrap: wrap;
     overflow: scroll;
+    background-size: cover;
+    background-position: right;
     .store {
       width: 250px;
       height: 280px;

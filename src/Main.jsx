@@ -10,15 +10,17 @@ import {
 import { db } from "./firebase";
 import time from "./image/time.svg"; // image
 import phone from "./image/phone.svg"; // image
-import location from "./image/location.svg"; // image
+import bg from "./image/mainBG.jpeg"; // image
 import check from "./image/check.svg"; // image
 import getVariable from "./Variable";
 import { nanoid } from "nanoid";
 
 function Main({ data }) {
+  console.log(getVariable.search);
   const [showRestaurant, setShowRestaurant] = useState([]);
   const [categoryBox, setCategoryBox] = useState([]);
-
+  let [keyWord, setKeyWord] = useState("");
+  let history = useHistory();
   useEffect(() => {
     if (categoryBox.length > 0) {
       let latestCategory = [];
@@ -32,16 +34,19 @@ function Main({ data }) {
       setShowRestaurant(latestCategory);
     } else {
       // show 符合 URL search 的餐廳
+      console.log("AA");
       let filterRestaurants = [];
       data.forEach((store) => {
         let newTitle = store.title.split("");
         if (newTitle.includes(getVariable().search)) {
+          console.log("符合");
           filterRestaurants.push(store);
+          console.log(filterRestaurants);
         }
       });
       setShowRestaurant(filterRestaurants);
     }
-  }, [categoryBox]);
+  }, [categoryBox, keyWord]);
 
   // 從 Data 中找出有幾種 category 並組合成 Array
   let kindOfCategory = [];
@@ -78,12 +83,26 @@ function Main({ data }) {
     }
   };
 
-  console.log("categoryBox=", categoryBox);
-  //  console.log("showRestaurant=", showRestaurant);
+  function searchHandler(e) {
+    setKeyWord(e.target.value);
+  }
+  function submitHandler(e) {
+    e.preventDefault();
+    setKeyWord("");
+    history.push(`/main?search=${keyWord}`);
+  }
 
   return (
     <div className={styles.outer}>
       <div className={styles.sideBar}>
+        <form onSubmit={submitHandler}>
+          <input
+            type="text"
+            value={keyWord}
+            placeholder="店名搜尋"
+            onChange={searchHandler}
+          />
+        </form>
         <div className={styles.categoryContainer}>
           <div className={styles.categorySubject}>附近餐廳</div>
           <div className={styles.category}>
@@ -99,7 +118,15 @@ function Main({ data }) {
           </div>
         </div>
       </div>
-      <div className={styles.stores}>
+      <div
+        className={styles.stores}
+        style={{
+          backgroundImage:
+            getVariable().search === null && categoryBox.length === 0
+              ? "url('" + bg + "')"
+              : "none",
+        }}
+      >
         {showRestaurant.map((item) => {
           return <SigleRestaurant detail={item} key={nanoid()} />;
         })}

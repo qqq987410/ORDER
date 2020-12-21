@@ -175,8 +175,8 @@
       .together {
         width: 150px;
         height: 60px;
-        background-color: #a7977f;
-        color: #4c686f;
+        background-color: RGB(183, 104, 89);
+        color: RGB(218, 202, 185);
         border-radius: 6px;
         display: flex;
         justify-content: center;
@@ -187,8 +187,8 @@
       .cartBtn {
         width: 150px;
         height: 60px;
-        background-color: #a7977f;
-        color: #4c686f;
+        background-color: RGB(183, 104, 89);
+        color: RGB(218, 202, 185);
         border-radius: 6px;
         display: flex;
         justify-content: center;
@@ -197,11 +197,12 @@
         span {
           position: absolute;
           bottom: 50px;
-          right: -10px;
+          right: -5px;
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          background-color: #4c686f;
+          //  background-color: #4c686f;
+          background-color: rgb(148, 122, 68);
           color: #fff;
           display: flex;
           justify-content: center;
