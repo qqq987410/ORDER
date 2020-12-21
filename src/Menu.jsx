@@ -27,6 +27,7 @@ function Menu({
   const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   const [mealPopupDetail, setMealPopupDetail] = useState({});
   const [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
+  const [cartLength, setCartLength] = useState(0);
   const [URL, setURL] = useState();
   const history = useHistory();
 
@@ -55,6 +56,35 @@ function Menu({
       {restaurantDetail.businessHour[1]}
     </div>
   );
+
+  // 4. 從db撈訂單長度
+  let orderListRef = db.collection("orderList");
+  orderListRef.get().then((lengthRes) => {
+    lengthRes.forEach((lengthhDoc) => {
+      // if(getVariable().)
+      //  orderListRef.onSnapshot((onSnapshot) => {
+      //     orderListRef
+      //        .where("uid", "==", facebookbStatus.uid)
+      //        .where("status", "==", "ongoing")
+      //        .get()
+      //        .then((res) => {
+      //           res.forEach((doc) => {
+      //              orderListRef
+      //                 .doc(doc.id)
+      //                 .collection("records")
+      //                 .onSnapshot((onSnapshot_2) => {
+      //                    let totalPrice = 0;
+      //                    //  setCartListLength(onSnapshot_2.size);
+      //                    onSnapshot_2.forEach((doc_2) => {
+      //                       totalPrice += doc_2.data().price * doc_2.data().qty;
+      //                    });
+      //                    //  setCartListTotalPrice(totalPrice);
+      //                 });
+      //           });
+      //        });
+      //  });
+    });
+  });
   function teamBuying() {
     if (facebookbStatus.status === true) {
       setTeamBuyingPopup(true);
@@ -84,9 +114,10 @@ function Menu({
           // 情況三
           let findMyGroup = false;
           res1.forEach((doc1) => {
+            console.log(doc1.data());
             if (
               doc1.data().uid === facebookbStatus.uid &&
-              doc.data().status === "ongoing"
+              doc1.data().status === "ongoing"
             ) {
               setURL(`${location.href}&docID=${doc1.id}&special=true`);
               findMyGroup = true;
@@ -171,9 +202,12 @@ function Menu({
     if (e.target.id === "teamBuyingPopup") {
       setTeamBuyingPopup(false);
     }
-    // console.log(e.target.className);
   }
   function linkToOrderList() {
+    // if (facebookbStatus.status === true) {
+    //    let orderListRef = db.collection("orderList");
+    //    orderListRef.get().then(res1=>{
+    //      res1.forEach(doc1=>{
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
@@ -190,11 +224,19 @@ function Menu({
                 if (shot.size === 0) {
                   Swal.fire("尚未加入餐點！");
                 } else {
-                  history.push(
-                    `./orderList?restaurantID=${
-                      getVariable().restaurantID
-                    }&docID=${doc.id}`
-                  );
+                  if (getVariable().special) {
+                    history.push(
+                      `./orderList?restaurantID=${
+                        getVariable().restaurantID
+                      }&docID=${doc.id}&special=true`
+                    );
+                  } else {
+                    history.push(
+                      `./orderList?restaurantID=${
+                        getVariable().restaurantID
+                      }&docID=${doc.id}`
+                    );
+                  }
                 }
               })
               .then(() => {});
@@ -248,10 +290,10 @@ function Menu({
               揪團
             </div>
             <div className={styles.cartBtn} onClick={linkToOrderList}>
-              <span>{cartListLength}</span>
+              <span>{cartLength}</span>
               <Cart className={styles.cart} />
               購物車
-              <div className={styles.totalPrice}>{cartListTotalPrice}</div>
+              <div className={styles.totalPrice}>xxxx</div>
             </div>
           </div>
         </div>
@@ -354,7 +396,6 @@ function MealPoppup({
   const sizeContentRef = useRef(null);
   const iceContentRef = useRef(null);
   const sugarContentRef = useRef(null);
-
   const [record, setRecord] = useState({
     qty: 1,
     price: mealPopupDetail.sizeOption
@@ -365,9 +406,6 @@ function MealPoppup({
     sugar: "",
     ice: "",
   });
-
-  // ====== //
-  console.log("record=", record);
 
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
@@ -407,6 +445,9 @@ function MealPoppup({
       let orderListRef = db.collection("orderList");
       orderListRef.get().then((res1) => {
         if (res1.size === 0) {
+          // 情況一 => size=0
+          console.log("情況一");
+
           orderListRef
             .add({
               status: "ongoing",
@@ -445,7 +486,110 @@ function MealPoppup({
                 });
             });
         } else {
+          // 情況二 => size!=0
+          console.log("情況二");
+
           res1.forEach((doc1) => {
+            if (getVariable().docID !== null) {
+              // 情況2.1 => docID存在 && status='ongoing'
+              console.log("情況2.1");
+
+              orderListRef
+                .doc(getVariable().docID)
+                .get()
+                .then((specific) => {
+                  console.log(specific.data().status);
+                  if (specific.data().status === "ongoing") {
+                    orderListRef
+                      .doc(getVariable().docID)
+                      .collection("records")
+                      .add({
+                        uid: facebookbStatus.uid,
+                        displayName: facebookbStatus.displayName,
+                        email: facebookbStatus.email,
+                        name: mealPopupDetail.name,
+                        qty: record.qty,
+                        price: record.price,
+                        size: record.size,
+                        sugar: record.sugar,
+                        canChooseIce: record.canChooseIce,
+                        ice: record.ice,
+                      })
+                      .then((specificRes) => {
+                        orderListRef
+                          .doc(getVariable().docID)
+                          .collection("records")
+                          .doc(specificRes.id)
+                          .set({ id: specificRes.id }, { merge: true });
+                      });
+                  }
+                });
+            } else if (
+              doc1.data().uid === facebookbStatus.uid &&
+              doc1.data().status === "ongoing"
+            ) {
+              // 情況2.2 => docID不存在 && data().uid = fb.uid && status='ongoing'
+              console.log("情況2.2");
+
+              orderListRef
+                .doc(doc1.data().id)
+                .collection("records")
+                .add({
+                  uid: facebookbStatus.uid,
+                  displayName: facebookbStatus.displayName,
+                  email: facebookbStatus.email,
+                  name: mealPopupDetail.name,
+                  qty: record.qty,
+                  price: record.price,
+                  size: record.size,
+                  sugar: record.sugar,
+                  canChooseIce: record.canChooseIce,
+                  ice: record.ice,
+                })
+                .then((mainRes) => {
+                  orderListRef
+                    .doc(doc1.data().id)
+                    .collection("records")
+                    .doc(mainRes.id)
+                    .set({ id: mainRes.id }, { merge: true });
+                });
+            } else {
+              // 情況2.3 => 團號不存在，創建一筆新團號
+              console.log("情況2.3");
+
+              orderListRef
+                .add({
+                  status: "ongoing",
+                  uid: facebookbStatus.uid,
+                })
+                .then((nonfix) => {
+                  orderListRef
+                    .doc(nonfix.id)
+                    .set({ id: nonfix.id }, { merge: true });
+                  orderListRef
+                    .doc(nonfix.id)
+                    .collection("records")
+                    .add({
+                      uid: facebookbStatus.uid,
+                      displayName: facebookbStatus.displayName,
+                      email: facebookbStatus.email,
+                      name: mealPopupDetail.name,
+                      qty: record.qty,
+                      price: record.price,
+                      size: record.size,
+                      sugar: record.sugar,
+                      canChooseIce: record.canChooseIce,
+                      ice: record.ice,
+                    })
+                    .then((recordResult) => {
+                      orderListRef
+                        .doc(nonfix.id)
+                        .collection("records")
+                        .doc(recordResult.id)
+                        .set({ id: recordResult.id }, { merge: true });
+                    });
+                });
+            }
             if (
               getVariable().docID === null &&
               doc1.data().uid === facebookbStatus.uid &&

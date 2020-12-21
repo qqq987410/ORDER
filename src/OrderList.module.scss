@@ -121,6 +121,22 @@
           transition: all ease 0.2s;
         }
       }
+      .join {
+        width: 150px;
+        height: 40px;
+        border-radius: 6px;
+        border: none;
+        background-color: #70493c;
+        color: #ffffff;
+        cursor: pointer;
+        position: relative;
+        &:hover {
+          bottom: 5px;
+          box-shadow: 0px 3px 10px black;
+          font-size: 16px;
+          transition: all ease 0.2s;
+        }
+      }
     }
   }
 }

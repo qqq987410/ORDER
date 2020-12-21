@@ -46,11 +46,19 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
   }, [facebookbStatus]);
 
   function previousPage() {
-    history.push(
-      `./menu?restaurantID=${getVariable().restaurantID}&docID=${
-        getVariable().docID
-      }`
-    );
+    if (getVariable().special) {
+      history.push(
+        `./menu?restaurantID=${getVariable().restaurantID}&docID=${
+          getVariable().docID
+        }&special=true`
+      );
+    } else {
+      history.push(
+        `./menu?restaurantID=${getVariable().restaurantID}&docID=${
+          getVariable().docID
+        }`
+      );
+    }
   }
   function checkout() {
     if (facebookbStatus.status === true) {
@@ -74,7 +82,34 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
             { merge: true }
           );
           // 導轉至 History Page
-          history.push(`./history`);
+          if (getVariable().special) {
+            history.push("./history?special=true");
+          } else {
+            history.push(`./history`);
+          }
+        }
+      });
+    }
+  }
+  function join() {
+    if (facebookbStatus.status === true) {
+      Swal.fire({
+        title: "確定產生訂單嗎?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire("成功!", "訂單已送至給開團者", "success");
+          // 導轉至 Home Page
+          if (getVariable().special) {
+            history.push("/?special=true");
+          } else {
+            history.push("/");
+          }
         }
       });
     }
@@ -114,9 +149,16 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           <button className={styles.keepBuying} onClick={previousPage}>
             繼續購買
           </button>
-          <button className={styles.checkout} onClick={checkout}>
-            產生訂單
-          </button>
+
+          {getVariable().special ? (
+            <button className={styles.join} onClick={join}>
+              參加揪團
+            </button>
+          ) : (
+            <button className={styles.checkout} onClick={checkout}>
+              產生訂單
+            </button>
+          )}
         </div>
       </div>
     </div>

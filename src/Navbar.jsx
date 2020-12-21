@@ -11,6 +11,7 @@ import firebase from "firebase/app";
 import logo from "./image/Logo.svg";
 import Swal from "sweetalert2";
 import "animate.css";
+import getVariable from "./Variable";
 import { useEffect } from "react";
 
 function Navbar({ facebookbStatus }) {
@@ -40,17 +41,29 @@ function Navbar({ facebookbStatus }) {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <Link to="/">
-          <img src={logo} alt="logo" />
-        </Link>
+        {getVariable().special ? (
+          <Link to="/?special=true">
+            <img src={logo} alt="logo" />
+          </Link>
+        ) : (
+          <Link to="/">
+            <img src={logo} alt="logo" />
+          </Link>
+        )}
       </div>
       <div className={styles.right}>
-        <div className={styles.mainPage}>
-          <Link to="/main">所有餐廳</Link>
-        </div>
-        <div className={styles.historyPage}>
-          <Link to="/history">歷史訂單</Link>
-        </div>
+        {getVariable().special ? (
+          <div className={styles.historyPage}>
+            <Link to="/history?special=true">歷史訂單</Link>
+          </div>
+        ) : (
+          <div className={styles.historyPage}>
+            <Link to="/history">歷史訂單</Link>
+          </div>
+        )}
+        {/* <div className={styles.mainPage}>
+               <Link to="/main">所有餐廳</Link>
+            </div> */}
         {facebookbStatus.status ? (
           <div className={styles.logOutPage} id="logOut" onClick={signOut}>
             登出
