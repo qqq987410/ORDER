@@ -68,10 +68,7 @@ function Main({ data }) {
       setCategoryBox(newArray);
     } else if (value.style.backgroundImage !== "none") {
       console.log("Yes");
-      //  let newarray = [...categoryBox];
       let newArray = [];
-      //  let lastestarray = newarray.splice(value.id, 0);
-
       categoryBox.forEach((item) => {
         if (item !== value.id) {
           newArray.push(item);
@@ -149,19 +146,16 @@ function SigleRestaurant({ detail }) {
 function Category({ categoryTitle, handleBox }) {
   const [isCheck, setIscheck] = useState(false);
 
-  function checkBox(e) {}
-  //  console.log(isCheck);
+  function checkBox(e) {
+    setIscheck(!isCheck);
+    handleBox(e.target);
+  }
   return (
     <div className={styles.categoryInner}>
       <div
         className={styles.checkBox}
         id={categoryTitle}
-        onClick={(e) => {
-          //  checkBox(e);
-          setIscheck(!isCheck);
-          handleBox(e.target);
-          console.log("e.target=", e.target);
-        }}
+        onClick={checkBox}
         style={
           isCheck
             ? { backgroundImage: "url(" + check + ")" }

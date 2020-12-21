@@ -13,7 +13,7 @@ import {
 import { ReactComponent as Time } from "./image/time.svg";
 import { ReactComponent as Phone } from "./image/phone.svg";
 import { ReactComponent as Location } from "./image/location.svg";
-import cart from "./image/cart.svg";
+import { ReactComponent as Cart } from "./image/cart.svg";
 import Swal from "sweetalert2";
 import getVariable from "./Variable";
 
@@ -27,7 +27,6 @@ function Menu({
   const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   const [mealPopupDetail, setMealPopupDetail] = useState({});
   const [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
-  const [iceOption, setIceOption] = useState(false);
   const [URL, setURL] = useState();
   const history = useHistory();
 
@@ -36,7 +35,7 @@ function Menu({
   data.forEach((doc) => {
     if (doc.id === getVariable().restaurantID) {
       restaurantDetail = doc;
-      console.log("This餐廳資訊＝", restaurantDetail);
+      //  console.log("This餐廳資訊＝", restaurantDetail);
     }
   });
 
@@ -57,41 +56,6 @@ function Menu({
     </div>
   );
 
-  function linkToOrderList() {
-    if (facebookbStatus.status === true) {
-      let ref = db.collection("orderList");
-      ref.get().then((res) => {
-        res.forEach((doc) => {
-          if (
-            doc.data().uid === facebookbStatus.uid &&
-            doc.data().status === "ongoing"
-          ) {
-            ref
-              .doc(doc.data().id)
-              .collection("records")
-              .get()
-              .then((shot) => {
-                if (shot.size === 0) {
-                  Swal.fire("尚未加入餐點！");
-                } else {
-                  history.push(
-                    `./orderList?restaurantID=${
-                      getVariable().restaurantID
-                    }&docID=${doc.id}`
-                  );
-                }
-              })
-              .then(() => {});
-          }
-        });
-      });
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "尚未登錄會員",
-      });
-    }
-  }
   function teamBuying() {
     if (facebookbStatus.status === true) {
       setTeamBuyingPopup(true);
@@ -166,6 +130,41 @@ function Menu({
     }
     // console.log(e.target.className);
   }
+  function linkToOrderList() {
+    if (facebookbStatus.status === true) {
+      let ref = db.collection("orderList");
+      ref.get().then((res) => {
+        res.forEach((doc) => {
+          if (
+            doc.data().uid === facebookbStatus.uid &&
+            doc.data().status === "ongoing"
+          ) {
+            ref
+              .doc(doc.data().id)
+              .collection("records")
+              .get()
+              .then((shot) => {
+                if (shot.size === 0) {
+                  Swal.fire("尚未加入餐點！");
+                } else {
+                  history.push(
+                    `./orderList?restaurantID=${
+                      getVariable().restaurantID
+                    }&docID=${doc.id}`
+                  );
+                }
+              })
+              .then(() => {});
+          }
+        });
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "尚未登錄會員",
+      });
+    }
+  }
   return (
     <>
       <div className={styles.main}>
@@ -197,33 +196,28 @@ function Menu({
                 classTitle={item}
                 setMealPopupSwitch={setMealPopupSwitch}
                 setMealPopupDetail={setMealPopupDetail}
-                setIceOption={setIceOption}
                 key={nanoid()}
               />
             );
           })}
+          <div className={styles.deco}>
+            <div className={styles.together} onClick={teamBuying}>
+              揪團
+            </div>
+            <div className={styles.cartBtn} onClick={linkToOrderList}>
+              <span>{cartListLength}</span>
+              <Cart className={styles.cart} />
+              購物車
+              <div className={styles.totalPrice}>{cartListTotalPrice}</div>
+            </div>
+          </div>
         </div>
-        {/* <div className={styles.selectSpace}>
-                     <div className={styles.together} onClick={teamBuying}>
-                        揪團
-                     </div>
-                     <div className={styles.cartBtn} onClick={linkToOrderList}>
-                        <span>{cartListLength}</span>
-                        <div className={styles.cart}>
-                           <img src={cart} alt="cart" />
-                           購物車
-                        </div>
-                        <div className={styles.totalPrice}>{cartListTotalPrice}</div>
-                     </div>
-                  </div> */}
       </div>
       {mealPopupSwitch ? (
         <MealPoppup
           setMealPopupSwitch={setMealPopupSwitch}
           mealPopupDetail={mealPopupDetail}
           setMealPopupDetail={setMealPopupDetail}
-          iceOption={iceOption}
-          setIceOption={setIceOption}
           cartListTotalPrice={cartListTotalPrice}
           setCartListTotalPrice={setCartListTotalPrice}
           facebookbStatus={facebookbStatus}
@@ -256,7 +250,6 @@ function Class({
   classTitle,
   setMealPopupSwitch,
   setMealPopupDetail,
-  setIceOption,
 }) {
   let classMenu = [];
   restaurantDetail.menu.map((item) => {
@@ -274,7 +267,6 @@ function Class({
               detail={item}
               setMealPopupSwitch={setMealPopupSwitch}
               setMealPopupDetail={setMealPopupDetail}
-              setIceOption={setIceOption}
               key={nanoid()}
             />
           );
@@ -283,16 +275,10 @@ function Class({
     </div>
   );
 }
-function Meal({
-  detail,
-  setMealPopupSwitch,
-  setMealPopupDetail,
-  setIceOption,
-}) {
+function Meal({ detail, setMealPopupSwitch, setMealPopupDetail }) {
   function checkDish() {
     setMealPopupSwitch(true);
     setMealPopupDetail(detail);
-    setIceOption(false);
   }
   return (
     <div className={styles.meal} onClick={checkDish}>
@@ -314,35 +300,31 @@ function Meal({
     </div>
   );
 }
-
 function MealPoppup({
   setMealPopupSwitch,
   mealPopupDetail,
   setMealPopupDetail,
-  iceOption,
-  setIceOption,
   cartListTotalPrice,
   setCartListTotalPrice,
   facebookbStatus,
 }) {
-  console.log("mealPopupDetail=", mealPopupDetail);
   const sizeContentRef = useRef(null);
   const iceContentRef = useRef(null);
   const sugarContentRef = useRef(null);
 
-  let sizeRef = useRef(null);
-  let iceRef = useRef(null);
-  let sugarRef = useRef(null);
-
-  const [bgRecord, setBgRecord] = useState({});
-  const [qtyRealTime, setQtyRealTime] = useState(1);
-  const [priceRealTime, setPriceRealTime] = useState(
-    mealPopupDetail.sizeOption
+  const [record, setRecord] = useState({
+    qty: 1,
+    price: mealPopupDetail.sizeOption
       ? mealPopupDetail.sizeAndPrice[0].price
-      : mealPopupDetail.price
-  );
-  console.log("bgRecord=", bgRecord);
-  console.log();
+      : mealPopupDetail.price,
+    canChooseIce: "",
+    size: "",
+    sugar: "",
+    ice: "",
+  });
+
+  // ====== //
+  console.log("record=", record);
 
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
@@ -351,163 +333,230 @@ function MealPoppup({
   }
   function chooseQty(e) {
     let numberClicked = Number(e.currentTarget.getAttribute("data"));
-    if (!(qtyRealTime === 1 && numberClicked < 0)) {
-      setQtyRealTime(qtyRealTime + numberClicked);
-      bgRecord.qty = qtyRealTime + numberClicked;
-      setBgRecord(bgRecord);
+    if (!(record.qty === 1 && numberClicked < 0)) {
+      let newRecord = { ...record, qty: record.qty + numberClicked };
+      setRecord(newRecord);
     }
   }
   function chooseSize(e) {
-    // 1. 切換顏色
-    console.log(e.target);
-    sizeContentRef.current.childNodes.forEach((item) => {
-      if (item.className === e.target.className) {
-        // item.style.backgroundColor = "#d9c8b8";
-        // item.style.color = "#877a6d";
-        // e.target.style.backgroundColor = "#4c686f";
-        // e.target.style.color = "#fff";
-        bgRecord.size = e.target.textContent;
-        mealPopupDetail.sizeAndPrice.forEach((item) => {
-          if (item.size === e.target.textContent) {
-            bgRecord.price = item.price;
-            setBgRecord(bgRecord);
-          }
-        });
+    mealPopupDetail.sizeAndPrice.forEach((item) => {
+      if (item.size === e.target.textContent) {
+        let newRecord = {
+          ...record,
+          size: e.target.textContent,
+          price: item.price,
+          canChooseIce: item.canChooseIce,
+        };
+        setRecord(newRecord);
       }
     });
-    // 2. 如果點選到的size可選冰度 => Render Ice Option
-    if (e.target.style.backgroundColor) {
-      mealPopupDetail.sizeAndPrice.forEach((item) => {
-        if (item.size === e.target.textContent && item.canChooseIce) {
-          setIceOption(true);
-          setPriceRealTime(item.price);
-        }
-      });
-    }
   }
   function chooseIce(e) {
-    // 1. 切換顏色
-    iceContentRef.current.childNodes.forEach((item) => {
-      if (item.className === e.target.className) {
-        // item.style.backgroundColor = "#d9c8b8";
-        // item.style.color = "#877a6d";
-        // e.target.style.backgroundColor = "#4c686f";
-        // e.target.style.color = "#fff";
-        bgRecord.ice = e.target.textContent;
-        setBgRecord(bgRecord);
-      }
-    });
+    let newRecord = { ...record, ice: e.target.textContent };
+    setRecord(newRecord);
   }
-  function chooseSuagr() {}
+  function chooseSuagr(e) {
+    let newRecord = { ...record, sugar: e.target.textContent };
+    setRecord(newRecord);
+  }
   function addToCart() {
     if (facebookbStatus.status === true) {
-      let ref = db.collection("orderList");
-      ref.get().then((res) => {
-        if (res.size === 0) {
-          console.log("res.size=", res.size);
-          ref
-            .add({ status: "ongoing", uid: facebookbStatus.uid })
-            .then((res) => {
-              ref.doc(res.id).set(
+      let orderListRef = db.collection("orderList");
+      orderListRef.get().then((res1) => {
+        if (res1.size === 0) {
+          orderListRef
+            .add({
+              status: "ongoing",
+              uid: facebookbStatus.uid,
+            })
+            .then((res2) => {
+              // 1. merge id
+              orderListRef.doc(res2.id).set(
                 {
-                  id: res.id,
+                  id: res2.id,
                 },
                 { merge: true }
               );
-              ref
-                .doc(res.id)
+              // 2. set collection('records')
+              orderListRef
+                .doc(res2.id)
                 .collection("records")
                 .add({
-                  name: mealPopupDetail.name,
-                  price: mealPopupDetail.price,
-                  qty: mealPopupDetail.qty,
                   uid: facebookbStatus.uid,
                   displayName: facebookbStatus.displayName,
                   email: facebookbStatus.email,
+                  name: mealPopupDetail.name,
+                  qty: record.qty,
+                  price: record.price,
+                  size: record.size,
+                  sugar: record.sugar,
+                  canChooseIce: record.canChooseIce,
+                  ice: record.ice,
                 })
-                .then((res_2) => {
-                  console.log(res_2.id);
-                  ref.doc(res.id).collection("records").doc(res_2.id).set(
-                    {
-                      id: res_2.id,
-                    },
-                    { merge: true }
-                  );
+                .then((res3) => {
+                  orderListRef
+                    .doc(res2.id)
+                    .collection("records")
+                    .doc(res3.id)
+                    .set({ id: res3.id }, { merge: true });
                 });
             });
         } else {
-          let switcher = true;
-          res.forEach((doc) => {
+          res1.forEach((doc1) => {
             if (
-              (doc.data().uid === facebookbStatus.uid ||
-                getVariable().docID !== null) &&
-              doc.data().status === "ongoing"
+              getVariable().docID === null &&
+              doc1.data().uid === facebookbStatus.uid &&
+              doc1.data().status === "ongoing"
             ) {
-              switcher = false;
-              ref
-                .doc(doc.id)
+              orderListRef
+                .doc(doc1.id)
                 .collection("records")
                 .add({
-                  name: mealPopupDetail.name,
-                  price: mealPopupDetail.price,
-                  qty: mealPopupDetail.qty,
                   uid: facebookbStatus.uid,
                   displayName: facebookbStatus.displayName,
                   email: facebookbStatus.email,
+                  name: mealPopupDetail.name,
+                  qty: record?.qty,
+                  price: record?.price,
+                  size: record?.size,
+                  sugar: record?.sugar,
+                  canChooseIce: record?.canChooseIce,
+                  ice: record?.ice,
                 })
                 .then((res) => {
-                  ref
-                    .doc(doc.id)
+                  orderListRef
+                    .doc(doc1.id)
                     .collection("records")
                     .doc(res.id)
                     .set({ id: res.id }, { merge: true });
                 });
+            } else if (getVariable().docID !== null) {
+              orderListRef.doc(getVariable().docID).collection("records").add({
+                uid: facebookbStatus.uid,
+                displayName: facebookbStatus.displayName,
+                email: facebookbStatus.email,
+                name: mealPopupDetail.name,
+                qty: record.qty,
+                price: record.price,
+                size: record.size,
+                sugar: record.sugar,
+                canChooseIce: record.canChooseIce,
+                ice: record.ice,
+              });
+            } else {
+              orderListRef
+                .add({
+                  status: "ongoing",
+                  uid: facebookbStatus.uid,
+                })
+                .then((res4) => {
+                  // 1. merge id
+                  orderListRef.doc(res4.id).set(
+                    {
+                      id: res4.id,
+                    },
+                    { merge: true }
+                  );
+                  // 2. set collection('records')
+                  orderListRef
+                    .doc(res4.id)
+                    .collection("records")
+                    .add({
+                      uid: facebookbStatus.uid,
+                      displayName: facebookbStatus.displayName,
+                      email: facebookbStatus.email,
+                      name: mealPopupDetail.name,
+                      qty: record.qty,
+                      price: record.price,
+                      size: record.size,
+                      sugar: record.sugar,
+                      canChooseIce: record.canChooseIce,
+                      ice: record.ice,
+                    })
+                    .then((res5) => {
+                      orderListRef
+                        .doc(res4.id)
+                        .collection("records")
+                        .doc(res5.id)
+                        .set({ id: res5.id }, { merge: true });
+                    });
+                });
             }
           });
-          if (switcher) {
-            console.log("BBB");
-            ref
-              .add({
-                status: "ongoing",
-                uid: facebookbStatus.uid,
-              })
-              .then((response) => {
-                console.log(response.id);
-                ref.doc(response.id).set({ id: response.id }, { merge: true });
-                ref
-                  .doc(response.id)
-                  .collection("records")
-                  .add({
-                    name: mealPopupDetail.name,
-                    price: mealPopupDetail.price,
-                    qty: mealPopupDetail.qty,
-                    uid: facebookbStatus.uid,
-                    displayName: facebookbStatus.displayName,
-                    email: facebookbStatus.email,
-                  })
-                  .then((response_2) => {
-                    ref
-                      .doc(response.id)
-                      .collection("records")
-                      .doc(response_2.id)
-                      .set({ id: response_2.id }, { merge: true });
-                  });
-              });
-          }
         }
       });
       setMealPopupSwitch(false);
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "尚未登錄會員",
-      });
     }
-    // initQty = 1;
   }
-  console.log(mealPopupDetail);
+  /*Swal.fire({icon: "error",title: "尚未登錄會員"});*/
 
-  console.log("sizeRef=", sizeRef);
+  function test() {
+    ref.get().then((res) => {
+      if (res.size === 0) {
+      } else {
+        let switcher = true;
+        res.forEach((doc) => {
+          if (
+            (doc.data().uid === facebookbStatus.uid ||
+              getVariable().docID !== null) &&
+            doc.data().status === "ongoing"
+          ) {
+            switcher = false;
+            ref
+              .doc(doc.id)
+              .collection("records")
+              .add({
+                name: mealPopupDetail.name,
+                price: mealPopupDetail.price,
+                qty: mealPopupDetail.qty,
+                uid: facebookbStatus.uid,
+                displayName: facebookbStatus.displayName,
+                email: facebookbStatus.email,
+              })
+              .then((res) => {
+                ref
+                  .doc(doc.id)
+                  .collection("records")
+                  .doc(res.id)
+                  .set({ id: res.id }, { merge: true });
+              });
+          }
+        });
+        if (switcher) {
+          console.log("BBB");
+          ref
+            .add({
+              status: "ongoing",
+              uid: facebookbStatus.uid,
+            })
+            .then((response) => {
+              console.log(response.id);
+              ref.doc(response.id).set({ id: response.id }, { merge: true });
+              ref
+                .doc(response.id)
+                .collection("records")
+                .add({
+                  name: mealPopupDetail.name,
+                  price: mealPopupDetail.price,
+                  qty: mealPopupDetail.qty,
+                  uid: facebookbStatus.uid,
+                  displayName: facebookbStatus.displayName,
+                  email: facebookbStatus.email,
+                })
+                .then((response_2) => {
+                  ref
+                    .doc(response.id)
+                    .collection("records")
+                    .doc(response_2.id)
+                    .set({ id: response_2.id }, { merge: true });
+                });
+            });
+        }
+      }
+    });
+    setMealPopupSwitch(false);
+  }
+
   return (
     <div className={styles.outer} id="outer" onClick={closeMealPopup}>
       <div className={styles.inner}>
@@ -516,7 +565,7 @@ function MealPoppup({
           <div className={styles.minus} data={-1} onClick={chooseQty}>
             -
           </div>
-          <div className={styles.number}>{qtyRealTime}</div>
+          <div className={styles.number}>{record.qty}</div>
           <div className={styles.add} data={+1} onClick={chooseQty}>
             +
           </div>
@@ -531,8 +580,12 @@ function MealPoppup({
                     <div
                       className={styles.size}
                       key={nanoid()}
-                      ref={sizeRef}
                       onClick={chooseSize}
+                      style={{
+                        backgroundColor:
+                          item.size === record.size ? "#4c686f" : "none",
+                        color: item.size === record.size ? "#fff" : "#877a6d",
+                      }}
                     >
                       {item.size}
                     </div>
@@ -542,7 +595,7 @@ function MealPoppup({
             </div>
           </>
         ) : null}
-        {iceOption ? (
+        {record.canChooseIce ? (
           <div className={styles.iceBlock}>
             <div className={styles.iceTitle}>Ice</div>
             <div className={styles.iceContent} ref={iceContentRef}>
@@ -551,8 +604,11 @@ function MealPoppup({
                   <div
                     className={styles.ice}
                     key={nanoid()}
-                    ref={iceRef}
                     onClick={chooseIce}
+                    style={{
+                      backgroundColor: item === record.ice ? "#4c686f" : "none",
+                      color: item === record.ice ? "#fff" : "#877a6d",
+                    }}
                   >
                     {item}
                   </div>
@@ -570,8 +626,11 @@ function MealPoppup({
                   <div
                     className={styles.sugar}
                     key={nanoid()}
-                    ref={sugarRef}
                     onClick={chooseSuagr}
+                    style={{
+                      background: item === record.sugar ? "#4c686f" : "none",
+                      color: item === record.sugar ? "#fff" : "#877a6d",
+                    }}
                   >
                     {item}
                   </div>
@@ -582,7 +641,7 @@ function MealPoppup({
         ) : null}
         {/* <div className={styles.subTotal}>總金額：{mealPopupDetail.price * mealPopupDetail.qty}</div> */}
         <div className={styles.subTotal}>
-          總金額：{qtyRealTime * priceRealTime}
+          總金額：{record.qty * record.price}
         </div>
         <button className={styles.addCartBtn} onClick={addToCart}>
           加入購物車
