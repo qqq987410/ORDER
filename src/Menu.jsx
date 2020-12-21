@@ -55,56 +55,99 @@ function Menu({
       {restaurantDetail.businessHour[1]}
     </div>
   );
-
   function teamBuying() {
     if (facebookbStatus.status === true) {
       setTeamBuyingPopup(true);
-      let ref = db.collection("orderList");
-      ref.get().then((res) => {
-        if (res.size !== 0) {
-          let ctrl = true;
-          let docIDExixt = true;
-          let historyStatusLength = 0;
-          res.forEach((doc) => {
-            if (getVariable().docID) {
-              ctrl = false;
-              docIDExixt = false;
-              setURL(`${window.location.href}&docID=${getVariable().docID}`);
-            } else if (
-              doc.data().uid === facebookbStatus.uid &&
-              doc.data().status === "ongoing" &&
-              docIDExixt
-            ) {
-              ctrl = false;
-              setURL(`${window.location.href}&docID=${doc.id}`);
-            } else if (doc.data().status === "history") {
-              historyStatusLength++;
-              if (historyStatusLength === res.size) {
-                ref
-                  .add({
-                    status: "ongoing",
-                    uid: facebookbStatus.uid,
-                  })
-                  .then((res) => {
-                    ref.doc(res.id).set({ id: res.id }, { merge: true });
-                    setURL(`${window.location.href}&docID=${res.id}`);
-                  });
-              }
-            }
-          });
-        } else {
-          ref
+      let orderListRef = db.collection("orderList");
+
+      orderListRef.get().then((res1) => {
+        if (getVariable().special) {
+          // 情況一
+          setURL(location.href);
+        } else if (res1.size === 0) {
+          // 情況二
+          orderListRef
             .add({
               status: "ongoing",
               uid: facebookbStatus.uid,
             })
-            .then((res) => {
-              console.log(res.id);
-              ref.doc(res.id).set({ id: res.id }, { merge: true });
-              setURL(`${window.location.href}&docID=${res.id}`);
+            .then((res2) => {
+              orderListRef.doc(res2.id).set(
+                {
+                  id: res2.id,
+                },
+                { merge: true }
+              );
+              setURL(`${location.href}&docID=${res2.id}&special=true`);
             });
+        } else {
+          // 情況三
+          let findMyGroup = false;
+          res1.forEach((doc1) => {
+            if (
+              doc1.data().uid === facebookbStatus.uid &&
+              doc.data().status === "ongoing"
+            ) {
+              setURL(`${location.href}&docID=${doc1.id}&special=true`);
+              findMyGroup = true;
+            }
+          });
+          if (!findMyGroup) {
+            orderListRef
+              .add({
+                status: "ongoing",
+                uid: facebookbStatus.uid,
+              })
+              .then((res3) => {
+                orderListRef.doc(res3.id).set(
+                  {
+                    id: res3.id,
+                  },
+                  { merge: true }
+                );
+                setURL(`${location.href}&docID=${res3.id}&special=true`);
+              });
+          }
         }
       });
+
+      //  let ref = db.collection("orderList");
+      //  ref.get().then((res) => {
+      //     if (res.size !== 0) {
+      //        let ctrl = true;
+      //        let docIDExixt = true;
+      //        let historyStatusLength = 0;
+      //        res.forEach((doc) => {
+      //           if (getVariable().docID) {
+      //              ctrl = false;
+      //              docIDExixt = false;
+      //              setURL(`${window.location.href}&docID=${getVariable().docID}`);
+      //           } else if (doc.data().uid === facebookbStatus.uid && doc.data().status === "ongoing" && docIDExixt) {
+      //              ctrl = false;
+      //              setURL(`${window.location.href}&docID=${doc.id}`);
+      //           } else if (doc.data().status === "history") {
+      //              historyStatusLength++;
+      //              if (historyStatusLength === res.size) {
+      //                 ref.add({
+      //                    status: "ongoing",
+      //                    uid: facebookbStatus.uid,
+      //                 }).then((res) => {
+      //                    ref.doc(res.id).set({ id: res.id }, { merge: true });
+      //                    setURL(`${window.location.href}&docID=${res.id}`);
+      //                 });
+      //              }
+      //           }
+      //        });
+      //     } else {
+      //        ref.add({
+      //           status: "ongoing",
+      //           uid: facebookbStatus.uid,
+      //        }).then((res) => {
+      //           ref.doc(res.id).set({ id: res.id }, { merge: true });
+      //           setURL(`${window.location.href}&docID=${res.id}&special=true`);
+      //        });
+      //     }
+      //  });
     } else {
       Swal.fire({
         icon: "error",
