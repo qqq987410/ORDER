@@ -18,17 +18,13 @@ import { nanoid } from "nanoid";
 function Main({ data }) {
   const [showRestaurant, setShowRestaurant] = useState([]);
   const [categoryBox, setCategoryBox] = useState([]);
-  console.log("長度=", categoryBox.length);
 
   useEffect(() => {
-    console.log(categoryBox);
     if (categoryBox.length > 0) {
       let latestCategory = [];
       categoryBox.forEach((item) => {
         data.forEach((dt) => {
-          console.log(categoryBox);
-          console.log(item);
-          if (item.current?.id === dt.category) {
+          if (item === dt.category) {
             latestCategory.push(dt);
           }
         });
@@ -66,23 +62,27 @@ function Main({ data }) {
   });
 
   const addRef = (value) => {
-    let newArray = [...categoryBox, value];
-    console.log("YES_2");
-    console.log(value);
-    setCategoryBox(newArray);
-  };
-  const removeRef = (value) => {
-    let newArray = [];
-    categoryBox.forEach((item) => {
-      if (item.current !== value.current) {
-        newArray.push(item);
-      }
-    });
-    setCategoryBox(newArray);
+    if (value.style.backgroundImage === "none") {
+      console.log("No");
+      let newArray = [...categoryBox, value.id];
+      setCategoryBox(newArray);
+    } else if (value.style.backgroundImage !== "none") {
+      console.log("Yes");
+      //  let newarray = [...categoryBox];
+      let newArray = [];
+      //  let lastestarray = newarray.splice(value.id, 0);
+
+      categoryBox.forEach((item) => {
+        if (item !== value.id) {
+          newArray.push(item);
+        }
+      });
+      setCategoryBox(newArray);
+    }
   };
 
   console.log("categoryBox=", categoryBox);
-  console.log("showRestaurant=", showRestaurant);
+  //  console.log("showRestaurant=", showRestaurant);
 
   return (
     <div className={styles.outer}>
@@ -90,13 +90,12 @@ function Main({ data }) {
         <div className={styles.categoryContainer}>
           <div className={styles.categorySubject}>附近餐廳</div>
           <div className={styles.category}>
-            {kindOfCategory.sort().map((category) => {
+            {kindOfCategory.sort().map((category, index) => {
               return (
                 <Category
                   categoryTitle={category}
-                  addBox={addRef}
-                  removeBox={removeRef}
-                  key={nanoid()}
+                  handleBox={addRef}
+                  key={index}
                 />
               );
             })}
@@ -111,7 +110,6 @@ function Main({ data }) {
     </div>
   );
 }
-
 function SigleRestaurant({ detail }) {
   let history = useHistory();
   function linkToMenu() {
@@ -148,38 +146,27 @@ function SigleRestaurant({ detail }) {
     </div>
   );
 }
+function Category({ categoryTitle, handleBox }) {
+  const [isCheck, setIscheck] = useState(false);
 
-function Category({ categoryTitle, addBox, removeBox }) {
-  const checkbox = useRef(null);
-  console.log(checkbox);
-  function checkBox(e) {
-    console.log(e.currentTarget.style);
-    // 1. checkBox toggle
-    if (e.currentTarget.style.backgroundImage) {
-      e.currentTarget.style.backgroundImage = "";
-      console.log("NO");
-    } else {
-      console.log("YES");
-
-      e.currentTarget.style.backgroundImage = `url(${check})`;
-    }
-    // 2.
-    if (checkbox.current.style.backgroundImage) {
-      console.log(checkbox);
-      addBox(checkbox);
-      console.log("YES_1");
-    } else {
-      removeBox(checkbox);
-      console.log("NO_1");
-    }
-  }
+  function checkBox(e) {}
+  //  console.log(isCheck);
   return (
     <div className={styles.categoryInner}>
       <div
         className={styles.checkBox}
-        ref={checkbox}
         id={categoryTitle}
-        onClick={checkBox}
+        onClick={(e) => {
+          //  checkBox(e);
+          setIscheck(!isCheck);
+          handleBox(e.target);
+          console.log("e.target=", e.target);
+        }}
+        style={
+          isCheck
+            ? { backgroundImage: "url(" + check + ")" }
+            : { backgroundImage: "none" }
+        }
       ></div>
       <div className={styles.categoryName}>{categoryTitle.toUpperCase()}</div>
     </div>

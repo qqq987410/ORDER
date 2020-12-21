@@ -330,11 +330,9 @@ function MealPoppup({
   const iceContentRef = useRef(null);
   const sugarContentRef = useRef(null);
 
-  let minSizeRef = useRef(null);
+  let sizeRef = useRef(null);
   let iceRef = useRef(null);
   let sugarRef = useRef(null);
-
-  //  const checkbox = useRef(null);
 
   const [bgRecord, setBgRecord] = useState({});
   const [qtyRealTime, setQtyRealTime] = useState(1);
@@ -344,7 +342,8 @@ function MealPoppup({
       : mealPopupDetail.price
   );
   console.log("bgRecord=", bgRecord);
-  console.log(minSizeRef);
+  console.log();
+
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
       setMealPopupSwitch(false);
@@ -359,8 +358,8 @@ function MealPoppup({
     }
   }
   function chooseSize(e) {
-    console.log(sizeRef);
     // 1. 切換顏色
+    console.log(e.target);
     sizeContentRef.current.childNodes.forEach((item) => {
       if (item.className === e.target.className) {
         // item.style.backgroundColor = "#d9c8b8";
@@ -508,6 +507,7 @@ function MealPoppup({
   }
   console.log(mealPopupDetail);
 
+  console.log("sizeRef=", sizeRef);
   return (
     <div className={styles.outer} id="outer" onClick={closeMealPopup}>
       <div className={styles.inner}>
@@ -525,17 +525,14 @@ function MealPoppup({
           <>
             <div className={styles.sizeBlock}>
               <div className={styles.sizeTitle}>Size</div>
-              <div
-                className={styles.sizeContent}
-                ref={sizeContentRef}
-                onClick={chooseSize}
-              >
+              <div className={styles.sizeContent} ref={sizeContentRef}>
                 {mealPopupDetail.sizeAndPrice.map((item) => {
                   return (
                     <div
                       className={styles.size}
                       key={nanoid()}
-                      ref={minSizeRef}
+                      ref={sizeRef}
+                      onClick={chooseSize}
                     >
                       {item.size}
                     </div>
@@ -548,14 +545,15 @@ function MealPoppup({
         {iceOption ? (
           <div className={styles.iceBlock}>
             <div className={styles.iceTitle}>Ice</div>
-            <div
-              className={styles.iceContent}
-              ref={iceContentRef}
-              onClick={chooseIce}
-            >
+            <div className={styles.iceContent} ref={iceContentRef}>
               {mealPopupDetail.ice.map((item) => {
                 return (
-                  <div className={styles.ice} key={nanoid()}>
+                  <div
+                    className={styles.ice}
+                    key={nanoid()}
+                    ref={iceRef}
+                    onClick={chooseIce}
+                  >
                     {item}
                   </div>
                 );
@@ -572,6 +570,7 @@ function MealPoppup({
                   <div
                     className={styles.sugar}
                     key={nanoid()}
+                    ref={sugarRef}
                     onClick={chooseSuagr}
                   >
                     {item}
