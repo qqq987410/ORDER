@@ -487,21 +487,55 @@ function MealPoppup({
             });
         } else {
           // 情況二 => size!=0
-          console.log("情況二");
 
-          res1.forEach((doc1) => {
-            if (getVariable().docID !== null) {
-              // 情況2.1 => docID存在 && status='ongoing'
-              console.log("情況2.1");
+          let createNewGroup;
+          if (getVariable().docID !== null) {
+            // 情況2.1 => docID存在 && status='ongoing'
+            console.log("情況二.1");
 
-              orderListRef
-                .doc(getVariable().docID)
-                .get()
-                .then((specific) => {
-                  console.log(specific.data().status);
-                  if (specific.data().status === "ongoing") {
+            orderListRef
+              .doc(getVariable().docID)
+              .get()
+              .then((specific) => {
+                console.log(specific.data());
+                if (specific.data() && specific.data().status === "ongoing") {
+                  orderListRef
+                    .doc(getVariable().docID)
+                    .collection("records")
+                    .add({
+                      uid: facebookbStatus.uid,
+                      displayName: facebookbStatus.displayName,
+                      email: facebookbStatus.email,
+                      name: mealPopupDetail.name,
+                      qty: record.qty,
+                      price: record.price,
+                      size: record.size,
+                      sugar: record.sugar,
+                      canChooseIce: record.canChooseIce,
+                      ice: record.ice,
+                    })
+                    .then((specificRes) => {
+                      orderListRef
+                        .doc(getVariable().docID)
+                        .collection("records")
+                        .doc(specificRes.id)
+                        .set({ id: specificRes.id }, { merge: true });
+                    });
+                }
+              });
+          } else {
+            orderListRef
+              .where("status", "==", "ongoing")
+              .where("uid", "==", facebookbStatus.uid)
+              .get()
+              .then((ongoingUidTrueRes) => {
+                if (ongoingUidTrueRes.size !== 0) {
+                  // 情況2.2 => docID不存在 && data().uid = fb.uid && status='ongoing'
+                  console.log("情況二.2");
+
+                  ongoingUidTrueRes.forEach((ongoingUidTrueDoc) => {
                     orderListRef
-                      .doc(getVariable().docID)
+                      .doc(ongoingUidTrueDoc.id)
                       .collection("records")
                       .add({
                         uid: facebookbStatus.uid,
@@ -515,161 +549,58 @@ function MealPoppup({
                         canChooseIce: record.canChooseIce,
                         ice: record.ice,
                       })
-                      .then((specificRes) => {
+                      .then((mainRes) => {
                         orderListRef
-                          .doc(getVariable().docID)
+                          .doc(ongoingUidTrueDoc.id)
                           .collection("records")
-                          .doc(specificRes.id)
-                          .set({ id: specificRes.id }, { merge: true });
+                          .doc(mainRes.id)
+                          .set(
+                            {
+                              id: mainRes.id,
+                            },
+                            { merge: true }
+                          );
                       });
-                  }
-                });
-            } else if (
-              doc1.data().uid === facebookbStatus.uid &&
-              doc1.data().status === "ongoing"
-            ) {
-              // 情況2.2 => docID不存在 && data().uid = fb.uid && status='ongoing'
-              console.log("情況2.2");
+                  });
+                } else {
+                  // 情況2.3 => 團號不存在，創建一筆新團號
+                  console.log("情況二.3");
 
-              orderListRef
-                .doc(doc1.data().id)
-                .collection("records")
-                .add({
-                  uid: facebookbStatus.uid,
-                  displayName: facebookbStatus.displayName,
-                  email: facebookbStatus.email,
-                  name: mealPopupDetail.name,
-                  qty: record.qty,
-                  price: record.price,
-                  size: record.size,
-                  sugar: record.sugar,
-                  canChooseIce: record.canChooseIce,
-                  ice: record.ice,
-                })
-                .then((mainRes) => {
                   orderListRef
-                    .doc(doc1.data().id)
-                    .collection("records")
-                    .doc(mainRes.id)
-                    .set({ id: mainRes.id }, { merge: true });
-                });
-            } else {
-              // 情況2.3 => 團號不存在，創建一筆新團號
-              console.log("情況2.3");
-
-              orderListRef
-                .add({
-                  status: "ongoing",
-                  uid: facebookbStatus.uid,
-                })
-                .then((nonfix) => {
-                  orderListRef
-                    .doc(nonfix.id)
-                    .set({ id: nonfix.id }, { merge: true });
-                  orderListRef
-                    .doc(nonfix.id)
-                    .collection("records")
                     .add({
+                      status: "ongoing",
                       uid: facebookbStatus.uid,
-                      displayName: facebookbStatus.displayName,
-                      email: facebookbStatus.email,
-                      name: mealPopupDetail.name,
-                      qty: record.qty,
-                      price: record.price,
-                      size: record.size,
-                      sugar: record.sugar,
-                      canChooseIce: record.canChooseIce,
-                      ice: record.ice,
                     })
-                    .then((recordResult) => {
+                    .then((nonfix) => {
+                      orderListRef
+                        .doc(nonfix.id)
+                        .set({ id: nonfix.id }, { merge: true });
                       orderListRef
                         .doc(nonfix.id)
                         .collection("records")
-                        .doc(recordResult.id)
-                        .set({ id: recordResult.id }, { merge: true });
+                        .add({
+                          uid: facebookbStatus.uid,
+                          displayName: facebookbStatus.displayName,
+                          email: facebookbStatus.email,
+                          name: mealPopupDetail.name,
+                          qty: record.qty,
+                          price: record.price,
+                          size: record.size,
+                          sugar: record.sugar,
+                          canChooseIce: record.canChooseIce,
+                          ice: record.ice,
+                        })
+                        .then((recordResult) => {
+                          orderListRef
+                            .doc(nonfix.id)
+                            .collection("records")
+                            .doc(recordResult.id)
+                            .set({ id: recordResult.id }, { merge: true });
+                        });
                     });
-                });
-            }
-            if (
-              getVariable().docID === null &&
-              doc1.data().uid === facebookbStatus.uid &&
-              doc1.data().status === "ongoing"
-            ) {
-              orderListRef
-                .doc(doc1.id)
-                .collection("records")
-                .add({
-                  uid: facebookbStatus.uid,
-                  displayName: facebookbStatus.displayName,
-                  email: facebookbStatus.email,
-                  name: mealPopupDetail.name,
-                  qty: record?.qty,
-                  price: record?.price,
-                  size: record?.size,
-                  sugar: record?.sugar,
-                  canChooseIce: record?.canChooseIce,
-                  ice: record?.ice,
-                })
-                .then((res) => {
-                  orderListRef
-                    .doc(doc1.id)
-                    .collection("records")
-                    .doc(res.id)
-                    .set({ id: res.id }, { merge: true });
-                });
-            } else if (getVariable().docID !== null) {
-              orderListRef.doc(getVariable().docID).collection("records").add({
-                uid: facebookbStatus.uid,
-                displayName: facebookbStatus.displayName,
-                email: facebookbStatus.email,
-                name: mealPopupDetail.name,
-                qty: record.qty,
-                price: record.price,
-                size: record.size,
-                sugar: record.sugar,
-                canChooseIce: record.canChooseIce,
-                ice: record.ice,
+                }
               });
-            } else {
-              orderListRef
-                .add({
-                  status: "ongoing",
-                  uid: facebookbStatus.uid,
-                })
-                .then((res4) => {
-                  // 1. merge id
-                  orderListRef.doc(res4.id).set(
-                    {
-                      id: res4.id,
-                    },
-                    { merge: true }
-                  );
-                  // 2. set collection('records')
-                  orderListRef
-                    .doc(res4.id)
-                    .collection("records")
-                    .add({
-                      uid: facebookbStatus.uid,
-                      displayName: facebookbStatus.displayName,
-                      email: facebookbStatus.email,
-                      name: mealPopupDetail.name,
-                      qty: record.qty,
-                      price: record.price,
-                      size: record.size,
-                      sugar: record.sugar,
-                      canChooseIce: record.canChooseIce,
-                      ice: record.ice,
-                    })
-                    .then((res5) => {
-                      orderListRef
-                        .doc(res4.id)
-                        .collection("records")
-                        .doc(res5.id)
-                        .set({ id: res5.id }, { merge: true });
-                    });
-                });
-            }
-          });
+          }
         }
       });
       setMealPopupSwitch(false);
