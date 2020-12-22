@@ -119,7 +119,6 @@ function Login() {
       });
   }
   function nativeSignUp() {
-    console.log("AA");
     firebase
       .auth()
       .createUserWithEmailAndPassword(account, password)
@@ -127,13 +126,11 @@ function Login() {
         console.log(user);
         // 紀錄在 db
         let userRef = db.collection("users");
-        userRef
-          .doc(firebase.auth().currentUser.uid)
-          .set({
-            userName: name,
-            userEmail: account,
-            uid: firebase.auth().currentUser.uid,
-          });
+        userRef.doc(firebase.auth().currentUser.uid).set({
+          userName: name,
+          userEmail: account,
+          uid: firebase.auth().currentUser.uid,
+        });
         // 跳轉至前一頁
         history.goBack();
       })

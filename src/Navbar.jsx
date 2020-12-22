@@ -34,7 +34,7 @@ function Navbar({ facebookbStatus }) {
           },
         });
         // 2. 跳轉至首頁
-        history.push("/");
+        history.push("/main");
       });
   }
 
