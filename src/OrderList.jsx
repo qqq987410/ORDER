@@ -22,6 +22,7 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
   let history = useHistory();
   let [cartLists, setCartLists] = useState([]);
 
+  console.log(cartLists);
   useEffect(() => {
     if (facebookbStatus.status === true) {
       ref
@@ -106,9 +107,9 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           Swal.fire("成功!", "訂單已送至給開團者", "success");
           // 導轉至 Home Page
           if (getVariable().special) {
-            history.push("/?special=true");
+            history.push("/main?special=true");
           } else {
-            history.push("/");
+            history.push("/main");
           }
         }
       });
