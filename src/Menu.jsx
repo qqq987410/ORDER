@@ -58,33 +58,64 @@ function Menu({
   );
 
   // 4. 從db撈訂單長度
-  let orderListRef = db.collection("orderList");
-  orderListRef.get().then((lengthRes) => {
-    lengthRes.forEach((lengthhDoc) => {
-      // if(getVariable().)
-      //  orderListRef.onSnapshot((onSnapshot) => {
-      //     orderListRef
-      //        .where("uid", "==", facebookbStatus.uid)
-      //        .where("status", "==", "ongoing")
-      //        .get()
-      //        .then((res) => {
-      //           res.forEach((doc) => {
-      //              orderListRef
-      //                 .doc(doc.id)
-      //                 .collection("records")
-      //                 .onSnapshot((onSnapshot_2) => {
-      //                    let totalPrice = 0;
-      //                    //  setCartListLength(onSnapshot_2.size);
-      //                    onSnapshot_2.forEach((doc_2) => {
-      //                       totalPrice += doc_2.data().price * doc_2.data().qty;
-      //                    });
-      //                    //  setCartListTotalPrice(totalPrice);
-      //                 });
-      //           });
-      //        });
-      //  });
+  useEffect(() => {
+    console.log(facebookbStatus.status);
+
+    let orderListRef = db.collection("orderList");
+    orderListRef.onSnapshot((onSnapshotRes) => {
+      onSnapshotRes.forEach((onSnapshotAgainDoc) => {
+        orderListRef
+          .doc(onSnapshotAgainDoc.data().id)
+          .collection("records")
+          .onSnapshot((recordsSnapShot) => {
+            if (getVariable().docID !== null) {
+              // 情況一 => docID存在
+              console.log("情況一 => docID存在");
+
+              orderListRef
+                .doc(getVariable().docID)
+                .get()
+                .then((docIDRes) => {
+                  if (docIDRes.data().status === "ongoing") {
+                    orderListRef
+                      .doc(getVariable().docID)
+                      .collection("records")
+                      .where("uid", "==", facebookbStatus.uid)
+                      .get()
+                      .then((followerRes) => {
+                        let followerLength = [];
+                        followerRes.forEach((followerDoc) => {
+                          followerLength.push(followerDoc.data());
+                        });
+                        setCartLength(followerLength.length);
+                      });
+                  }
+                });
+            } else {
+              // 情況二 => docID不存在
+              console.log("情況二 => docID不存在");
+
+              onSnapshotRes.forEach((onSnapshotDoc) => {
+                console.log(onSnapshotDoc.data());
+                if (
+                  onSnapshotDoc.data().uid === facebookbStatus.uid &&
+                  onSnapshotDoc.data().status === "ongoing"
+                ) {
+                  orderListRef
+                    .doc(onSnapshotDoc.data().id)
+                    .collection("records")
+                    .get()
+                    .then((totalMealRes) => {
+                      setCartLength(totalMealRes.size);
+                    });
+                }
+              });
+            }
+          });
+      });
     });
-  });
+  }, [facebookbStatus.status]);
+
   function teamBuying() {
     if (facebookbStatus.status === true) {
       setTeamBuyingPopup(true);
@@ -141,44 +172,6 @@ function Menu({
           }
         }
       });
-
-      //  let ref = db.collection("orderList");
-      //  ref.get().then((res) => {
-      //     if (res.size !== 0) {
-      //        let ctrl = true;
-      //        let docIDExixt = true;
-      //        let historyStatusLength = 0;
-      //        res.forEach((doc) => {
-      //           if (getVariable().docID) {
-      //              ctrl = false;
-      //              docIDExixt = false;
-      //              setURL(`${window.location.href}&docID=${getVariable().docID}`);
-      //           } else if (doc.data().uid === facebookbStatus.uid && doc.data().status === "ongoing" && docIDExixt) {
-      //              ctrl = false;
-      //              setURL(`${window.location.href}&docID=${doc.id}`);
-      //           } else if (doc.data().status === "history") {
-      //              historyStatusLength++;
-      //              if (historyStatusLength === res.size) {
-      //                 ref.add({
-      //                    status: "ongoing",
-      //                    uid: facebookbStatus.uid,
-      //                 }).then((res) => {
-      //                    ref.doc(res.id).set({ id: res.id }, { merge: true });
-      //                    setURL(`${window.location.href}&docID=${res.id}`);
-      //                 });
-      //              }
-      //           }
-      //        });
-      //     } else {
-      //        ref.add({
-      //           status: "ongoing",
-      //           uid: facebookbStatus.uid,
-      //        }).then((res) => {
-      //           ref.doc(res.id).set({ id: res.id }, { merge: true });
-      //           setURL(`${window.location.href}&docID=${res.id}&special=true`);
-      //        });
-      //     }
-      //  });
     } else {
       Swal.fire({
         icon: "error",
@@ -521,6 +514,8 @@ function MealPoppup({
                         .doc(specificRes.id)
                         .set({ id: specificRes.id }, { merge: true });
                     });
+                } else {
+                  Swal.fire("此團已關閉");
                 }
               });
           } else {
@@ -604,75 +599,9 @@ function MealPoppup({
         }
       });
       setMealPopupSwitch(false);
+    } else {
+      Swal.fire({ icon: "error", title: "尚未登錄會員" });
     }
-  }
-  /*Swal.fire({icon: "error",title: "尚未登錄會員"});*/
-
-  function test() {
-    ref.get().then((res) => {
-      if (res.size === 0) {
-      } else {
-        let switcher = true;
-        res.forEach((doc) => {
-          if (
-            (doc.data().uid === facebookbStatus.uid ||
-              getVariable().docID !== null) &&
-            doc.data().status === "ongoing"
-          ) {
-            switcher = false;
-            ref
-              .doc(doc.id)
-              .collection("records")
-              .add({
-                name: mealPopupDetail.name,
-                price: mealPopupDetail.price,
-                qty: mealPopupDetail.qty,
-                uid: facebookbStatus.uid,
-                displayName: facebookbStatus.displayName,
-                email: facebookbStatus.email,
-              })
-              .then((res) => {
-                ref
-                  .doc(doc.id)
-                  .collection("records")
-                  .doc(res.id)
-                  .set({ id: res.id }, { merge: true });
-              });
-          }
-        });
-        if (switcher) {
-          console.log("BBB");
-          ref
-            .add({
-              status: "ongoing",
-              uid: facebookbStatus.uid,
-            })
-            .then((response) => {
-              console.log(response.id);
-              ref.doc(response.id).set({ id: response.id }, { merge: true });
-              ref
-                .doc(response.id)
-                .collection("records")
-                .add({
-                  name: mealPopupDetail.name,
-                  price: mealPopupDetail.price,
-                  qty: mealPopupDetail.qty,
-                  uid: facebookbStatus.uid,
-                  displayName: facebookbStatus.displayName,
-                  email: facebookbStatus.email,
-                })
-                .then((response_2) => {
-                  ref
-                    .doc(response.id)
-                    .collection("records")
-                    .doc(response_2.id)
-                    .set({ id: response_2.id }, { merge: true });
-                });
-            });
-        }
-      }
-    });
-    setMealPopupSwitch(false);
   }
 
   return (
