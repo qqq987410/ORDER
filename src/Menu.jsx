@@ -28,6 +28,8 @@ function Menu({
   const [mealPopupDetail, setMealPopupDetail] = useState({});
   const [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
   const [cartLength, setCartLength] = useState(0);
+  const [cartPrice, setCartPrice] = useState(0);
+  const [myOrders, setMyOrders] = useState([]);
   const [URL, setURL] = useState();
   const history = useHistory();
 
@@ -56,65 +58,84 @@ function Menu({
       {restaurantDetail.businessHour[1]}
     </div>
   );
-
-  // 4. 從db撈訂單長度
+  // 4. 從db撈訂單長度 & myOrders
   useEffect(() => {
-    console.log(facebookbStatus.status);
+    if (facebookbStatus.status) {
+      console.log(facebookbStatus);
 
-    let orderListRef = db.collection("orderList");
-    orderListRef.onSnapshot((onSnapshotRes) => {
-      onSnapshotRes.forEach((onSnapshotAgainDoc) => {
-        orderListRef
-          .doc(onSnapshotAgainDoc.data().id)
-          .collection("records")
-          .onSnapshot((recordsSnapShot) => {
-            if (getVariable().docID !== null) {
-              // 情況一 => docID存在
-              console.log("情況一 => docID存在");
+      let orderListRef = db.collection("orderList");
+      orderListRef.onSnapshot((onSnapshotRes) => {
+        onSnapshotRes.forEach((onSnapshotAgainDoc) => {
+          orderListRef
+            .doc(onSnapshotAgainDoc.data().id)
+            .collection("records")
+            .onSnapshot((recordsSnapShot) => {
+              if (getVariable().docID !== null) {
+                // 情況一 => docID存在
+                console.log("情況一 => docID存在");
 
-              orderListRef
-                .doc(getVariable().docID)
-                .get()
-                .then((docIDRes) => {
-                  if (docIDRes.data().status === "ongoing") {
-                    orderListRef
-                      .doc(getVariable().docID)
-                      .collection("records")
-                      .where("uid", "==", facebookbStatus.uid)
-                      .get()
-                      .then((followerRes) => {
-                        let followerLength = [];
-                        followerRes.forEach((followerDoc) => {
-                          followerLength.push(followerDoc.data());
+                orderListRef
+                  .doc(getVariable().docID)
+                  .get()
+                  .then((docIDRes) => {
+                    if (docIDRes.data().status === "ongoing") {
+                      console.log(facebookbStatus.uid);
+                      orderListRef
+                        .doc(getVariable().docID)
+                        .collection("records")
+                        .where("uid", "==", facebookbStatus.uid)
+                        .get()
+                        .then((followerRes) => {
+                          let followerLength = [];
+                          followerRes.forEach((followerDoc) => {
+                            followerLength.push(followerDoc.data());
+                          });
+                          setCartLength(followerLength.length);
+                          setMyOrders(followerLength);
                         });
-                        setCartLength(followerLength.length);
+                    }
+                  });
+              } else {
+                // 情況二 => docID不存在
+                console.log("情況二 => docID不存在");
+
+                onSnapshotRes.forEach((onSnapshotDoc) => {
+                  console.log(onSnapshotDoc.data());
+                  if (
+                    onSnapshotDoc.data().uid === facebookbStatus.uid &&
+                    onSnapshotDoc.data().status === "ongoing"
+                  ) {
+                    orderListRef
+                      .doc(onSnapshotDoc.data().id)
+                      .collection("records")
+                      .get()
+                      .then((totalMealRes) => {
+                        setCartLength(totalMealRes.size);
+                        let ownerOrderList = [];
+                        totalMealRes.forEach((totalMealDoc) => {
+                          ownerOrderList.push(totalMealDoc.data());
+                        });
+                        setMyOrders(ownerOrderList);
                       });
                   }
                 });
-            } else {
-              // 情況二 => docID不存在
-              console.log("情況二 => docID不存在");
-
-              onSnapshotRes.forEach((onSnapshotDoc) => {
-                console.log(onSnapshotDoc.data());
-                if (
-                  onSnapshotDoc.data().uid === facebookbStatus.uid &&
-                  onSnapshotDoc.data().status === "ongoing"
-                ) {
-                  orderListRef
-                    .doc(onSnapshotDoc.data().id)
-                    .collection("records")
-                    .get()
-                    .then((totalMealRes) => {
-                      setCartLength(totalMealRes.size);
-                    });
-                }
-              });
-            }
-          });
+              }
+            });
+        });
       });
-    });
+    }
   }, [facebookbStatus.status]);
+
+  // 5. 總金額計算
+  console.log(myOrders);
+
+  useEffect(() => {
+    let initPrice = 0;
+    myOrders.forEach((dish) => {
+      initPrice += dish.price * dish.qty;
+    });
+    setCartPrice(initPrice);
+  }, [myOrders]);
 
   function teamBuying() {
     if (facebookbStatus.status === true) {
@@ -286,7 +307,7 @@ function Menu({
               <span>{cartLength}</span>
               <Cart className={styles.cart} />
               購物車
-              <div className={styles.totalPrice}>xxxx</div>
+              <div className={styles.totalPrice}>{cartPrice}</div>
             </div>
           </div>
         </div>

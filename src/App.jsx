@@ -56,6 +56,7 @@ function App() {
     //  判斷 FB 登錄狀態
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
+        // console.log(user.uid);
         setFacebookbStatus({
           status: true,
           uid: user.uid,
