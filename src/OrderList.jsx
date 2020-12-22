@@ -19,32 +19,52 @@ import getVariable from "./Variable";
 
 function OrderList({ facebookbStatus, cartListTotalPrice }) {
   let ref = db.collection("orderList");
+  let orderListRef = db.collection("orderList");
   let history = useHistory();
   let [cartLists, setCartLists] = useState([]);
+  let [orderListPrice, setOrderListPrice] = useState(0);
 
   console.log(cartLists);
   useEffect(() => {
     if (facebookbStatus.status === true) {
-      ref
-        .where("status", "==", "ongoing")
-        .where("uid", "==", facebookbStatus.uid)
-        .get()
-        .then((res) => {
-          res.forEach((doc) => {
-            ref
-              .doc(doc.id)
-              .collection("records")
-              .onSnapshot((onSnapshot) => {
-                let newCartLists = [];
-                onSnapshot.forEach((doc) => {
-                  newCartLists.push(doc.data());
-                });
-                setCartLists(newCartLists);
-              });
+      orderListRef
+        .doc(getVariable().docID)
+        .collection("records")
+        .onSnapshot((history) => {
+          let newCartLists = [];
+          history.forEach((historyDoc) => {
+            console.log(historyDoc.data());
+            newCartLists.push(historyDoc.data());
           });
+          setCartLists(newCartLists);
         });
+      // ref
+      //   .where("status", "==", "ongoing")
+      //   .where("uid", "==", facebookbStatus.uid)
+      //   .get()
+      //   .then((res) => {
+      //     res.forEach((doc) => {
+      //       ref
+      //         .doc(doc.id)
+      //         .collection("records")
+      //         .onSnapshot((onSnapshot) => {
+      //           let newCartLists = [];
+      //           onSnapshot.forEach((doc) => {
+      //             newCartLists.push(doc.data());
+      //           });
+      //           setCartLists(newCartLists);
+      //         });
+      //     });
+      //   });
     }
   }, [facebookbStatus]);
+  useEffect(() => {
+    let initPrice = 0;
+    cartLists.forEach((item) => {
+      initPrice += item.price * item.qty;
+    });
+    setOrderListPrice(initPrice);
+  }, [cartLists]);
 
   function previousPage() {
     if (getVariable().special) {
@@ -125,7 +145,7 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           </div>
           <div className={styles.totalPrice}>
             <img src={dollarSign} alt="money icon" />
-            <p>{cartListTotalPrice}</p>
+            <p>{orderListPrice}</p>
           </div>
         </div>
         <div className={styles.middle}>
@@ -142,6 +162,7 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
                 key={nanoid()}
                 facebookbStatus={facebookbStatus}
                 setCartLists={setCartLists}
+                dishData={item}
               />
             );
           })}
@@ -173,6 +194,7 @@ function Item({
   displayName,
   facebookbStatus,
   setCartLists,
+  dishData,
 }) {
   let ref = db.collection("orderList");
   function deleteItem(e) {
@@ -199,7 +221,8 @@ function Item({
       <div className={styles.left}>
         <div className={styles.title}>{name}</div>
         <div className={styles.orderDetail}>
-          ${price} / {qty} 份 / ?? / ?? /
+          ${price} / {qty} 份 / {dishData.size !== "" ? dishData.size : null} /{" "}
+          {dishData.ice} / {dishData.sugar} /
         </div>
       </div>
       <div className={styles.right}>
