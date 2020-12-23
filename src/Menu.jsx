@@ -61,8 +61,6 @@ function Menu({
   // 4. 從db撈訂單長度 & myOrders
   useEffect(() => {
     if (facebookbStatus.status) {
-      console.log(facebookbStatus);
-
       let orderListRef = db.collection("orderList");
       orderListRef.onSnapshot((onSnapshotRes) => {
         onSnapshotRes.forEach((onSnapshotAgainDoc) => {
@@ -79,7 +77,6 @@ function Menu({
                   .get()
                   .then((docIDRes) => {
                     if (docIDRes.data().status === "ongoing") {
-                      console.log(facebookbStatus.uid);
                       orderListRef
                         .doc(getVariable().docID)
                         .collection("records")
@@ -100,7 +97,6 @@ function Menu({
                 console.log("情況二 => docID不存在");
 
                 onSnapshotRes.forEach((onSnapshotDoc) => {
-                  console.log(onSnapshotDoc.data());
                   if (
                     onSnapshotDoc.data().uid === facebookbStatus.uid &&
                     onSnapshotDoc.data().status === "ongoing"
@@ -127,8 +123,6 @@ function Menu({
   }, [facebookbStatus.status]);
 
   // 5. 總金額計算
-  console.log(myOrders);
-
   useEffect(() => {
     let initPrice = 0;
     myOrders.forEach((dish) => {
@@ -218,10 +212,6 @@ function Menu({
     }
   }
   function linkToOrderList() {
-    // if (facebookbStatus.status === true) {
-    //    let orderListRef = db.collection("orderList");
-    //    orderListRef.get().then(res1=>{
-    //      res1.forEach(doc1=>{
     if (facebookbStatus.status === true) {
       let ref = db.collection("orderList");
       ref.get().then((res) => {
@@ -254,6 +244,24 @@ function Menu({
                 }
               })
               .then(() => {});
+          } else if (
+            doc.data().uid !== facebookbStatus.uid &&
+            doc.data().status === "ongoing" &&
+            getVariable().docID !== null
+          ) {
+            if (getVariable().special) {
+              history.push(
+                `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
+                  doc.id
+                }&special=true`
+              );
+            } else {
+              history.push(
+                `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
+                  doc.id
+                }`
+              );
+            }
           }
         });
       });
@@ -456,6 +464,21 @@ function MealPoppup({
   }
   function addToCart() {
     if (facebookbStatus.status === true) {
+      /* */
+      //  if (getVariable().docID !== null && getVariable().special) {
+      //     let orderListRef = db.collection("orderList");
+      //     orderListRef
+      //        .doc(getVariable().docID)
+      //        .get()
+      //        .then((checkGroupIsOngoingRes) => {
+      //           console.log(checkGroupIsOngoingRes.data().status);
+      //           if(checkGroupIsOngoingRes.data().status==='ongoing'){
+      //             let newLists=[]
+      //             location.set('carLists',)
+      //           }
+      //        });
+      //  }
+      /* */
       let orderListRef = db.collection("orderList");
       orderListRef.get().then((res1) => {
         if (res1.size === 0) {
@@ -511,7 +534,6 @@ function MealPoppup({
               .doc(getVariable().docID)
               .get()
               .then((specific) => {
-                console.log(specific.data());
                 if (specific.data() && specific.data().status === "ongoing") {
                   orderListRef
                     .doc(getVariable().docID)

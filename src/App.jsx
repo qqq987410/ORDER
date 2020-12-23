@@ -9,7 +9,6 @@ import {
 } from "react-router-dom";
 import Navbar from "./Navbar";
 import Home from "./Home";
-import Main from "./Main";
 import Menu from "./Menu";
 import OrderList from "./OrderList";
 import History from "./History";
@@ -74,10 +73,7 @@ function App() {
       <Navbar facebookbStatus={facebookbStatus} />
       <Switch>
         <Route exact path="/">
-          <Home />
-        </Route>
-        <Route path="/main">
-          <Main data={data} />
+          <Home data={data} />
         </Route>
         <Route path="/menu">
           <Menu
@@ -134,40 +130,6 @@ data.forEach((item) => {
                   sugar: meal.sugar === undefined ? null : meal.sugar,
                   ice: meal.ice === undefined ? null : meal.ice,
                   id: meal.id,
-               });
-         });
-      });
-});
-=====================================*/
-/*===============Old===================
-let reff = db.collection("restaurant");
-data.forEach((item) => {
-   reff
-      .add({
-         address: item.address,
-         businessHour: item.businessHour,
-         category: item.category,
-         phoneNumber: item.phoneNumber,
-         photo: item.photo,
-         title: item.title,
-      })
-      .then((res) => {
-         item.menu.forEach((meal) => {
-            reff.doc(res.id).set({ id: res.id }, { merge: true });
-            reff
-               .doc(res.id)
-               .collection("menu")
-               .add({
-                  price: meal.price,
-                  title: meal.name,
-                  class: meal.class,
-                  sizeOption: meal.sizeOption,
-                  sizeAndPrice: meal.sizeAndPrice,
-                  sugar: meal.sugar === undefined ? null : meal.sugar,
-                  ice: meal.ice === undefined ? null : meal.ice,
-               })
-               .then((result) => {
-                  reff.doc(res.id).collection("menu").doc(result.id).set({ id: result.id }, { merge: true });
                });
          });
       });

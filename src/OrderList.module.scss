@@ -67,6 +67,23 @@
           .orderDetail {
             color: rgb(113, 113, 113);
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            .price {
+            }
+            .qty {
+              &:before {
+                content: "/";
+                margin-left: 5px;
+                margin-right: 5px;
+              }
+            }
+            .size {
+            }
+            .ice {
+            }
+            .sugar {
+            }
           }
         }
         .right {

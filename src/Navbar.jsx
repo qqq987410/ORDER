@@ -34,7 +34,11 @@ function Navbar({ facebookbStatus }) {
           },
         });
         // 2. 跳轉至首頁
-        history.push("/main");
+        if (getVariable().special) {
+          history.push("/");
+        } else {
+          history.push("/?special=true");
+        }
       });
   }
 
@@ -42,11 +46,11 @@ function Navbar({ facebookbStatus }) {
     <nav className={styles.navbar}>
       <div className={styles.logo}>
         {getVariable().special ? (
-          <Link to="/main?special=true">
+          <Link to="/?special=true">
             <img src={logo} alt="logo" />
           </Link>
         ) : (
-          <Link to="/main">
+          <Link to="/">
             <img src={logo} alt="logo" />
           </Link>
         )}
@@ -61,9 +65,6 @@ function Navbar({ facebookbStatus }) {
             <Link to="/history">歷史訂單</Link>
           </div>
         )}
-        {/* <div className={styles.mainPage}>
-               <Link to="/main">所有餐廳</Link>
-            </div> */}
         {facebookbStatus.status ? (
           <div className={styles.logOutPage} id="logOut" onClick={signOut}>
             登出

@@ -6,8 +6,8 @@ function getVariable() {
   let restaurantID = urlParams.get("restaurantID");
   let docID = urlParams.get("docID");
   let special = urlParams.get("special");
-  let ref = db.collection("orderList");
+  let orderListRef = db.collection("orderList");
 
-  return { search, restaurantID, docID, special, ref };
+  return { search, restaurantID, docID, special, orderListRef };
 }
 export default getVariable;

@@ -90,17 +90,17 @@ function Login() {
   }
   function googleSignInHandler() {
     let provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope("email");
     firebase
       .auth()
       .signInWithPopup(provider)
       .then(function (result) {
-        let user = firebase.auth().currentUser;
-
         let userName = result.user.displayName;
-        let userEmail = result.user.email;
+        let userEmail = result.additionalUserInfo.profile.email;
         let uid = result.user.uid;
-        console.log(userName, userEmail, uid);
+
         console.log("您被選中入宮當秀女 Google");
+
         // 紀錄在 db
         db.collection("users").doc(uid).set({
           userName: userName,
@@ -123,7 +123,21 @@ function Login() {
       .auth()
       .createUserWithEmailAndPassword(account, password)
       .then((user) => {
-        console.log(user);
+        // Update
+        var user = firebase.auth().currentUser;
+        user
+          .updateProfile({
+            displayName: name,
+            photoURL: "https://example.com/jane-q-user/profile.jpg",
+          })
+          .then(function () {
+            console.log("success");
+          })
+          .catch(function (error) {
+            console.log("error");
+          });
+
+        console.log("user=", user);
         // 紀錄在 db
         let userRef = db.collection("users");
         userRef.doc(firebase.auth().currentUser.uid).set({

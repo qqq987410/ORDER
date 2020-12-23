@@ -14,7 +14,6 @@ import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-// import { restaurantID, docID } from "./Variable";
 import getVariable from "./Variable";
 
 function OrderList({ facebookbStatus, cartListTotalPrice }) {
@@ -24,7 +23,6 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
   let [cartLists, setCartLists] = useState([]);
   let [orderListPrice, setOrderListPrice] = useState(0);
 
-  console.log(cartLists);
   useEffect(() => {
     if (facebookbStatus.status === true) {
       orderListRef
@@ -33,29 +31,12 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
         .onSnapshot((history) => {
           let newCartLists = [];
           history.forEach((historyDoc) => {
-            console.log(historyDoc.data());
-            newCartLists.push(historyDoc.data());
+            if (historyDoc.data().uid === facebookbStatus.uid) {
+              newCartLists.push(historyDoc.data());
+            }
           });
           setCartLists(newCartLists);
         });
-      // ref
-      //   .where("status", "==", "ongoing")
-      //   .where("uid", "==", facebookbStatus.uid)
-      //   .get()
-      //   .then((res) => {
-      //     res.forEach((doc) => {
-      //       ref
-      //         .doc(doc.id)
-      //         .collection("records")
-      //         .onSnapshot((onSnapshot) => {
-      //           let newCartLists = [];
-      //           onSnapshot.forEach((doc) => {
-      //             newCartLists.push(doc.data());
-      //           });
-      //           setCartLists(newCartLists);
-      //         });
-      //     });
-      //   });
     }
   }, [facebookbStatus]);
   useEffect(() => {
@@ -74,11 +55,7 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
         }&special=true`
       );
     } else {
-      history.push(
-        `./menu?restaurantID=${getVariable().restaurantID}&docID=${
-          getVariable().docID
-        }`
-      );
+      history.push(`./menu?restaurantID=${getVariable().restaurantID}`);
     }
   }
   function checkout() {
@@ -127,9 +104,9 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           Swal.fire("成功!", "訂單已送至給開團者", "success");
           // 導轉至 Home Page
           if (getVariable().special) {
-            history.push("/main?special=true");
+            history.push("/?special=true");
           } else {
-            history.push("/main");
+            history.push("/");
           }
         }
       });
@@ -173,8 +150,8 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           </button>
 
           {getVariable().special ? (
-            <button className={styles.join} onClick={join}>
-              參加揪團
+            <button className={styles.checkout} onClick={checkout}>
+              送單給團長
             </button>
           ) : (
             <button className={styles.checkout} onClick={checkout}>
@@ -221,8 +198,17 @@ function Item({
       <div className={styles.left}>
         <div className={styles.title}>{name}</div>
         <div className={styles.orderDetail}>
-          ${price} / {qty} 份 / {dishData.size !== "" ? dishData.size : null} /{" "}
-          {dishData.ice} / {dishData.sugar} /
+          <div className={styles.price}>{price}</div>
+          <div className={styles.qty}> {qty}份</div>
+          {dishData.size !== "" ? (
+            <div className={styles.size}>{dishData.size}</div>
+          ) : null}
+          {dishData.ice !== "" ? (
+            <div className={styles.ice}>{dishData.ice}</div>
+          ) : null}
+          {dishData.sugar !== "" ? (
+            <div className={styles.sugar}>{dishData.sugar}</div>
+          ) : null}
         </div>
       </div>
       <div className={styles.right}>
