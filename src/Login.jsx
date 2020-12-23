@@ -22,6 +22,7 @@ function Login() {
   const [password, setPassword] = useState("");
 
   const history = useHistory();
+  console.log(firebase.auth().currentUser);
 
   function signInAnimation() {
     let min = document.getElementById("min");
@@ -89,13 +90,12 @@ function Login() {
   }
   function googleSignInHandler() {
     let provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({
-      prompt: "select_account",
-    });
     firebase
       .auth()
       .signInWithPopup(provider)
       .then(function (result) {
+        let user = firebase.auth().currentUser;
+
         let userName = result.user.displayName;
         let userEmail = result.user.email;
         let uid = result.user.uid;
