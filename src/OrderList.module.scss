@@ -79,10 +79,25 @@
               }
             }
             .size {
+              &:before {
+                content: "/";
+                margin-left: 5px;
+                margin-right: 5px;
+              }
             }
             .ice {
+              &:before {
+                content: "/";
+                margin-left: 5px;
+                margin-right: 5px;
+              }
             }
             .sugar {
+              &:before {
+                content: "/";
+                margin-left: 5px;
+                margin-right: 5px;
+              }
             }
           }
         }

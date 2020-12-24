@@ -39,6 +39,7 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
         });
     }
   }, [facebookbStatus]);
+
   useEffect(() => {
     let initPrice = 0;
     cartLists.forEach((item) => {
@@ -198,8 +199,8 @@ function Item({
       <div className={styles.left}>
         <div className={styles.title}>{name}</div>
         <div className={styles.orderDetail}>
-          <div className={styles.price}>{price}</div>
-          <div className={styles.qty}> {qty}份</div>
+          <div className={styles.price}>{price}元</div>
+          <div className={styles.qty}>{qty}份</div>
           {dishData.size !== "" ? (
             <div className={styles.size}>{dishData.size}</div>
           ) : null}
