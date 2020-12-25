@@ -37,7 +37,6 @@
       .lists {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
         align-items: center;
         .dish {
           min-width: 250px;
@@ -48,20 +47,46 @@
           //    background-color: #7a7979db;
           color: #ffffff;
           display: flex;
-          flex-wrap: wrap;
+          //  flex-wrap: wrap;
+          flex-direction: column;
           justify-content: center;
           align-items: center;
           font-size: 12px;
           box-shadow: 3px 3px 10px #7a7979db;
-          .name {
-            font-size: 16px;
-            margin-right: 8px;
+          .top {
+            // width: 100%;
+            // border: 1px solid #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .name {
+              font-size: 16px;
+              margin-right: 8px;
+            }
+            .displayName {
+            }
           }
-          .price {
-            margin-right: 8px;
-          }
-          .qty {
-            margin-right: 8px;
+          .down {
+            // width: 100%;
+            // border: 1px solid #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .price {
+              margin: 0 4px;
+            }
+            .qty {
+              margin: 0 4px;
+            }
+            .size {
+              margin: 0 4px;
+            }
+            .ice {
+              margin: 0 4px;
+            }
+            .sugar {
+              margin: 0 4px;
+            }
           }
         }
       }

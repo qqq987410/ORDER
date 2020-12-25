@@ -5,9 +5,9 @@ import { useEffect, useState, useRef } from "react";
 import { nanoid } from "nanoid";
 
 function History({ facebookbStatus }) {
-  let [bundle, setBundle] = useState([]);
-  let [subBundle, setSubBundle] = useState([]);
-  const latestProps = useRef(bundle);
+  const [bundle, setBundle] = useState([]);
+  const [subBundle, setSubBundle] = useState([]);
+  const [mixBundle, setMixBundle] = useState([]);
 
   useEffect(() => {
     if (facebookbStatus.status) {
@@ -37,6 +37,9 @@ function History({ facebookbStatus }) {
                         name: b_doc.data().name,
                         price: b_doc.data().price,
                         qty: b_doc.data().qty,
+                        size: b_doc.data().size,
+                        ice: b_doc.data().ice,
+                        sugar: b_doc.data().sugar,
                         displayName: b_doc.data().displayName,
                       });
                     });
@@ -47,13 +50,11 @@ function History({ facebookbStatus }) {
                     });
                     // 3.
                     let newHistoryOrderLists = [...historyOrderLists];
+                    console.log(newHistoryOrderLists);
                     setBundle(newHistoryOrderLists);
                     return newHistoryOrderLists;
                   });
               }); // ===end
-            })
-            .then((result) => {
-              console.log(bundle);
             });
 
           // 副揪
@@ -71,7 +72,6 @@ function History({ facebookbStatus }) {
                   .where("uid", "==", facebookbStatus.uid)
                   .get()
                   .then((b_res) => {
-                    console.log("b_res", b_res); //size=0
                     let orderLists = [];
                     b_res.forEach((b_doc) => {
                       // 1.
@@ -79,6 +79,9 @@ function History({ facebookbStatus }) {
                         name: b_doc.data().name,
                         price: b_doc.data().price,
                         qty: b_doc.data().qty,
+                        size: b_doc.data().size,
+                        ice: b_doc.data().ice,
+                        sugar: b_doc.data().sugar,
                         displayName: b_doc.data().displayName,
                       });
                     });
@@ -87,7 +90,6 @@ function History({ facebookbStatus }) {
                       endTime: doc.data().endTime,
                       orderLists: orderLists,
                     });
-                    console.log(historyLists);
                     // 3.
                     let newHistoryLists = [...historyLists];
                     setSubBundle(newHistoryLists);
@@ -99,30 +101,32 @@ function History({ facebookbStatus }) {
     }
   }, [facebookbStatus]);
 
-  console.log("Bundle=", bundle);
+  useEffect(() => {
+    let newBundle = [...bundle, ...subBundle];
+    setMixBundle(newBundle);
+  }, [bundle, subBundle]);
+
+  //  console.log("Bundle=", bundle);
+  //  console.log("subBundle=", subBundle);
+  //  console.log("mixBundle=", mixBundle);
 
   return (
     <div className={styles.out}>
       <div className={styles.in}>
         <div className={styles.historyTitle}>History Order</div>
-        {bundle.map((unit) => {
-          return (
-            <Unit
-              endTime={unit.endTime}
-              orderLists={unit.orderLists}
-              key={nanoid()}
-            />
-          );
-        })}{" "}
-        {subBundle.map((unit) => {
-          return (
-            <Unit
-              endTime={unit.endTime}
-              orderLists={unit.orderLists}
-              key={nanoid()}
-            />
-          );
-        })}
+        {mixBundle
+          .sort((a, b) => (a.endTime.seconds > b.endTime.seconds ? -1 : 1))
+          .map((res) => {
+            if (res.orderLists.length > 0) {
+              return (
+                <Unit
+                  endTime={res.endTime}
+                  orderLists={res.orderLists}
+                  key={nanoid()}
+                />
+              );
+            }
+          })}
       </div>
     </div>
   );
@@ -138,27 +142,26 @@ function Unit({ endTime, orderLists }) {
       <div className={styles.time}>{formatDateTime(endTime)}</div>
       <div className={styles.lists}>
         {orderLists.map((dish) => {
-          return (
-            <Dish
-              name={dish.name}
-              price={dish.price}
-              qty={dish.qty}
-              displayName={dish.displayName}
-              key={nanoid()}
-            />
-          );
+          return <Dish dish={dish} key={nanoid()} />;
         })}
       </div>
     </div>
   );
 }
-function Dish({ name, price, qty, displayName }) {
+function Dish({ dish }) {
   return (
     <div className={styles.dish}>
-      <div className={styles.name}> {name}</div>
-      <div className={styles.price}>{price}元</div>
-      <div className={styles.qty}>{qty}份</div>
-      <div className={styles.displayName}>by {displayName}</div>
+      <div className={styles.top}>
+        <div className={styles.name}> {dish.name}</div>
+        <div className={styles.displayName}>by {dish.displayName}</div>
+      </div>
+      <div className={styles.down}>
+        <div className={styles.price}>{dish.price}元</div>
+        <div className={styles.qty}>{dish.qty}份</div>
+        {dish.size ? <div className={styles.size}>{dish.size}</div> : null}
+        {dish.ice ? <div className={styles.ice}>{dish.ice}</div> : null}
+        {dish.sugar ? <div className={styles.suagr}>{dish.sugar}</div> : null}
+      </div>
     </div>
   );
 }

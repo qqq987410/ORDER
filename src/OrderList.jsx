@@ -16,33 +16,43 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import getVariable from "./Variable";
 
-function OrderList({ facebookbStatus, cartListTotalPrice }) {
+function OrderList({ facebookbStatus }) {
   let ref = db.collection("orderList");
   let orderListRef = db.collection("orderList");
   let history = useHistory();
   let [cartLists, setCartLists] = useState([]);
+  let [followerCartLists, setFollowerCartLists] = useState(
+    localStorage.getItem(getVariable().docID)
+  );
   let [orderListPrice, setOrderListPrice] = useState(0);
 
+  // 1. owner & follower 畫面的 cartLists
   useEffect(() => {
     if (facebookbStatus.status === true) {
-      orderListRef
-        .doc(getVariable().docID)
-        .collection("records")
-        .onSnapshot((history) => {
-          let newCartLists = [];
-          history.forEach((historyDoc) => {
-            if (historyDoc.data().uid === facebookbStatus.uid) {
+      if (getVariable().special) {
+        let followerStorage = JSON.parse(
+          localStorage.getItem(getVariable().docID)
+        );
+        setCartLists(followerStorage);
+      } else {
+        orderListRef
+          .doc(getVariable().docID)
+          .collection("records")
+          .onSnapshot((history) => {
+            let newCartLists = [];
+            history.forEach((historyDoc) => {
               newCartLists.push(historyDoc.data());
-            }
+            });
+            setCartLists(newCartLists);
           });
-          setCartLists(newCartLists);
-        });
+      }
     }
   }, [facebookbStatus]);
 
+  // 2. owner 畫面的 cartLists 中的總金額
   useEffect(() => {
     let initPrice = 0;
-    cartLists.forEach((item) => {
+    cartLists?.forEach((item) => {
       initPrice += item.price * item.qty;
     });
     setOrderListPrice(initPrice);
@@ -81,38 +91,43 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
             { merge: true }
           );
           // 導轉至 History Page
-          if (getVariable().special) {
-            history.push("./history?special=true");
-          } else {
-            history.push(`./history`);
-          }
+          history.push("/history");
         }
       });
     }
   }
-  function join() {
-    if (facebookbStatus.status === true) {
-      Swal.fire({
-        title: "確定產生訂單嗎?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "確定",
-        cancelButtonText: "取消",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire("成功!", "訂單已送至給開團者", "success");
-          // 導轉至 Home Page
-          if (getVariable().special) {
+  function toOwner() {
+    let orderListRef = db.collection("orderList");
+    // ongoing
+    orderListRef
+      .doc(getVariable().docID)
+      .get()
+      .then((currentGroup) => {
+        console.log(currentGroup.data());
+        if (currentGroup.data().status === "ongoing") {
+          // 加入 db
+          cartLists.map((item) => {
+            console.log(item);
+            orderListRef
+              .doc(getVariable().docID)
+              .collection("records")
+              .doc(item.id)
+              .set(item);
+          });
+          // 刪除 LocalStorage
+          localStorage.setItem(getVariable().docID, JSON.stringify([]));
+          setCartLists([]);
+
+          // 跳轉至首頁
+          Swal.fire("訂單已傳送").then(() => {
             history.push("/?special=true");
-          } else {
-            history.push("/");
-          }
+          });
+        } else {
+          Swal.fire("此團已關閉");
         }
       });
-    }
   }
+
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
@@ -127,20 +142,14 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           </div>
         </div>
         <div className={styles.middle}>
-          {cartLists.map((item) => {
+          {cartLists?.map((item) => {
             return (
               <Item
-                name={item.name}
-                price={item.price}
-                qty={item.qty}
-                id={item.id}
-                uid={item.uid}
-                displayName={item.displayName}
-                email={item.email}
-                key={nanoid()}
-                facebookbStatus={facebookbStatus}
-                setCartLists={setCartLists}
                 dishData={item}
+                facebookbStatus={facebookbStatus}
+                followerCartLists={followerCartLists}
+                setCartLists={setCartLists}
+                key={nanoid()}
               />
             );
           })}
@@ -151,7 +160,7 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
           </button>
 
           {getVariable().special ? (
-            <button className={styles.checkout} onClick={checkout}>
+            <button className={styles.checkout} onClick={toOwner}>
               送單給團長
             </button>
           ) : (
@@ -164,43 +173,46 @@ function OrderList({ facebookbStatus, cartListTotalPrice }) {
     </div>
   );
 }
-function Item({
-  name,
-  price,
-  qty,
-  id,
-  displayName,
-  facebookbStatus,
-  setCartLists,
-  dishData,
-}) {
+function Item({ dishData, facebookbStatus, followerCartLists, setCartLists }) {
   let ref = db.collection("orderList");
+
   function deleteItem(e) {
-    if (facebookbStatus.status === true && e.target.id === "trash") {
-      ref
-        .doc(getVariable().docID)
-        .collection("records")
-        .get()
-        .then((onSnapshot) => {
-          onSnapshot.forEach((doc) => {
-            if (doc.data().id === id) {
-              ref
-                .doc(getVariable().docID)
-                .collection("records")
-                .doc(doc.data().id)
-                .delete();
-            }
+    if (facebookbStatus.status === true && e.target.id === dishData.id) {
+      if (getVariable().special) {
+        console.log("Follower");
+
+        let arr = JSON.parse(localStorage.getItem(getVariable().docID));
+        let newOne = arr.filter((item) => item.id !== e.target.id);
+        localStorage.setItem(getVariable().docID, JSON.stringify(newOne));
+        setCartLists(newOne);
+      } else {
+        console.log("Owner");
+
+        ref
+          .doc(getVariable().docID)
+          .collection("records")
+          .get()
+          .then((onSnapshot) => {
+            onSnapshot.forEach((doc) => {
+              if (doc.data().id === dishData.id) {
+                ref
+                  .doc(getVariable().docID)
+                  .collection("records")
+                  .doc(doc.data().id)
+                  .delete();
+              }
+            });
           });
-        });
+      }
     }
   }
   return (
-    <div className={styles.item} onClick={deleteItem}>
+    <div className={styles.item}>
       <div className={styles.left}>
-        <div className={styles.title}>{name}</div>
+        <div className={styles.title}>{dishData.name}</div>
         <div className={styles.orderDetail}>
-          <div className={styles.price}>{price}元</div>
-          <div className={styles.qty}>{qty}份</div>
+          <div className={styles.price}>{dishData.price}元</div>
+          <div className={styles.qty}>{dishData.qty}份</div>
           {dishData.size !== "" ? (
             <div className={styles.size}>{dishData.size}</div>
           ) : null}
@@ -213,8 +225,14 @@ function Item({
         </div>
       </div>
       <div className={styles.right}>
-        <div className={styles.orderPeople}>By&nbsp;{displayName}</div>
-        <img src={trash} id="trash" alt="trash can" />
+        <div className={styles.orderPeople}>By&nbsp;{dishData.displayName}</div>
+        <img
+          src={trash}
+          id={dishData.id}
+          className={styles.trash}
+          alt="trash can"
+          onClick={deleteItem}
+        />
       </div>
     </div>
   );

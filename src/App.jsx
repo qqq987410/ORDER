@@ -52,10 +52,10 @@ function App() {
   }, [facebookbStatus]);
 
   useEffect(() => {
-    //  判斷 FB 登錄狀態
+    //  判斷登錄狀態
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
-        // console.log(user.uid);
+        console.log(user, user.uid, user.displayName, user.email);
         setFacebookbStatus({
           status: true,
           uid: user.uid,
@@ -79,8 +79,6 @@ function App() {
           <Menu
             data={data}
             facebookbStatus={facebookbStatus}
-            cartListLength={cartListLength}
-            cartListTotalPrice={cartListTotalPrice}
             setCartListTotalPrice={setCartListTotalPrice}
           />
         </Route>
