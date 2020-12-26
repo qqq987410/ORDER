@@ -632,7 +632,8 @@ function MealPoppup({
     sugar: "",
     ice: "",
   });
-
+  console.log(mealPopupDetail);
+  console.log(record);
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
       setMealPopupSwitch(false);
@@ -667,6 +668,40 @@ function MealPoppup({
     setRecord(newRecord);
   }
   function addToCart() {
+    if (mealPopupDetail.sizeOption && record.size === "") {
+      Swal.fire({
+        title: "請選擇Size",
+        showClass: {
+          popup: "animate__animated animate__fadeInDown",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp",
+        },
+      });
+      return;
+    } else if (record.canChooseIce === true && record.ice === "") {
+      Swal.fire({
+        title: "請選擇Ice",
+        showClass: {
+          popup: "animate__animated animate__fadeInDown",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp",
+        },
+      });
+      return;
+    } else if (mealPopupDetail.sugar.length > 0 && record.sugar === "") {
+      Swal.fire({
+        title: "請選擇Sugar",
+        showClass: {
+          popup: "animate__animated animate__fadeInDown",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp",
+        },
+      });
+      return;
+    }
     if (facebookbStatus.status === true) {
       let orderListRef = db.collection("orderList");
       orderListRef.get().then((res1) => {
@@ -709,7 +744,6 @@ function MealPoppup({
                   arr.push(target);
                   setFollowerStorage(JSON.stringify(arr));
                 }
-
                 // ===============change=============
               } else {
                 // 1. merge id
@@ -757,8 +791,6 @@ function MealPoppup({
               .then((specific) => {
                 if (specific.data() && specific.data().status === "ongoing") {
                   console.log("情況二.1.1");
-                  // ===============change=============
-                  //  if (localStorage.getItem(getVariable().docID === null)) {
                   let target = {
                     uid: facebookbStatus.uid,
                     displayName: facebookbStatus.displayName,
@@ -789,32 +821,6 @@ function MealPoppup({
                     );
                     setFollowerStorage(JSON.stringify(arr));
                   }
-                  //  }
-                  // ===============change=============
-                  /* 
-                           orderListRef
-                              .doc(getVariable().docID)
-                              .collection("records")
-                              .add({
-                                 uid: facebookbStatus.uid,
-                                 displayName: facebookbStatus.displayName,
-                                 email: facebookbStatus.email,
-                                 name: mealPopupDetail.name,
-                                 qty: record.qty,
-                                 price: record.price,
-                                 size: record.size,
-                                 sugar: record.sugar,
-                                 canChooseIce: record.canChooseIce,
-                                 ice: record.ice,
-                              })
-                              .then((specificRes) => {
-                                 orderListRef
-                                    .doc(getVariable().docID)
-                                    .collection("records")
-                                    .doc(specificRes.id)
-                                    .set({ id: specificRes.id }, { merge: true });
-                              });
-                            */
                 } else {
                   Swal.fire("此團已關閉");
                 }
@@ -905,7 +911,6 @@ function MealPoppup({
       Swal.fire({ icon: "error", title: "尚未登錄會員" });
     }
   }
-
   return (
     <div className={styles.outer} id="outer" onClick={closeMealPopup}>
       <div className={styles.inner}>
