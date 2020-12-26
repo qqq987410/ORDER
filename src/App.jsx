@@ -20,7 +20,7 @@ import data from "./data";
 // import "firebase/firestore";
 
 function App() {
-  const [facebookbStatus, setFacebookbStatus] = useState({ status: false });
+  const [facebookbStatus, setFacebookbStatus] = useState({});
   const [cartListLength, setCartListLength] = useState(0);
   const [cartListTotalPrice, setCartListTotalPrice] = useState(0);
 
@@ -55,7 +55,7 @@ function App() {
     //  判斷登錄狀態
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
-        console.log(user, user.uid, user.displayName, user.email);
+        // console.log(user, user.uid, user.displayName, user.email);
         setFacebookbStatus({
           status: true,
           uid: user.uid,
@@ -79,6 +79,7 @@ function App() {
           <Menu
             data={data}
             facebookbStatus={facebookbStatus}
+            setFacebookbStatus={setFacebookbStatus}
             setCartListTotalPrice={setCartListTotalPrice}
           />
         </Route>

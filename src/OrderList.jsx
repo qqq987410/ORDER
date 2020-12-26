@@ -103,7 +103,6 @@ function OrderList({ facebookbStatus }) {
       .doc(getVariable().docID)
       .get()
       .then((currentGroup) => {
-        console.log(currentGroup.data());
         if (currentGroup.data().status === "ongoing") {
           // 加入 db
           cartLists.map((item) => {
@@ -120,7 +119,7 @@ function OrderList({ facebookbStatus }) {
 
           // 跳轉至首頁
           Swal.fire("訂單已傳送").then(() => {
-            history.push("/?special=true");
+            history.push("/");
           });
         } else {
           Swal.fire("此團已關閉");

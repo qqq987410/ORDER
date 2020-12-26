@@ -17,7 +17,7 @@ import { ReactComponent as Cart } from "./image/cart.svg";
 import Swal from "sweetalert2";
 import getVariable from "./Variable";
 
-function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
+function Menu({ data, facebookbStatus, setFacebookbStatus }) {
   const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   const [mealPopupDetail, setMealPopupDetail] = useState({});
   const [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
@@ -29,6 +29,7 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
   );
   const [URL, setURL] = useState();
   const [grouperName, setGrouperName] = useState("");
+  const [teamBuyingBtnExist, setTeamBuyingBtnExist] = useState();
   const history = useHistory();
 
   // 1. 單一餐廳資訊
@@ -148,6 +149,15 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
     }
   }, [facebookbStatus.status]);
 
+  // 7. 揪團Btn setState
+  useEffect(() => {
+    if (!getVariable().special) {
+      setTeamBuyingBtnExist(true);
+    } else {
+      setTeamBuyingBtnExist(false);
+    }
+  }, []);
+
   function teamBuying() {
     if (facebookbStatus.status === true) {
       setTeamBuyingPopup(true);
@@ -206,7 +216,7 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
           }
         }
       });
-    } else {
+    } else if (facebookbStatus.status === false) {
       Swal.fire({
         icon: "error",
         title: "尚未登錄會員",
@@ -232,19 +242,41 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
   }
   function linkToOrderList() {
     if (facebookbStatus.status === true) {
+      if (getVariable().special) {
+        // follower
+        console.log(followerStorage);
+        let followerLong = JSON.parse(followerStorage);
+        if (!followerLong) {
+          Swal.fire("尚未加入餐點！");
+          return;
+        }
+      } else {
+        //  owner
+        if (cartLength === 0) {
+          Swal.fire("尚未加入餐點！");
+          return;
+        }
+      }
       let ref = db.collection("orderList");
       ref.get().then((res) => {
+        console.log(res);
+        let followerCreateNewGroup = false;
         res.forEach((doc) => {
+          console.log("doc.data()=", doc.data());
+          console.log("facebookbStatus.uid=", facebookbStatus.uid);
+          console.log("getVariable().docID=", getVariable().docID);
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
+            console.log("A");
             ref
               .doc(doc.data().id)
               .collection("records")
               .get()
               .then((shot) => {
                 if (shot.size === 0) {
+                  console.log("1");
                   Swal.fire("尚未加入餐點！");
                 } else {
                   if (getVariable().special) {
@@ -268,21 +300,51 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
             doc.data().status === "ongoing" &&
             getVariable().docID !== null
           ) {
+            console.log("B");
             if (getVariable().special) {
+              console.log("C");
+
+              //  ref.doc(getVariable().docID)
+              //     .get()
+              //     .then((groupsizeRes) => {
+              //        console.log(groupsizeRes);
+              //     });
               history.push(
                 `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
                   doc.id
                 }&special=true`
               );
             } else {
+              console.log("D");
               history.push(
                 `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
                   doc.id
                 }`
               );
             }
+            //  else if(){
+            // console.log("E");
+            // followerCreateNewGroup = true;
+            // Swal.fire("尚未加入餐點！");
           }
         });
+        // if (followerCreateNewGroup) {
+        //    console.log("F");
+        //    ref.add({
+        //       status: "ongoing",
+        //       uid: facebookbStatus.uid,
+        //       displayName: facebookbStatus.displayName,
+        //    }).then((res2) => {
+        //       ref.doc(res2.id).set(
+        //          {
+        //             id: res2.id,
+        //          },
+        //          { merge: true }
+        //       );
+        //       //  setURL(`${location.href}&docID=${res2.id}&special=true`);
+        //       history.push(`./orderList?restaurantID=${getVariable().restaurantID}&docID=${res2.id}`);
+        //    });
+        // }
       });
     } else {
       Swal.fire({
@@ -301,16 +363,109 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
   function showFollowerPrice() {
     let init = 0;
     let arr = JSON.parse(followerStorage);
-    console.log(arr);
     if (!arr) {
       init = 0;
     } else {
-      console.log(arr);
       arr?.forEach((item) => {
         init += item.qty * item.price;
       });
     }
     return init;
+  }
+  function CreateNewGroup() {
+    if (facebookbStatus.status) {
+      if (!getVariable().special) {
+        //  Owner
+
+        let orderListRef = db.collection("orderList");
+        orderListRef.get().then((groups) => {
+          if (groups.size === 0) {
+            // 1. db is empty => create new group
+            orderListRef
+              .add({
+                status: "ongoing",
+                uid: facebookbStatus.uid,
+                displayName: facebookbStatus.displayName,
+              })
+              .then((mergeId) => {
+                orderListRef.doc(mergeId).set(
+                  {
+                    id: mergeId.id,
+                  },
+                  { merge: true }
+                );
+              });
+            Swal.fire("新團已開，請點擊『揪團』");
+          } else {
+            // 2-1. db not empty ['ongoing' && 'uid'] => alert
+            let myGroupExist = false;
+            groups.forEach((group) => {
+              if (
+                group.data().status === "ongoing" &&
+                group.data().uid === facebookbStatus.uid
+              ) {
+                myGroupExist = true;
+              }
+            });
+            if (myGroupExist) {
+              Swal.fire("請先結單哦");
+            } else {
+              // 2-2. db not empty 不符合上面 => create new group
+              orderListRef
+                .add({
+                  status: "ongoing",
+                  uid: facebookbStatus.uid,
+                  displayName: facebookbStatus.displayName,
+                })
+                .then((mergeId) => {
+                  console.log(mergeId);
+                  orderListRef.doc(mergeId.id).set(
+                    {
+                      id: mergeId.id,
+                    },
+                    { merge: true }
+                  );
+                });
+              Swal.fire("新團已開，請點擊『揪團』");
+            }
+          }
+        });
+      } else {
+        //  Follower
+
+        Swal.fire({
+          title: "確定要離開目前的跟團嗎?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // 1. clear LocalStorage
+            localStorage.clear();
+            setFollowerStorage(JSON.stringify([]));
+
+            // 2. setGrouperName
+            setGrouperName(`${facebookbStatus.displayName}開的團`);
+
+            // 3. clear URL
+            history.push(`/menu?restaurantID=${getVariable().restaurantID}`);
+
+            // 4.setTeamBuyingBtnExist
+            setTeamBuyingBtnExist(true);
+
+            // 5. Swal
+            Swal.fire("新團已開!", "請點擊『揪團』", "success");
+          }
+        });
+      }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "尚未登錄會員",
+      });
+    }
   }
   return (
     <>
@@ -348,9 +503,14 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
             );
           })}
           <div className={styles.deco}>
-            <div className={styles.together} onClick={teamBuying}>
-              揪團
+            <div className={styles.together} onClick={CreateNewGroup}>
+              開新團
             </div>
+            {teamBuyingBtnExist ? (
+              <div className={styles.together} onClick={teamBuying}>
+                揪團
+              </div>
+            ) : null}
             <div className={styles.cartBtn} onClick={linkToOrderList}>
               {facebookbStatus.status && getVariable().docID !== null ? (
                 <span>{showFollowerLength()}</span>
@@ -373,7 +533,6 @@ function Menu({ data, facebookbStatus, setCartListTotalPrice }) {
           setMealPopupSwitch={setMealPopupSwitch}
           mealPopupDetail={mealPopupDetail}
           setMealPopupDetail={setMealPopupDetail}
-          setCartListTotalPrice={setCartListTotalPrice}
           facebookbStatus={facebookbStatus}
           followerStorage={followerStorage}
           setFollowerStorage={setFollowerStorage}
@@ -600,7 +759,6 @@ function MealPoppup({
                   console.log("情況二.1.1");
                   // ===============change=============
                   //  if (localStorage.getItem(getVariable().docID === null)) {
-                  console.log("SSS");
                   let target = {
                     uid: facebookbStatus.uid,
                     displayName: facebookbStatus.displayName,
@@ -743,7 +901,7 @@ function MealPoppup({
         }
       });
       setMealPopupSwitch(false);
-    } else {
+    } else if (facebookbStatus.status === false) {
       Swal.fire({ icon: "error", title: "尚未登錄會員" });
     }
   }

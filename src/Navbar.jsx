@@ -12,9 +12,12 @@ import logo from "./image/Logo.svg";
 import Swal from "sweetalert2";
 import "animate.css";
 import getVariable from "./Variable";
-import { useEffect } from "react";
-
+import { db } from "./firebase";
+import { useEffect, useState } from "react";
 function Navbar({ facebookbStatus }) {
+  const [followerStorage, setFollowerStorage] = useState(
+    localStorage.getItem(getVariable().docID)
+  );
   let history = useHistory();
 
   function signOut() {

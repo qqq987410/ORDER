@@ -7,7 +7,7 @@ import {
   Link,
   useHistory,
 } from "react-router-dom";
-import { db } from "./firebase";
+
 import time from "./image/time.svg"; // image
 import phone from "./image/phone.svg"; // image
 import check from "./image/check.svg"; // image
@@ -135,7 +135,11 @@ function Home({ data }) {
 function SigleRestaurant({ detail }) {
   let history = useHistory();
   function linkToMenu() {
-    history.push(`./menu?restaurantID=${detail.id}`);
+    if (getVariable().special) {
+      history.push(`./menu?restaurantID=${detail.id}&special=true`);
+    } else {
+      history.push(`./menu?restaurantID=${detail.id}`);
+    }
   }
   return (
     <div className={styles.store} onClick={linkToMenu}>
