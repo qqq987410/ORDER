@@ -283,7 +283,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
                     history.push(
                       `./orderList?restaurantID=${
                         getVariable().restaurantID
-                      }&docID=${doc.id}&special=true`
+                      }&docID=${getVariable().docID}&special=true`
                     );
                   } else {
                     history.push(
