@@ -1,13 +1,12 @@
 .outer {
   width: 100vw;
   height: 100vh;
-  //  border: 3px solid red;
   display: flex;
   padding-top: 60px;
   overflow: hidden;
   .sideBar {
-    width: 30%;
-    min-width: 270px;
+    width: 350px;
+    min-width: 300px;
     height: 100%;
     padding: 20px 40px;
     background-image: url("./image/brown.jpeg");
@@ -16,7 +15,7 @@
     form {
       margin-bottom: 50px;
       input {
-        width: 200px;
+        width: 100%;
         height: 40px;
         border-radius: 20px;
         border: none;
@@ -36,21 +35,17 @@
         letter-spacing: 3px;
       }
       .category {
-        // border: 2px solid #fff;
-        // border-radius: 6px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         padding: 15px 0;
         .categoryMiddle {
           color: #fff;
-          // border: 1px solid #fff;
           display: flex;
           justify-content: center;
           align-items: center;
         }
         .categoryInner {
-          // border: 2px solid black;
           height: 40px;
           display: flex;
           align-items: center;
@@ -74,8 +69,8 @@
     }
   }
   .stores {
-    width: 70%;
-    padding: 20px 40px;
+    width: 100%;
+    padding: 20px 0 20px 40px;
     display: flex;
     flex-wrap: wrap;
     overflow: scroll;
@@ -157,6 +152,62 @@
               color: #696363db;
             }
           }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 600px) {
+  .outer {
+    flex-direction: column;
+    .sideBar {
+      width: 100%;
+      height: 150px;
+      padding-left: 0;
+      padding-right: 0;
+      form {
+        margin-bottom: 0;
+        margin: 0 30px;
+      }
+      .categoryContainer {
+        border: none;
+        .categorySubject {
+          display: none;
+        }
+        .category {
+          //  width: 100%;
+          border: 2px solid #fff;
+          flex-direction: row;
+          overflow: scroll;
+          padding: 5px 50px;
+          margin: 0 10px;
+          .categoryMiddle {
+            display: none;
+          }
+          .categoryInner {
+            border: 1px solid red;
+            margin-right: 40px;
+            // padding: 0 20px;
+            .checkBox {
+              margin-right: 5px;
+              margin-left: 0;
+            }
+          }
+        }
+      }
+    }
+    .stores {
+      justify-content: center;
+      padding: 20px 10px;
+      .store {
+        width: 100%;
+        max-width: 300px;
+        .top {
+          img {
+            width: 100%;
+          }
+        }
+        .down {
         }
       }
     }

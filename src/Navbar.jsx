@@ -8,7 +8,8 @@ import {
   useLocation,
 } from "react-router-dom";
 import firebase from "firebase/app";
-import logo from "./image/Logo.svg";
+import { ReactComponent as Logo } from "./image/Logo.svg";
+// import logo from "./image/Logo.svg";
 import Swal from "sweetalert2";
 import "animate.css";
 import getVariable from "./Variable";
@@ -50,11 +51,11 @@ function Navbar({ facebookbStatus }) {
       <div className={styles.logo}>
         {getVariable().special ? (
           <Link to="/?special=true">
-            <img src={logo} alt="logo" />
+            <Logo className={styles.logoImg} />
           </Link>
         ) : (
           <Link to="/">
-            <img src={logo} alt="logo" />
+            <Logo className={styles.logoImg} />
           </Link>
         )}
       </div>

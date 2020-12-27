@@ -259,24 +259,17 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
       }
       let ref = db.collection("orderList");
       ref.get().then((res) => {
-        console.log(res);
-        let followerCreateNewGroup = false;
         res.forEach((doc) => {
-          console.log("doc.data()=", doc.data());
-          console.log("facebookbStatus.uid=", facebookbStatus.uid);
-          console.log("getVariable().docID=", getVariable().docID);
           if (
             doc.data().uid === facebookbStatus.uid &&
             doc.data().status === "ongoing"
           ) {
-            console.log("A");
             ref
               .doc(doc.data().id)
               .collection("records")
               .get()
               .then((shot) => {
                 if (shot.size === 0) {
-                  console.log("1");
                   Swal.fire("尚未加入餐點！");
                 } else {
                   if (getVariable().special) {
@@ -293,58 +286,27 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
                     );
                   }
                 }
-              })
-              .then(() => {});
+              });
           } else if (
             doc.data().uid !== facebookbStatus.uid &&
             doc.data().status === "ongoing" &&
             getVariable().docID !== null
           ) {
-            console.log("B");
             if (getVariable().special) {
-              console.log("C");
-
-              //  ref.doc(getVariable().docID)
-              //     .get()
-              //     .then((groupsizeRes) => {
-              //        console.log(groupsizeRes);
-              //     });
               history.push(
                 `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
                   doc.id
                 }&special=true`
               );
             } else {
-              console.log("D");
               history.push(
                 `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
                   doc.id
                 }`
               );
             }
-            //  else if(){
-            // console.log("E");
-            // followerCreateNewGroup = true;
-            // Swal.fire("尚未加入餐點！");
           }
         });
-        // if (followerCreateNewGroup) {
-        //    console.log("F");
-        //    ref.add({
-        //       status: "ongoing",
-        //       uid: facebookbStatus.uid,
-        //       displayName: facebookbStatus.displayName,
-        //    }).then((res2) => {
-        //       ref.doc(res2.id).set(
-        //          {
-        //             id: res2.id,
-        //          },
-        //          { merge: true }
-        //       );
-        //       //  setURL(`${location.href}&docID=${res2.id}&special=true`);
-        //       history.push(`./orderList?restaurantID=${getVariable().restaurantID}&docID=${res2.id}`);
-        //    });
-        // }
       });
     } else {
       Swal.fire({
