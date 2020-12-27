@@ -99,37 +99,42 @@ function Home({ data }) {
   }
 
   return (
-    <div className={styles.outer}>
-      <div className={styles.sideBar}>
-        <form onSubmit={submitHandler}>
-          <input
-            type="text"
-            value={keyWord}
-            placeholder="店名搜尋"
-            onChange={searchHandler}
-          />
-        </form>
-        <div className={styles.categoryContainer}>
-          <div className={styles.categorySubject}>附近餐廳</div>
-          <div className={styles.category}>
-            {kindOfCategory.sort().map((category, index) => {
-              return (
-                <Category
-                  categoryTitle={category}
-                  handleBox={addRef}
-                  key={index}
-                />
-              );
-            })}
+    <>
+      <div className={styles.slogan}>今天來點...?</div>
+      <div className={styles.outer}>
+        <div className={styles.sideBar}>
+          <div className={styles.choice}>
+            <form onSubmit={submitHandler}>
+              <input
+                type="text"
+                value={keyWord}
+                placeholder="店名搜尋"
+                onChange={searchHandler}
+              />
+            </form>
+            <div className={styles.categoryContainer}>
+              <div className={styles.categorySubject}>附近餐廳</div>
+              <div className={styles.category}>
+                {kindOfCategory.sort().map((category, index) => {
+                  return (
+                    <Category
+                      categoryTitle={category}
+                      handleBox={addRef}
+                      key={index}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
+        <div className={styles.stores}>
+          {showRestaurant.map((item) => {
+            return <SigleRestaurant detail={item} key={nanoid()} />;
+          })}
+        </div>
       </div>
-      <div className={styles.stores}>
-        {showRestaurant.map((item) => {
-          return <SigleRestaurant detail={item} key={nanoid()} />;
-        })}
-      </div>
-    </div>
+    </>
   );
 }
 function SigleRestaurant({ detail }) {

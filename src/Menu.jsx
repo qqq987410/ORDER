@@ -465,7 +465,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
             );
           })}
           <div className={styles.deco}>
-            <div className={styles.together} onClick={CreateNewGroup}>
+            <div className={styles.newGroup} onClick={CreateNewGroup}>
               開新團
             </div>
             {teamBuyingBtnExist ? (
@@ -652,7 +652,7 @@ function MealPoppup({
         },
       });
       return;
-    } else if (mealPopupDetail.sugar.length > 0 && record.sugar === "") {
+    } else if (mealPopupDetail?.sugar?.length > 0 && record.sugar === "") {
       Swal.fire({
         title: "請選擇Sugar",
         showClass: {

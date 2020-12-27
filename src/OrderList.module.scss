@@ -4,14 +4,15 @@
 .outer {
   width: 100vw;
   height: 100vh;
-  background-color: rgb(231, 231, 231);
-  margin-top: 60px;
+  background-color: #d9c8b8;
+  padding-top: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
   .inner {
     width: 90%;
     min-height: 400px;
+    max-height: 600px;
     background-color: #ffffff;
     border-radius: 8px;
     max-width: 500px;
@@ -43,13 +44,15 @@
       }
     }
     .middle {
+      height: 400px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      overflow-y: scroll;
+      padding: 10px 0;
       .item {
         width: 90%;
-        height: 60px;
+        height: 100px;
         background-color: rgb(246, 246, 246);
         border-radius: 4px;
         display: flex;
@@ -59,14 +62,18 @@
         padding-left: 20px;
         margin-bottom: 20px;
         .left {
+          height: 60px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
           .title {
-            color: #70493c;
+            color: #877a6d;
             font-weight: bolder;
             font-size: 18px;
           }
           .orderDetail {
-            color: rgb(113, 113, 113);
-            font-size: 14px;
+            color: #877a6d;
+            font-size: 12px;
             display: flex;
             align-items: center;
             .price {
@@ -102,11 +109,12 @@
           }
         }
         .right {
+          height: 60px;
           display: flex;
           justify-content: center;
           align-items: center;
           .orderPeople {
-            color: #70493c;
+            color: #877a6d;
             margin-right: 15px;
           }
           img {
@@ -124,32 +132,26 @@
       .keepBuying {
         width: 150px;
         height: 40px;
-        border-radius: 6px;
+        border-radius: 20px;
         border: none;
-        background-color: #70493c;
+        background-color: rgb(183, 104, 89);
         color: #ffffff;
         cursor: pointer;
-        position: relative;
         &:hover {
-          bottom: 5px;
-          box-shadow: 0px 3px 10px black;
-          font-size: 16px;
+          box-shadow: 0 0 10px rgb(109, 106, 106);
           transition: all ease 0.2s;
         }
       }
       .checkout {
         width: 150px;
         height: 40px;
-        border-radius: 6px;
+        border-radius: 20px;
         border: none;
-        background-color: #70493c;
+        background-color: rgb(183, 104, 89);
         color: #ffffff;
         cursor: pointer;
-        position: relative;
         &:hover {
-          bottom: 5px;
-          box-shadow: 0px 3px 10px black;
-          font-size: 16px;
+          box-shadow: 0 0 10px rgb(109, 106, 106);
           transition: all ease 0.2s;
         }
       }
@@ -158,14 +160,11 @@
         height: 40px;
         border-radius: 6px;
         border: none;
-        background-color: #70493c;
+        background-color: rgb(183, 104, 89);
         color: #ffffff;
         cursor: pointer;
-        position: relative;
         &:hover {
-          bottom: 5px;
-          box-shadow: 0px 3px 10px black;
-          font-size: 16px;
+          box-shadow: 0 0 10px rgb(109, 106, 106);
           transition: all ease 0.2s;
         }
       }
