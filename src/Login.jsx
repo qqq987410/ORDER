@@ -209,7 +209,7 @@ function Login() {
             <div className={styles.account}>
               <input
                 type="text"
-                placeholder="Account"
+                placeholder="Email"
                 value={account}
                 onChange={accountHandler}
               />
