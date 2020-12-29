@@ -1,13 +1,6 @@
 import styles from "./Login.module.scss";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-  useLocation,
-} from "react-router-dom";
-import { useState } from "react";
+import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { db } from "./firebase";
@@ -25,15 +18,15 @@ function Login() {
   console.log(firebase.auth().currentUser);
 
   function signInAnimation() {
-    let min = document.getElementById("min");
-    let max = document.getElementById("max");
-    let signInUp = document.getElementById("signInUp");
-    let title = document.getElementById("title");
-    let greeting = document.getElementById("greeting");
-    let icon = document.getElementById("icon");
-    let nameInput = document.getElementById("nameInput");
-    let signUp = document.getElementById("signUp");
-    let signIn = document.getElementById("signIn");
+    const min = document.getElementById("min");
+    const max = document.getElementById("max");
+    const signInUp = document.getElementById("signInUp");
+    const title = document.getElementById("title");
+    const greeting = document.getElementById("greeting");
+    const icon = document.getElementById("icon");
+    const nameInput = document.getElementById("nameInput");
+    const signUp = document.getElementById("signUp");
+    const signIn = document.getElementById("signIn");
 
     if (trigger) {
       min.style.transform = "translateX(0%)";
@@ -61,16 +54,14 @@ function Login() {
     }
   }
   function fbSignInHandler() {
-    let provider = new firebase.auth.FacebookAuthProvider();
+    const provider = new firebase.auth.FacebookAuthProvider();
     firebase
       .auth()
       .signInWithPopup(provider)
       .then(function (result) {
-        let userName = result.user.displayName;
-        let userEmail = result.user.email;
-        let uid = result.user.uid;
-        console.log(userName, userEmail, uid);
-        console.log("您被選中入宮當秀女 FaceBook");
+        const userName = result.user.displayName;
+        const userEmail = result.user.email;
+        const uid = result.user.uid;
         // 紀錄在 db
         db.collection("users").doc(uid).set({
           userName: userName,
@@ -80,8 +71,7 @@ function Login() {
         // 跳轉至前一頁
         history.goBack();
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch(function () {
         Swal.fire({
           icon: "error",
           title: "登入失敗，請重新登錄",
@@ -89,17 +79,15 @@ function Login() {
       });
   }
   function googleSignInHandler() {
-    let provider = new firebase.auth.GoogleAuthProvider();
+    const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope("email");
     firebase
       .auth()
       .signInWithPopup(provider)
       .then(function (result) {
-        let userName = result.user.displayName;
-        let userEmail = result.additionalUserInfo.profile.email;
-        let uid = result.user.uid;
-
-        console.log("您被選中入宮當秀女 Google");
+        const userName = result.user.displayName;
+        const userEmail = result.additionalUserInfo.profile.email;
+        const uid = result.user.uid;
 
         // 紀錄在 db
         db.collection("users").doc(uid).set({
@@ -110,8 +98,7 @@ function Login() {
         // 跳轉至前一頁
         history.goBack();
       })
-      .catch(function (error) {
-        console.log(error.message);
+      .catch(function () {
         Swal.fire({
           icon: "error",
           title: "登入失敗，請重新登錄",
@@ -122,24 +109,16 @@ function Login() {
     firebase
       .auth()
       .createUserWithEmailAndPassword(account, password)
-      .then((user) => {
+      .then(() => {
         // Update
-        var user = firebase.auth().currentUser;
-        user
-          .updateProfile({
-            displayName: name,
-            photoURL: "https://example.com/jane-q-user/profile.jpg",
-          })
-          .then(function () {
-            console.log("success");
-          })
-          .catch(function (error) {
-            console.log("error");
-          });
+        const userDetail = firebase.auth().currentUser;
+        userDetail.updateProfile({
+          displayName: name,
+          photoURL: "https://example.com/jane-q-user/profile.jpg",
+        });
 
-        console.log("user=", user);
         // 紀錄在 db
-        let userRef = db.collection("users");
+        const userRef = db.collection("users");
         userRef.doc(firebase.auth().currentUser.uid).set({
           userName: name,
           userEmail: account,
@@ -148,8 +127,7 @@ function Login() {
         // 跳轉至前一頁
         history.goBack();
       })
-      .catch((error) => {
-        console.log("Fail", error.message);
+      .catch(() => {
         Swal.fire({
           icon: "error",
           title: "登入失敗，請重新登錄",

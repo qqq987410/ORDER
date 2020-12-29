@@ -1,23 +1,17 @@
 import styles from "./Menu.module.scss";
+import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { db } from "./firebase";
-import firebase from "firebase";
-import { useEffect, useState, useRef } from "react";
+import getVariable from "./Variable";
 import { nanoid } from "nanoid";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
 import { ReactComponent as Time } from "./image/time.svg";
 import { ReactComponent as Phone } from "./image/phone.svg";
 import { ReactComponent as Location } from "./image/location.svg";
 import { ReactComponent as Cart } from "./image/cart.svg";
 import Swal from "sweetalert2";
-import getVariable from "./Variable";
+import PropTypes from "prop-types";
 
-function Menu({ data, facebookbStatus, setFacebookbStatus }) {
+function Menu({ data, facebookbStatus }) {
   const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   const [mealPopupDetail, setMealPopupDetail] = useState({});
   const [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
@@ -37,12 +31,11 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
   data.forEach((doc) => {
     if (doc.id === getVariable().restaurantID) {
       restaurantDetail = doc;
-      //  console.log("This餐廳資訊＝", restaurantDetail);
     }
   });
 
   // 2. 從Data中找出有幾種category，並組合成Array
-  let kindOfClass = [];
+  const kindOfClass = [];
   restaurantDetail.menu.forEach((item) => {
     if (!kindOfClass.includes(item.class)) {
       kindOfClass.push(item.class);
@@ -50,8 +43,8 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
   });
 
   // 3. 營業時間差異
-  let sigleTime = <div> {restaurantDetail.businessHour[0]}</div>;
-  let doubleTime = (
+  const sigleTime = <div> {restaurantDetail.businessHour[0]}</div>;
+  const doubleTime = (
     <div>
       {restaurantDetail.businessHour[0]}&nbsp;&amp;&nbsp;
       {restaurantDetail.businessHour[1]}
@@ -60,16 +53,15 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
   // 4. 從db撈訂單長度 & myOrders
   useEffect(() => {
     if (facebookbStatus.status) {
-      let orderListRef = db.collection("orderList");
+      const orderListRef = db.collection("orderList");
       orderListRef.onSnapshot((onSnapshotRes) => {
         onSnapshotRes.forEach((onSnapshotAgainDoc) => {
           orderListRef
             .doc(onSnapshotAgainDoc.data().id)
             .collection("records")
-            .onSnapshot((recordsSnapShot) => {
+            .onSnapshot(() => {
               if (getVariable().docID !== null) {
                 // 情況一 => docID存在
-                console.log("情況一 => docID存在");
 
                 orderListRef
                   .doc(getVariable().docID)
@@ -82,7 +74,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
                         .where("uid", "==", facebookbStatus.uid)
                         .get()
                         .then((followerRes) => {
-                          let followerLength = [];
+                          const followerLength = [];
                           followerRes.forEach((followerDoc) => {
                             followerLength.push(followerDoc.data());
                           });
@@ -93,7 +85,6 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
                   });
               } else {
                 // 情況二 => docID不存在
-                console.log("情況二 => docID不存在");
 
                 onSnapshotRes.forEach((onSnapshotDoc) => {
                   if (
@@ -106,7 +97,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
                       .get()
                       .then((totalMealRes) => {
                         setCartLength(totalMealRes.size);
-                        let ownerOrderList = [];
+                        const ownerOrderList = [];
                         totalMealRes.forEach((totalMealDoc) => {
                           ownerOrderList.push(totalMealDoc.data());
                         });
@@ -136,7 +127,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
       if (!getVariable().docID) {
         setGrouperName(`${facebookbStatus.displayName}開的團`);
       } else {
-        let orderListRef = db.collection("orderList");
+        const orderListRef = db.collection("orderList");
         orderListRef
           .doc(getVariable().docID)
           .get()
@@ -161,7 +152,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
   function teamBuying() {
     if (facebookbStatus.status === true) {
       setTeamBuyingPopup(true);
-      let orderListRef = db.collection("orderList");
+      const orderListRef = db.collection("orderList");
 
       orderListRef.get().then((res1) => {
         if (getVariable().special) {
@@ -188,7 +179,6 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
           // 情況三
           let findMyGroup = false;
           res1.forEach((doc1) => {
-            console.log(doc1.data());
             if (
               doc1.data().uid === facebookbStatus.uid &&
               doc1.data().status === "ongoing"
@@ -224,7 +214,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
     }
   }
   function copyLink() {
-    let link = document.getElementById("link");
+    const link = document.getElementById("link");
     link.select();
     document.execCommand("copy");
     Swal.fire({
@@ -244,8 +234,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
     if (facebookbStatus.status === true) {
       if (getVariable().special) {
         // follower
-        console.log(followerStorage);
-        let followerLong = JSON.parse(followerStorage);
+        const followerLong = JSON.parse(followerStorage);
         if (!followerLong) {
           Swal.fire("尚未加入餐點！");
           return;
@@ -257,7 +246,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
           return;
         }
       }
-      let ref = db.collection("orderList");
+      const ref = db.collection("orderList");
       ref.get().then((res) => {
         res.forEach((doc) => {
           if (
@@ -324,7 +313,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
   }
   function showFollowerPrice() {
     let init = 0;
-    let arr = JSON.parse(followerStorage);
+    const arr = JSON.parse(followerStorage);
     if (!arr) {
       init = 0;
     } else {
@@ -339,7 +328,7 @@ function Menu({ data, facebookbStatus, setFacebookbStatus }) {
       if (!getVariable().special) {
         //  Owner
 
-        let orderListRef = db.collection("orderList");
+        const orderListRef = db.collection("orderList");
         orderListRef.get().then((groups) => {
           if (groups.size === 0) {
             // 1. db is empty => create new group
@@ -528,7 +517,7 @@ function Class({
   setMealPopupSwitch,
   setMealPopupDetail,
 }) {
-  let classMenu = [];
+  const classMenu = [];
   restaurantDetail.menu.map((item) => {
     if (item.class === classTitle) {
       classMenu.push(item);
@@ -594,24 +583,23 @@ function MealPoppup({
     sugar: "",
     ice: "",
   });
-  console.log(mealPopupDetail);
-  console.log(record);
+
   function closeMealPopup(e) {
     if (e.target.id === "outer") {
       setMealPopupSwitch(false);
     }
   }
   function chooseQty(e) {
-    let numberClicked = Number(e.currentTarget.getAttribute("data"));
+    const numberClicked = Number(e.currentTarget.getAttribute("data"));
     if (!(record.qty === 1 && numberClicked < 0)) {
-      let newRecord = { ...record, qty: record.qty + numberClicked };
+      const newRecord = { ...record, qty: record.qty + numberClicked };
       setRecord(newRecord);
     }
   }
   function chooseSize(e) {
     mealPopupDetail.sizeAndPrice.forEach((item) => {
       if (item.size === e.target.textContent) {
-        let newRecord = {
+        const newRecord = {
           ...record,
           size: e.target.textContent,
           price: item.price,
@@ -622,11 +610,11 @@ function MealPoppup({
     });
   }
   function chooseIce(e) {
-    let newRecord = { ...record, ice: e.target.textContent };
+    const newRecord = { ...record, ice: e.target.textContent };
     setRecord(newRecord);
   }
   function chooseSuagr(e) {
-    let newRecord = { ...record, sugar: e.target.textContent };
+    const newRecord = { ...record, sugar: e.target.textContent };
     setRecord(newRecord);
   }
   function addToCart() {
@@ -665,7 +653,7 @@ function MealPoppup({
       return;
     }
     if (facebookbStatus.status === true) {
-      let orderListRef = db.collection("orderList");
+      const orderListRef = db.collection("orderList");
       orderListRef.get().then((res1) => {
         if (res1.size === 0) {
           // 情況一 => size=0
@@ -678,10 +666,9 @@ function MealPoppup({
               displayName: facebookbStatus.displayName,
             })
             .then((res2) => {
-              // ===============change=============
               if (getVariable().docID !== null && getVariable().special) {
-                let cartBox = [];
-                let target = {
+                const cartBox = [];
+                const target = {
                   uid: facebookbStatus.uid,
                   displayName: facebookbStatus.displayName,
                   email: facebookbStatus.email,
@@ -699,7 +686,7 @@ function MealPoppup({
                   getVariable().docID,
                   JSON.stringify(cartBox)
                 );
-                let arr = JSON.parse(followerStorage);
+                const arr = JSON.parse(followerStorage);
                 if (!arr) {
                   setFollowerStorage(JSON.stringify([target]));
                 } else {
@@ -745,15 +732,13 @@ function MealPoppup({
 
           if (getVariable().docID !== null) {
             // 情況2.1 => docID存在 && status='ongoing'
-            console.log("情況二.1");
 
             orderListRef
               .doc(getVariable().docID)
               .get()
               .then((specific) => {
                 if (specific.data() && specific.data().status === "ongoing") {
-                  console.log("情況二.1.1");
-                  let target = {
+                  const target = {
                     uid: facebookbStatus.uid,
                     displayName: facebookbStatus.displayName,
                     email: facebookbStatus.email,
@@ -766,16 +751,14 @@ function MealPoppup({
                     ice: record.ice,
                     id: nanoid(),
                   };
-                  let arr = JSON.parse(followerStorage);
+                  const arr = JSON.parse(followerStorage);
                   if (!arr) {
-                    console.log("A");
                     localStorage.setItem(
                       getVariable().docID,
                       JSON.stringify([target])
                     );
                     setFollowerStorage(JSON.stringify([target]));
                   } else {
-                    console.log("B");
                     arr?.push(target);
                     localStorage.setItem(
                       getVariable().docID,
@@ -795,7 +778,6 @@ function MealPoppup({
               .then((ongoingUidTrueRes) => {
                 if (ongoingUidTrueRes.size !== 0) {
                   // 情況2.2 => docID不存在 && data().uid = fb.uid && status='ongoing'
-                  console.log("情況二.2");
 
                   ongoingUidTrueRes.forEach((ongoingUidTrueDoc) => {
                     orderListRef
@@ -828,7 +810,6 @@ function MealPoppup({
                   });
                 } else {
                   // 情況2.3 => 團號不存在，創建一筆新團號
-                  console.log("情況二.3");
 
                   orderListRef
                     .add({
@@ -965,4 +946,26 @@ function MealPoppup({
     </div>
   );
 }
+Menu.propTypes = {
+  data: PropTypes.array.isRequired,
+  facebookbStatus: PropTypes.object.isRequired,
+};
+Class.propTypes = {
+  restaurantDetail: PropTypes.array.isRequired,
+  classTitle: PropTypes.string.isRequired,
+  setMealPopupSwitch: PropTypes.bool.isRequired,
+  setMealPopupDetail: PropTypes.object.isRequired,
+};
+Meal.propTypes = {
+  detail: PropTypes.object.isRequired,
+  setMealPopupSwitch: PropTypes.bool.isRequired,
+  setMealPopupDetail: PropTypes.object.isRequired,
+};
+MealPoppup.propTypes = {
+  setMealPopupSwitch: PropTypes.bool.isRequired,
+  mealPopupDetail: PropTypes.object.isRequired,
+  facebookbStatus: PropTypes.object.isRequired,
+  followerStorage: PropTypes.string.isRequired,
+  setFollowerStorage: PropTypes.string.isRequired,
+};
 export default Menu;

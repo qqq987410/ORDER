@@ -1,33 +1,24 @@
 import styles from "./Home.module.scss";
+import { useHistory } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
-
-import time from "./image/time.svg"; // image
-import phone from "./image/phone.svg"; // image
-import check from "./image/check.svg"; // image
+import time from "./image/time.svg";
+import phone from "./image/phone.svg";
+import check from "./image/check.svg";
 import getVariable from "./Variable";
 import { nanoid } from "nanoid";
 import "animate.css";
+import PropTypes from "prop-types";
 
 function Home({ data }) {
   const [showRestaurant, setShowRestaurant] = useState([]);
   const [categoryBox, setCategoryBox] = useState([]);
-  let [keyWord, setKeyWord] = useState("");
-  let history = useHistory();
+  const [keyWord, setKeyWord] = useState("");
 
   useEffect(() => {
-    // 情況一.
     setShowRestaurant(data);
 
     if (categoryBox.length > 0) {
-      // 情況二.
-      let latestCategory = [];
+      const latestCategory = [];
       categoryBox.forEach((item) => {
         data.forEach((dt) => {
           if (item === dt.category) {
@@ -37,7 +28,7 @@ function Home({ data }) {
       });
       setShowRestaurant(latestCategory);
       if (keyWord !== "") {
-        let afterKeywordLists = [];
+        const afterKeywordLists = [];
         latestCategory.forEach((afterKeyword) => {
           if (afterKeyword.title.includes(keyWord)) {
             afterKeywordLists.push(afterKeyword);
@@ -46,9 +37,8 @@ function Home({ data }) {
         setShowRestaurant(afterKeywordLists);
       }
     } else {
-      // 情況三.
       if (keyWord !== "") {
-        let afterDataSearchLists = [];
+        const afterDataSearchLists = [];
         data.forEach((afterKeyword) => {
           if (afterKeyword.title.includes(keyWord)) {
             afterDataSearchLists.push(afterKeyword);
@@ -59,8 +49,7 @@ function Home({ data }) {
     }
   }, [categoryBox, keyWord]);
 
-  // 從 Data 中找出有幾種 category 並組合成 Array
-  let kindOfCategory = [];
+  const kindOfCategory = [];
   data.forEach((item) => {
     if (kindOfCategory.length === 0) {
       kindOfCategory.push(item.category);
@@ -79,10 +68,10 @@ function Home({ data }) {
 
   const addRef = (value) => {
     if (value.style.backgroundImage === "none") {
-      let newArray = [...categoryBox, value.id];
+      const newArray = [...categoryBox, value.id];
       setCategoryBox(newArray);
     } else if (value.style.backgroundImage !== "none") {
-      let newArray = [];
+      const newArray = [];
       categoryBox.forEach((item) => {
         if (item !== value.id) {
           newArray.push(item);
@@ -138,7 +127,7 @@ function Home({ data }) {
   );
 }
 function SigleRestaurant({ detail }) {
-  let history = useHistory();
+  const history = useHistory();
   function linkToMenu() {
     if (getVariable().special) {
       history.push(`./menu?restaurantID=${detail.id}&special=true`);
@@ -200,4 +189,14 @@ function Category({ categoryTitle, handleBox }) {
     </div>
   );
 }
+Home.propTypes = {
+  data: PropTypes.array.isRequired,
+};
+SigleRestaurant.propTypes = {
+  detail: PropTypes.object.isRequired,
+};
+Category.propTypes = {
+  categoryTitle: PropTypes.string.isRequired,
+  handleBox: PropTypes.func.isRequired,
+};
 export default Home;

@@ -1,36 +1,26 @@
 import styles from "./OrderList.module.scss";
 import { db } from "./firebase";
-import firebase from "firebase";
 import { nanoid } from "nanoid";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import head from "./image/head.jpg";
 import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import getVariable from "./Variable";
+import PropTypes from "prop-types";
 
 function OrderList({ facebookbStatus }) {
-  let ref = db.collection("orderList");
-  let orderListRef = db.collection("orderList");
-  let history = useHistory();
-  let [cartLists, setCartLists] = useState([]);
-  let [followerCartLists, setFollowerCartLists] = useState(
-    localStorage.getItem(getVariable().docID)
-  );
-  let [orderListPrice, setOrderListPrice] = useState(0);
+  const orderListRef = db.collection("orderList");
+  const history = useHistory();
+  const [cartLists, setCartLists] = useState([]);
+  const [orderListPrice, setOrderListPrice] = useState(0);
 
   // 1. owner & follower 畫面的 cartLists
   useEffect(() => {
     if (facebookbStatus.status === true) {
       if (getVariable().special) {
-        let followerStorage = JSON.parse(
+        const followerStorage = JSON.parse(
           localStorage.getItem(getVariable().docID)
         );
         setCartLists(followerStorage);
@@ -39,7 +29,7 @@ function OrderList({ facebookbStatus }) {
           .doc(getVariable().docID)
           .collection("records")
           .onSnapshot((history) => {
-            let newCartLists = [];
+            const newCartLists = [];
             history.forEach((historyDoc) => {
               newCartLists.push(historyDoc.data());
             });
@@ -83,7 +73,7 @@ function OrderList({ facebookbStatus }) {
         if (result.isConfirmed) {
           Swal.fire("成功!", "訂單已產生", "success");
           // 將 firebase 狀態由 ongoing => history
-          ref.doc(getVariable().docID).set(
+          orderListRef.doc(getVariable().docID).set(
             {
               status: "history",
               endTime: new Date(),
@@ -97,7 +87,7 @@ function OrderList({ facebookbStatus }) {
     }
   }
   function toOwner() {
-    let orderListRef = db.collection("orderList");
+    const orderListRef = db.collection("orderList");
     // ongoing
     orderListRef
       .doc(getVariable().docID)
@@ -106,7 +96,6 @@ function OrderList({ facebookbStatus }) {
         if (currentGroup.data().status === "ongoing") {
           // 加入 db
           cartLists.map((item) => {
-            console.log(item);
             orderListRef
               .doc(getVariable().docID)
               .collection("records")
@@ -146,7 +135,6 @@ function OrderList({ facebookbStatus }) {
               <Item
                 dishData={item}
                 facebookbStatus={facebookbStatus}
-                followerCartLists={followerCartLists}
                 setCartLists={setCartLists}
                 key={nanoid()}
               />
@@ -172,21 +160,17 @@ function OrderList({ facebookbStatus }) {
     </div>
   );
 }
-function Item({ dishData, facebookbStatus, followerCartLists, setCartLists }) {
-  let ref = db.collection("orderList");
+function Item({ facebookbStatus, dishData, setCartLists }) {
+  const ref = db.collection("orderList");
 
   function deleteItem(e) {
     if (facebookbStatus.status === true && e.target.id === dishData.id) {
       if (getVariable().special) {
-        console.log("Follower");
-
-        let arr = JSON.parse(localStorage.getItem(getVariable().docID));
-        let newOne = arr.filter((item) => item.id !== e.target.id);
+        const arr = JSON.parse(localStorage.getItem(getVariable().docID));
+        const newOne = arr.filter((item) => item.id !== e.target.id);
         localStorage.setItem(getVariable().docID, JSON.stringify(newOne));
         setCartLists(newOne);
       } else {
-        console.log("Owner");
-
         ref
           .doc(getVariable().docID)
           .collection("records")
@@ -236,4 +220,12 @@ function Item({ dishData, facebookbStatus, followerCartLists, setCartLists }) {
     </div>
   );
 }
+OrderList.propTypes = {
+  facebookbStatus: PropTypes.object.isRequired,
+};
+Item.propTypes = {
+  facebookbStatus: PropTypes.object.isRequired,
+  dishData: PropTypes.object.isRequired,
+  setCartLists: PropTypes.array.isRequired,
+};
 export default OrderList;

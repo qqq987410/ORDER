@@ -1,8 +1,8 @@
-// import { facebookLogin } from "./firebase";
 import styles from "./History.module.scss";
+import React, { useEffect, useState } from "react";
 import { db } from "./firebase";
-import { useEffect, useState, useRef } from "react";
 import { nanoid } from "nanoid";
+import PropTypes from "prop-types";
 
 function History({ facebookbStatus }) {
   const [bundle, setBundle] = useState([]);
@@ -11,16 +11,16 @@ function History({ facebookbStatus }) {
 
   useEffect(() => {
     if (facebookbStatus.status) {
-      let ref = db.collection("orderList");
+      const ref = db.collection("orderList");
       ref.onSnapshot((onSnapshot) => {
-        onSnapshot.forEach((doc) => {
+        onSnapshot.forEach(() => {
           // 主揪
           ref
             .where("uid", "==", facebookbStatus.uid)
             .where("status", "==", "history")
             .get()
             .then((res) => {
-              let historyOrderLists = [];
+              const historyOrderLists = [];
 
               res.forEach((a_doc) => {
                 // ===start
@@ -29,7 +29,7 @@ function History({ facebookbStatus }) {
                   .collection("records")
                   .get()
                   .then((a_res) => {
-                    let orderLists = [];
+                    const orderLists = [];
 
                     a_res.forEach((b_doc) => {
                       // 1.
@@ -49,8 +49,7 @@ function History({ facebookbStatus }) {
                       orderLists: orderLists,
                     });
                     // 3.
-                    let newHistoryOrderLists = [...historyOrderLists];
-                    console.log(newHistoryOrderLists);
+                    const newHistoryOrderLists = [...historyOrderLists];
                     setBundle(newHistoryOrderLists);
                     return newHistoryOrderLists;
                   });
@@ -63,7 +62,7 @@ function History({ facebookbStatus }) {
             .where("status", "==", "history")
             .get()
             .then((res) => {
-              let historyLists = [];
+              const historyLists = [];
               res.forEach((doc) => {
                 // doc.data().endTime
                 ref
@@ -72,7 +71,7 @@ function History({ facebookbStatus }) {
                   .where("uid", "==", facebookbStatus.uid)
                   .get()
                   .then((b_res) => {
-                    let orderLists = [];
+                    const orderLists = [];
                     b_res.forEach((b_doc) => {
                       // 1.
                       orderLists.push({
@@ -91,7 +90,7 @@ function History({ facebookbStatus }) {
                       orderLists: orderLists,
                     });
                     // 3.
-                    let newHistoryLists = [...historyLists];
+                    const newHistoryLists = [...historyLists];
                     setSubBundle(newHistoryLists);
                   });
               });
@@ -102,14 +101,11 @@ function History({ facebookbStatus }) {
   }, [facebookbStatus]);
 
   useEffect(() => {
-    let newBundle = [...bundle, ...subBundle];
+    const newBundle = [...bundle, ...subBundle];
     setMixBundle(newBundle);
   }, [bundle, subBundle]);
-
-  //  console.log("Bundle=", bundle);
-  //  console.log("subBundle=", subBundle);
-  //  console.log("mixBundle=", mixBundle);
-
+  console.log(mixBundle);
+  console.log(mixBundle);
   return (
     <div className={styles.out}>
       <div className={styles.in}>
@@ -132,9 +128,10 @@ function History({ facebookbStatus }) {
   );
 }
 function Unit({ endTime, orderLists }) {
+  console.log(typeof endTime);
   function formatDateTime(date) {
-    let initTime = date.toDate().toString();
-    let fixTime = initTime.replace("GMT+0800 (台北標準時間)", "");
+    const initTime = date.toDate().toString();
+    const fixTime = initTime.replace("GMT+0800 (台北標準時間)", "");
     return fixTime;
   }
   return (
@@ -165,5 +162,17 @@ function Dish({ dish }) {
     </div>
   );
 }
+
+History.propTypes = {
+  facebookbStatus: PropTypes.object.isRequired,
+};
+
+Unit.propTypes = {
+  endTime: PropTypes.number.isRequired,
+  orderLists: PropTypes.array.isRequired,
+};
+Dish.propTypes = {
+  dish: PropTypes.object.isRequired,
+};
 
 export default History;

@@ -1,33 +1,21 @@
 import styles from "./Navbar.module.scss";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-  useLocation,
-} from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import React from "react";
 import firebase from "firebase/app";
+import getVariable from "./Variable";
 import { ReactComponent as Logo } from "./image/Logo.svg";
-// import logo from "./image/Logo.svg";
 import Swal from "sweetalert2";
 import "animate.css";
-import getVariable from "./Variable";
-import { db } from "./firebase";
-import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+
 function Navbar({ facebookbStatus }) {
-  const [followerStorage, setFollowerStorage] = useState(
-    localStorage.getItem(getVariable().docID)
-  );
-  let history = useHistory();
+  const history = useHistory();
 
   function signOut() {
     firebase
       .auth()
       .signOut()
       .then(() => {
-        console.log("您被逐出紫禁城了");
-        // 1. Sweet alert
         Swal.fire({
           title: "已登出",
           showClass: {
@@ -37,15 +25,13 @@ function Navbar({ facebookbStatus }) {
             popup: "animate__animated animate__fadeOutUp",
           },
         });
-        // 2. 跳轉至首頁
         if (getVariable().special) {
-          history.push("/");
-        } else {
           history.push("/?special=true");
+        } else {
+          history.push("/");
         }
       });
   }
-
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
@@ -82,4 +68,7 @@ function Navbar({ facebookbStatus }) {
     </nav>
   );
 }
+Navbar.propTypes = {
+  facebookbStatus: PropTypes.object.isRequired,
+};
 export default Navbar;

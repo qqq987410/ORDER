@@ -11,7 +11,7 @@ import storeImg_10 from "./image/storeImg/storeImg_10.jpeg";
 import storeImg_11 from "./image/storeImg/storeImg_11.jpg";
 import storeImg_12 from "./image/storeImg/storeImg_12.jpg";
 
-const data = [
+const DATA = [
   {
     address: "110台北市信義區松仁路253巷1弄2號",
     businessHour: ["10:30–20:00"],
@@ -2049,7 +2049,7 @@ const data = [
   //     menu: []
   //  },
 ];
-export default data;
+export default DATA;
 
 // {name: "",price: null,class: "",sizeOption: true,sizeAndPrice: [{ size: "L", price:  },{ size: "Bottle", price:  }],sugar: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"]},
 // {name: "",price: 65,class: "",sizeOption: false,sizeAndPrice: null,sugar: ["無糖", "一分糖", "二分糖", "微糖", "半糖", "少糖", "正常糖"],ice: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"]},

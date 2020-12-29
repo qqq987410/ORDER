@@ -1,61 +1,22 @@
-import styles from "./App.module.scss";
+import { Switch, Route } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
 import Navbar from "./Navbar";
 import Home from "./Home";
 import Menu from "./Menu";
 import OrderList from "./OrderList";
 import History from "./History";
 import Login from "./Login";
+import NotFound from "./NotFound";
 import firebase from "firebase/app";
-import { db } from "./firebase";
-import data from "./data";
-// import "firebase/auth";
-// import "firebase/firestore";
+// import { db } from "./firebase";
+import DATA from "./data";
 
 function App() {
   const [facebookbStatus, setFacebookbStatus] = useState({});
-  const [cartListLength, setCartListLength] = useState(0);
-  const [cartListTotalPrice, setCartListTotalPrice] = useState(0);
 
   useEffect(() => {
-    if (facebookbStatus.status === true) {
-      let ref = db.collection("orderList");
-      ref.onSnapshot((onSnapshot) => {
-        ref
-          .where("uid", "==", facebookbStatus.uid)
-          .where("status", "==", "ongoing")
-          .get()
-          .then((res) => {
-            res.forEach((doc) => {
-              ref
-                .doc(doc.id)
-                .collection("records")
-                .onSnapshot((onSnapshot_2) => {
-                  let totalPrice = 0;
-                  setCartListLength(onSnapshot_2.size);
-                  onSnapshot_2.forEach((doc_2) => {
-                    totalPrice += doc_2.data().price * doc_2.data().qty;
-                  });
-                  setCartListTotalPrice(totalPrice);
-                });
-            });
-          });
-      });
-    }
-  }, [facebookbStatus]);
-
-  useEffect(() => {
-    //  判斷登錄狀態
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
-        // console.log(user, user.uid, user.displayName, user.email);
         setFacebookbStatus({
           status: true,
           uid: user.uid,
@@ -70,30 +31,30 @@ function App() {
 
   return (
     <>
-      <Navbar facebookbStatus={facebookbStatus} />
+      {/* <Navbar facebookbStatus={facebookbStatus} /> */}
       <Switch>
         <Route exact path="/">
-          <Home data={data} />
+          <Navbar facebookbStatus={facebookbStatus} />
+          <Home data={DATA} />
         </Route>
         <Route path="/menu">
-          <Menu
-            data={data}
-            facebookbStatus={facebookbStatus}
-            setFacebookbStatus={setFacebookbStatus}
-            setCartListTotalPrice={setCartListTotalPrice}
-          />
+          <Navbar facebookbStatus={facebookbStatus} />
+          <Menu data={DATA} facebookbStatus={facebookbStatus} />
         </Route>
         <Route path="/orderList">
-          <OrderList
-            facebookbStatus={facebookbStatus}
-            cartListTotalPrice={cartListTotalPrice}
-          />
+          <Navbar facebookbStatus={facebookbStatus} />
+          <OrderList facebookbStatus={facebookbStatus} />
         </Route>
         <Route path="/history">
+          <Navbar facebookbStatus={facebookbStatus} />
           <History facebookbStatus={facebookbStatus} />
         </Route>
         <Route path="/login">
+          <Navbar facebookbStatus={facebookbStatus} />
           <Login />
+        </Route>
+        <Route>
+          <NotFound />
         </Route>
       </Switch>
     </>
@@ -101,8 +62,8 @@ function App() {
 }
 export default App;
 /*===============New===================
-let reff = db.collection("restaurants");
-data.forEach((item) => {
+const reff = db.collection("restaurants");
+DATA.forEach((item) => {
    reff
       .doc(item.id)
       .set({
