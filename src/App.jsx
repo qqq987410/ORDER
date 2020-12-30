@@ -31,7 +31,6 @@ function App() {
 
   return (
     <>
-      {/* <Navbar facebookbStatus={facebookbStatus} /> */}
       <Switch>
         <Route exact path="/">
           <Navbar facebookbStatus={facebookbStatus} />

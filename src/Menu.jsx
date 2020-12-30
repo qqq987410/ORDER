@@ -33,7 +33,6 @@ function Menu({ data, facebookbStatus }) {
       restaurantDetail = doc;
     }
   });
-
   // 2. 從Data中找出有幾種category，並組合成Array
   const kindOfClass = [];
   restaurantDetail.menu.forEach((item) => {
@@ -951,21 +950,21 @@ Menu.propTypes = {
   facebookbStatus: PropTypes.object.isRequired,
 };
 Class.propTypes = {
-  restaurantDetail: PropTypes.array.isRequired,
+  restaurantDetail: PropTypes.object.isRequired,
   classTitle: PropTypes.string.isRequired,
-  setMealPopupSwitch: PropTypes.bool.isRequired,
-  setMealPopupDetail: PropTypes.object.isRequired,
+  setMealPopupSwitch: PropTypes.func.isRequired,
+  setMealPopupDetail: PropTypes.func.isRequired,
 };
 Meal.propTypes = {
   detail: PropTypes.object.isRequired,
-  setMealPopupSwitch: PropTypes.bool.isRequired,
-  setMealPopupDetail: PropTypes.object.isRequired,
+  setMealPopupSwitch: PropTypes.func.isRequired,
+  setMealPopupDetail: PropTypes.func.isRequired,
 };
 MealPoppup.propTypes = {
-  setMealPopupSwitch: PropTypes.bool.isRequired,
+  setMealPopupSwitch: PropTypes.func.isRequired,
   mealPopupDetail: PropTypes.object.isRequired,
   facebookbStatus: PropTypes.object.isRequired,
   followerStorage: PropTypes.string.isRequired,
-  setFollowerStorage: PropTypes.string.isRequired,
+  setFollowerStorage: PropTypes.func.isRequired,
 };
 export default Menu;

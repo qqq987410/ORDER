@@ -226,6 +226,6 @@ OrderList.propTypes = {
 Item.propTypes = {
   facebookbStatus: PropTypes.object.isRequired,
   dishData: PropTypes.object.isRequired,
-  setCartLists: PropTypes.array.isRequired,
+  setCartLists: PropTypes.func.isRequired,
 };
 export default OrderList;

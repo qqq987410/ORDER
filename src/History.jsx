@@ -12,90 +12,73 @@ function History({ facebookbStatus }) {
   useEffect(() => {
     if (facebookbStatus.status) {
       const ref = db.collection("orderList");
-      ref.onSnapshot((onSnapshot) => {
-        onSnapshot.forEach(() => {
-          // 主揪
-          ref
-            .where("uid", "==", facebookbStatus.uid)
-            .where("status", "==", "history")
-            .get()
-            .then((res) => {
-              const historyOrderLists = [];
-
-              res.forEach((a_doc) => {
-                // ===start
+      ref.onSnapshot(() => {
+        // 主揪
+        ref
+          .where("uid", "==", facebookbStatus.uid)
+          .where("status", "==", "history")
+          .get()
+          .then((res) => {
+            const groupId = [];
+            res.forEach((groups) => {
+              groupId.push(
                 ref
-                  .doc(a_doc.id)
+                  .doc(groups.id)
                   .collection("records")
                   .get()
-                  .then((a_res) => {
-                    const orderLists = [];
-
-                    a_res.forEach((b_doc) => {
-                      // 1.
-                      orderLists.push({
-                        name: b_doc.data().name,
-                        price: b_doc.data().price,
-                        qty: b_doc.data().qty,
-                        size: b_doc.data().size,
-                        ice: b_doc.data().ice,
-                        sugar: b_doc.data().sugar,
-                        displayName: b_doc.data().displayName,
-                      });
-                    });
-                    // 2.
-                    historyOrderLists.push({
-                      endTime: a_doc.data().endTime,
-                      orderLists: orderLists,
-                    });
-                    // 3.
-                    const newHistoryOrderLists = [...historyOrderLists];
-                    setBundle(newHistoryOrderLists);
-                    return newHistoryOrderLists;
-                  });
-              }); // ===end
+                  .then((result) => {
+                    return {
+                      endTime: groups.data().endTime,
+                      orderLists: result.docs.map((item) => item.data()),
+                    };
+                  })
+              );
             });
-
-          // 副揪
-          ref
-            .where("uid", "!=", facebookbStatus.uid)
-            .where("status", "==", "history")
-            .get()
-            .then((res) => {
-              const historyLists = [];
-              res.forEach((doc) => {
-                // doc.data().endTime
-                ref
-                  .doc(doc.id)
-                  .collection("records")
-                  .where("uid", "==", facebookbStatus.uid)
-                  .get()
-                  .then((b_res) => {
-                    const orderLists = [];
-                    b_res.forEach((b_doc) => {
-                      // 1.
-                      orderLists.push({
-                        name: b_doc.data().name,
-                        price: b_doc.data().price,
-                        qty: b_doc.data().qty,
-                        size: b_doc.data().size,
-                        ice: b_doc.data().ice,
-                        sugar: b_doc.data().sugar,
-                        displayName: b_doc.data().displayName,
-                      });
-                    });
-                    // 2.
-                    historyLists.push({
-                      endTime: doc.data().endTime,
-                      orderLists: orderLists,
-                    });
-                    // 3.
-                    const newHistoryLists = [...historyLists];
-                    setSubBundle(newHistoryLists);
-                  });
-              });
+            Promise.all(groupId).then((summary) => {
+              setBundle(summary);
             });
-        });
+          });
+
+        // 副揪
+        ref
+          .where("uid", "!=", facebookbStatus.uid)
+          .where("status", "==", "history")
+          .get()
+          .then((res) => {
+            setSubBundle([]);
+            console.log(res);
+            /* 
+                  const historyLists = [];
+                  res.forEach((doc) => {
+                     ref.doc(doc.id)
+                        .collection("records")
+                        .where("uid", "==", facebookbStatus.uid)
+                        .get()
+                        .then((b_res) => {
+                           const orderLists = [];
+                           b_res.forEach((b_doc) => {
+                              // 1.
+                              orderLists.push({
+                                 name: b_doc.data().name,
+                                 price: b_doc.data().price,
+                                 qty: b_doc.data().qty,
+                                 size: b_doc.data().size,
+                                 ice: b_doc.data().ice,
+                                 sugar: b_doc.data().sugar,
+                                 displayName: b_doc.data().displayName,
+                              });
+                           });
+                           // 2.
+                           historyLists.push({
+                              endTime: doc.data().endTime,
+                              orderLists: orderLists,
+                           });
+                           // 3.
+                           const newHistoryLists = [...historyLists];
+                           setSubBundle(newHistoryLists);
+                        });
+                  });*/
+          });
       });
     }
   }, [facebookbStatus]);
@@ -104,8 +87,7 @@ function History({ facebookbStatus }) {
     const newBundle = [...bundle, ...subBundle];
     setMixBundle(newBundle);
   }, [bundle, subBundle]);
-  console.log(mixBundle);
-  console.log(mixBundle);
+
   return (
     <div className={styles.out}>
       <div className={styles.in}>
@@ -166,9 +148,8 @@ function Dish({ dish }) {
 History.propTypes = {
   facebookbStatus: PropTypes.object.isRequired,
 };
-
 Unit.propTypes = {
-  endTime: PropTypes.number.isRequired,
+  endTime: PropTypes.object.isRequired,
   orderLists: PropTypes.array.isRequired,
 };
 Dish.propTypes = {
