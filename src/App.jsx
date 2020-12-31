@@ -12,19 +12,19 @@ import firebase from "firebase/app";
 import DATA from "./data";
 
 function App() {
-  const [facebookbStatus, setFacebookbStatus] = useState({});
+  const [facebookStatus, setFacebookStatus] = useState({});
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
-        setFacebookbStatus({
+        setFacebookStatus({
           status: true,
           uid: user.uid,
           displayName: user.displayName,
           email: user.email,
         });
       } else {
-        setFacebookbStatus({ status: false });
+        setFacebookStatus({ status: false });
       }
     });
   }, []);
@@ -33,23 +33,23 @@ function App() {
     <>
       <Switch>
         <Route exact path="/">
-          <Navbar facebookbStatus={facebookbStatus} />
+          <Navbar facebookStatus={facebookStatus} />
           <Home data={DATA} />
         </Route>
         <Route path="/menu">
-          <Navbar facebookbStatus={facebookbStatus} />
-          <Menu data={DATA} facebookbStatus={facebookbStatus} />
+          <Navbar facebookStatus={facebookStatus} />
+          <Menu data={DATA} facebookStatus={facebookStatus} />
         </Route>
         <Route path="/orderList">
-          <Navbar facebookbStatus={facebookbStatus} />
-          <OrderList facebookbStatus={facebookbStatus} />
+          <Navbar facebookStatus={facebookStatus} />
+          <OrderList facebookStatus={facebookStatus} />
         </Route>
         <Route path="/history">
-          <Navbar facebookbStatus={facebookbStatus} />
-          <History facebookbStatus={facebookbStatus} />
+          <Navbar facebookStatus={facebookStatus} />
+          <History facebookStatus={facebookStatus} />
         </Route>
         <Route path="/login">
-          <Navbar facebookbStatus={facebookbStatus} />
+          <Navbar facebookStatus={facebookStatus} />
           <Login />
         </Route>
         <Route>

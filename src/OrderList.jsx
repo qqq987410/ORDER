@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 import getVariable from "./Variable";
 import PropTypes from "prop-types";
 
-function OrderList({ facebookbStatus }) {
+function OrderList({ facebookStatus }) {
   const orderListRef = db.collection("orderList");
   const history = useHistory();
   const [cartLists, setCartLists] = useState([]);
@@ -18,7 +18,7 @@ function OrderList({ facebookbStatus }) {
 
   // 1. owner & follower 畫面的 cartLists
   useEffect(() => {
-    if (facebookbStatus.status === true) {
+    if (facebookStatus.status === true) {
       if (getVariable().special) {
         const followerStorage = JSON.parse(
           localStorage.getItem(getVariable().docID)
@@ -37,7 +37,7 @@ function OrderList({ facebookbStatus }) {
           });
       }
     }
-  }, [facebookbStatus]);
+  }, [facebookStatus]);
 
   // 2. owner 畫面的 cartLists 中的總金額
   useEffect(() => {
@@ -60,7 +60,7 @@ function OrderList({ facebookbStatus }) {
     }
   }
   function checkout() {
-    if (facebookbStatus.status === true) {
+    if (facebookStatus.status === true) {
       Swal.fire({
         title: "確定產生訂單嗎?",
         icon: "warning",
@@ -122,7 +122,7 @@ function OrderList({ facebookbStatus }) {
         <div className={styles.header}>
           <div className={styles.user}>
             <img src={head} alt="head photo" />
-            <p>{facebookbStatus.displayName}</p>
+            <p>{facebookStatus.displayName}</p>
           </div>
           <div className={styles.totalPrice}>
             <img src={dollarSign} alt="money icon" />
@@ -134,7 +134,7 @@ function OrderList({ facebookbStatus }) {
             return (
               <Item
                 dishData={item}
-                facebookbStatus={facebookbStatus}
+                facebookStatus={facebookStatus}
                 setCartLists={setCartLists}
                 key={nanoid()}
               />
@@ -160,11 +160,11 @@ function OrderList({ facebookbStatus }) {
     </div>
   );
 }
-function Item({ facebookbStatus, dishData, setCartLists }) {
+function Item({ facebookStatus, dishData, setCartLists }) {
   const ref = db.collection("orderList");
 
   function deleteItem(e) {
-    if (facebookbStatus.status === true && e.target.id === dishData.id) {
+    if (facebookStatus.status === true && e.target.id === dishData.id) {
       if (getVariable().special) {
         const arr = JSON.parse(localStorage.getItem(getVariable().docID));
         const newOne = arr.filter((item) => item.id !== e.target.id);
@@ -221,10 +221,10 @@ function Item({ facebookbStatus, dishData, setCartLists }) {
   );
 }
 OrderList.propTypes = {
-  facebookbStatus: PropTypes.object.isRequired,
+  facebookStatus: PropTypes.object.isRequired,
 };
 Item.propTypes = {
-  facebookbStatus: PropTypes.object.isRequired,
+  facebookStatus: PropTypes.object.isRequired,
   dishData: PropTypes.object.isRequired,
   setCartLists: PropTypes.func.isRequired,
 };

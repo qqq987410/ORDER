@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import "animate.css";
 import PropTypes from "prop-types";
 
-function Navbar({ facebookbStatus }) {
+function Navbar({ facebookStatus }) {
   const history = useHistory();
 
   function signOut() {
@@ -55,7 +55,7 @@ function Navbar({ facebookbStatus }) {
             <Link to="/history">歷史訂單</Link>
           </div>
         )}
-        {facebookbStatus.status ? (
+        {facebookStatus.status ? (
           <div className={styles.logOutPage} id="logOut" onClick={signOut}>
             登出
           </div>
@@ -69,6 +69,6 @@ function Navbar({ facebookbStatus }) {
   );
 }
 Navbar.propTypes = {
-  facebookbStatus: PropTypes.object.isRequired,
+  facebookStatus: PropTypes.object.isRequired,
 };
 export default Navbar;

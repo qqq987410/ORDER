@@ -1,29 +1,28 @@
 import styles from "./History.module.scss";
 import React, { useEffect, useState } from "react";
-import { db } from "./firebase";
+import getVariable from "./Variable";
 import { nanoid } from "nanoid";
 import PropTypes from "prop-types";
 
-function History({ facebookbStatus }) {
+function History({ facebookStatus }) {
   const [bundle, setBundle] = useState([]);
   const [subBundle, setSubBundle] = useState([]);
   const [mixBundle, setMixBundle] = useState([]);
 
   useEffect(() => {
-    if (facebookbStatus.status) {
-      const ref = db.collection("orderList");
-      ref.onSnapshot(() => {
+    if (facebookStatus.status) {
+      getVariable().orderListRef.onSnapshot(() => {
         // 主揪
-        ref
-          .where("uid", "==", facebookbStatus.uid)
+        getVariable()
+          .orderListRef.where("uid", "==", facebookStatus.uid)
           .where("status", "==", "history")
           .get()
           .then((res) => {
             const groupId = [];
             res.forEach((groups) => {
               groupId.push(
-                ref
-                  .doc(groups.id)
+                getVariable()
+                  .orderListRef.doc(groups.id)
                   .collection("records")
                   .get()
                   .then((result) => {
@@ -40,48 +39,35 @@ function History({ facebookbStatus }) {
           });
 
         // 副揪
-        ref
-          .where("uid", "!=", facebookbStatus.uid)
+        getVariable()
+          .orderListRef.where("uid", "!=", facebookStatus.uid)
           .where("status", "==", "history")
           .get()
           .then((res) => {
-            setSubBundle([]);
-            console.log(res);
-            /* 
-                  const historyLists = [];
-                  res.forEach((doc) => {
-                     ref.doc(doc.id)
-                        .collection("records")
-                        .where("uid", "==", facebookbStatus.uid)
-                        .get()
-                        .then((b_res) => {
-                           const orderLists = [];
-                           b_res.forEach((b_doc) => {
-                              // 1.
-                              orderLists.push({
-                                 name: b_doc.data().name,
-                                 price: b_doc.data().price,
-                                 qty: b_doc.data().qty,
-                                 size: b_doc.data().size,
-                                 ice: b_doc.data().ice,
-                                 sugar: b_doc.data().sugar,
-                                 displayName: b_doc.data().displayName,
-                              });
-                           });
-                           // 2.
-                           historyLists.push({
-                              endTime: doc.data().endTime,
-                              orderLists: orderLists,
-                           });
-                           // 3.
-                           const newHistoryLists = [...historyLists];
-                           setSubBundle(newHistoryLists);
-                        });
-                  });*/
+            const groupId = [];
+            res.forEach((groups) => {
+              groupId.push(
+                getVariable()
+                  .orderListRef.doc(groups.id)
+                  .collection("records")
+                  .where("uid", "==", facebookStatus.uid)
+                  .get()
+                  .then((result) => {
+                    return {
+                      endTime: groups.data().endTime,
+                      orderLists: result.docs.map((item) => item.data()),
+                    };
+                  })
+              );
+            });
+            Promise.all(groupId).then((summary) => {
+              console.log(summary);
+              setSubBundle(summary);
+            });
           });
       });
     }
-  }, [facebookbStatus]);
+  }, [facebookStatus]);
 
   useEffect(() => {
     const newBundle = [...bundle, ...subBundle];
@@ -110,7 +96,6 @@ function History({ facebookbStatus }) {
   );
 }
 function Unit({ endTime, orderLists }) {
-  console.log(typeof endTime);
   function formatDateTime(date) {
     const initTime = date.toDate().toString();
     const fixTime = initTime.replace("GMT+0800 (台北標準時間)", "");
@@ -137,16 +122,16 @@ function Dish({ dish }) {
       <div className={styles.down}>
         <div className={styles.price}>{dish.price}元</div>
         <div className={styles.qty}>{dish.qty}份</div>
-        {dish.size ? <div className={styles.size}>{dish.size}</div> : null}
-        {dish.ice ? <div className={styles.ice}>{dish.ice}</div> : null}
-        {dish.sugar ? <div className={styles.suagr}>{dish.sugar}</div> : null}
+        {dish.size && <div className={styles.size}>{dish.size}</div>}
+        {dish.ice && <div className={styles.ice}>{dish.ice}</div>}
+        {dish.sugar && <div className={styles.sugar}>{dish.sugar}</div>}
       </div>
     </div>
   );
 }
 
 History.propTypes = {
-  facebookbStatus: PropTypes.object.isRequired,
+  facebookStatus: PropTypes.object.isRequired,
 };
 Unit.propTypes = {
   endTime: PropTypes.object.isRequired,

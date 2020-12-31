@@ -11,7 +11,7 @@ import { ReactComponent as Cart } from "./image/cart.svg";
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 
-function Menu({ data, facebookbStatus }) {
+function Menu({ data, facebookStatus }) {
   const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
   const [mealPopupDetail, setMealPopupDetail] = useState({});
   const [teamBuyingPopup, setTeamBuyingPopup] = useState(false);
@@ -42,7 +42,7 @@ function Menu({ data, facebookbStatus }) {
   });
 
   // 3. 營業時間差異
-  const sigleTime = <div> {restaurantDetail.businessHour[0]}</div>;
+  const singleTime = <div> {restaurantDetail.businessHour[0]}</div>;
   const doubleTime = (
     <div>
       {restaurantDetail.businessHour[0]}&nbsp;&amp;&nbsp;
@@ -51,26 +51,25 @@ function Menu({ data, facebookbStatus }) {
   );
   // 4. 從db撈訂單長度 & myOrders
   useEffect(() => {
-    if (facebookbStatus.status) {
-      const orderListRef = db.collection("orderList");
-      orderListRef.onSnapshot((onSnapshotRes) => {
+    if (facebookStatus.status) {
+      getVariable().orderListRef.onSnapshot((onSnapshotRes) => {
         onSnapshotRes.forEach((onSnapshotAgainDoc) => {
-          orderListRef
-            .doc(onSnapshotAgainDoc.data().id)
+          getVariable()
+            .orderListRef.doc(onSnapshotAgainDoc.data().id)
             .collection("records")
             .onSnapshot(() => {
               if (getVariable().docID !== null) {
                 // 情況一 => docID存在
 
-                orderListRef
-                  .doc(getVariable().docID)
+                getVariable()
+                  .orderListRef.doc(getVariable().docID)
                   .get()
                   .then((docIDRes) => {
                     if (docIDRes.data().status === "ongoing") {
-                      orderListRef
-                        .doc(getVariable().docID)
+                      getVariable()
+                        .orderListRef.doc(getVariable().docID)
                         .collection("records")
-                        .where("uid", "==", facebookbStatus.uid)
+                        .where("uid", "==", facebookStatus.uid)
                         .get()
                         .then((followerRes) => {
                           const followerLength = [];
@@ -87,11 +86,11 @@ function Menu({ data, facebookbStatus }) {
 
                 onSnapshotRes.forEach((onSnapshotDoc) => {
                   if (
-                    onSnapshotDoc.data().uid === facebookbStatus.uid &&
+                    onSnapshotDoc.data().uid === facebookStatus.uid &&
                     onSnapshotDoc.data().status === "ongoing"
                   ) {
-                    orderListRef
-                      .doc(onSnapshotDoc.data().id)
+                    getVariable()
+                      .orderListRef.doc(onSnapshotDoc.data().id)
                       .collection("records")
                       .get()
                       .then((totalMealRes) => {
@@ -109,7 +108,7 @@ function Menu({ data, facebookbStatus }) {
         });
       });
     }
-  }, [facebookbStatus.status]);
+  }, [facebookStatus.status]);
 
   // 5. 總金額計算
   useEffect(() => {
@@ -122,13 +121,12 @@ function Menu({ data, facebookbStatus }) {
 
   // 6. 開團者名字
   useEffect(() => {
-    if (facebookbStatus.status) {
+    if (facebookStatus.status) {
       if (!getVariable().docID) {
-        setGrouperName(`${facebookbStatus.displayName}開的團`);
+        setGrouperName(`${facebookStatus.displayName}開的團`);
       } else {
-        const orderListRef = db.collection("orderList");
-        orderListRef
-          .doc(getVariable().docID)
+        getVariable()
+          .orderListRef.doc(getVariable().docID)
           .get()
           .then((res) => {
             setGrouperName(`${res.data().displayName}開的團`);
@@ -137,7 +135,7 @@ function Menu({ data, facebookbStatus }) {
     } else {
       return "";
     }
-  }, [facebookbStatus.status]);
+  }, [facebookStatus.status]);
 
   // 7. 揪團Btn setState
   useEffect(() => {
@@ -149,63 +147,64 @@ function Menu({ data, facebookbStatus }) {
   }, []);
 
   function teamBuying() {
-    if (facebookbStatus.status === true) {
+    if (facebookStatus.status === true) {
       setTeamBuyingPopup(true);
-      const orderListRef = db.collection("orderList");
 
-      orderListRef.get().then((res1) => {
-        if (getVariable().special) {
-          // 情況一
-          setURL(location.href);
-        } else if (res1.size === 0) {
-          // 情況二
-          orderListRef
-            .add({
-              status: "ongoing",
-              uid: facebookbStatus.uid,
-              displayName: facebookbStatus.displayName,
-            })
-            .then((res2) => {
-              orderListRef.doc(res2.id).set(
-                {
-                  id: res2.id,
-                },
-                { merge: true }
-              );
-              setURL(`${location.href}&docID=${res2.id}&special=true`);
-            });
-        } else {
-          // 情況三
-          let findMyGroup = false;
-          res1.forEach((doc1) => {
-            if (
-              doc1.data().uid === facebookbStatus.uid &&
-              doc1.data().status === "ongoing"
-            ) {
-              setURL(`${location.href}&docID=${doc1.id}&special=true`);
-              findMyGroup = true;
-            }
-          });
-          if (!findMyGroup) {
-            orderListRef
-              .add({
+      getVariable()
+        .orderListRef.get()
+        .then((res1) => {
+          if (getVariable().special) {
+            // 情況一
+            setURL(location.href);
+          } else if (res1.size === 0) {
+            // 情況二
+            getVariable()
+              .orderListRef.add({
                 status: "ongoing",
-                uid: facebookbStatus.uid,
-                displayName: facebookbStatus.displayName,
+                uid: facebookStatus.uid,
+                displayName: facebookStatus.displayName,
               })
-              .then((res3) => {
-                orderListRef.doc(res3.id).set(
+              .then((res2) => {
+                getVariable().orderListRef.doc(res2.id).set(
                   {
-                    id: res3.id,
+                    id: res2.id,
                   },
                   { merge: true }
                 );
-                setURL(`${location.href}&docID=${res3.id}&special=true`);
+                setURL(`${location.href}&docID=${res2.id}&special=true`);
               });
+          } else {
+            // 情況三
+            let findMyGroup = false;
+            res1.forEach((doc1) => {
+              if (
+                doc1.data().uid === facebookStatus.uid &&
+                doc1.data().status === "ongoing"
+              ) {
+                setURL(`${location.href}&docID=${doc1.id}&special=true`);
+                findMyGroup = true;
+              }
+            });
+            if (!findMyGroup) {
+              getVariable()
+                .orderListRef.add({
+                  status: "ongoing",
+                  uid: facebookStatus.uid,
+                  displayName: facebookStatus.displayName,
+                })
+                .then((res3) => {
+                  getVariable().orderListRef.doc(res3.id).set(
+                    {
+                      id: res3.id,
+                    },
+                    { merge: true }
+                  );
+                  setURL(`${location.href}&docID=${res3.id}&special=true`);
+                });
+            }
           }
-        }
-      });
-    } else if (facebookbStatus.status === false) {
+        });
+    } else if (facebookStatus.status === false) {
       Swal.fire({
         icon: "error",
         title: "尚未登錄會員",
@@ -230,7 +229,7 @@ function Menu({ data, facebookbStatus }) {
     }
   }
   function linkToOrderList() {
-    if (facebookbStatus.status === true) {
+    if (facebookStatus.status === true) {
       if (getVariable().special) {
         // follower
         const followerLong = JSON.parse(followerStorage);
@@ -245,57 +244,58 @@ function Menu({ data, facebookbStatus }) {
           return;
         }
       }
-      const ref = db.collection("orderList");
-      ref.get().then((res) => {
-        res.forEach((doc) => {
-          if (
-            doc.data().uid === facebookbStatus.uid &&
-            doc.data().status === "ongoing"
-          ) {
-            ref
-              .doc(doc.data().id)
-              .collection("records")
-              .get()
-              .then((shot) => {
-                if (shot.size === 0) {
-                  Swal.fire("尚未加入餐點！");
-                } else {
-                  if (getVariable().special) {
-                    history.push(
-                      `./orderList?restaurantID=${
-                        getVariable().restaurantID
-                      }&docID=${getVariable().docID}&special=true`
-                    );
+      getVariable()
+        .orderListRef.get()
+        .then((res) => {
+          res.forEach((doc) => {
+            if (
+              doc.data().uid === facebookStatus.uid &&
+              doc.data().status === "ongoing"
+            ) {
+              getVariable()
+                .orderListRef.doc(doc.data().id)
+                .collection("records")
+                .get()
+                .then((shot) => {
+                  if (shot.size === 0) {
+                    Swal.fire("尚未加入餐點！");
                   } else {
-                    history.push(
-                      `./orderList?restaurantID=${
-                        getVariable().restaurantID
-                      }&docID=${doc.id}`
-                    );
+                    if (getVariable().special) {
+                      history.push(
+                        `./orderList?restaurantID=${
+                          getVariable().restaurantID
+                        }&docID=${getVariable().docID}&special=true`
+                      );
+                    } else {
+                      history.push(
+                        `./orderList?restaurantID=${
+                          getVariable().restaurantID
+                        }&docID=${doc.id}`
+                      );
+                    }
                   }
-                }
-              });
-          } else if (
-            doc.data().uid !== facebookbStatus.uid &&
-            doc.data().status === "ongoing" &&
-            getVariable().docID !== null
-          ) {
-            if (getVariable().special) {
-              history.push(
-                `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
-                  doc.id
-                }&special=true`
-              );
-            } else {
-              history.push(
-                `./orderList?restaurantID=${getVariable().restaurantID}&docID=${
-                  doc.id
-                }`
-              );
+                });
+            } else if (
+              doc.data().uid !== facebookStatus.uid &&
+              doc.data().status === "ongoing" &&
+              getVariable().docID !== null
+            ) {
+              if (getVariable().special) {
+                history.push(
+                  `./orderList?restaurantID=${
+                    getVariable().restaurantID
+                  }&docID=${doc.id}&special=true`
+                );
+              } else {
+                history.push(
+                  `./orderList?restaurantID=${
+                    getVariable().restaurantID
+                  }&docID=${doc.id}`
+                );
+              }
             }
-          }
+          });
         });
-      });
     } else {
       Swal.fire({
         icon: "error",
@@ -323,53 +323,23 @@ function Menu({ data, facebookbStatus }) {
     return init;
   }
   function CreateNewGroup() {
-    if (facebookbStatus.status) {
+    if (facebookStatus.status) {
       if (!getVariable().special) {
         //  Owner
 
-        const orderListRef = db.collection("orderList");
-        orderListRef.get().then((groups) => {
-          if (groups.size === 0) {
-            // 1. db is empty => create new group
-            orderListRef
-              .add({
-                status: "ongoing",
-                uid: facebookbStatus.uid,
-                displayName: facebookbStatus.displayName,
-              })
-              .then((mergeId) => {
-                orderListRef.doc(mergeId).set(
-                  {
-                    id: mergeId.id,
-                  },
-                  { merge: true }
-                );
-              });
-            Swal.fire("新團已開，請點擊『揪團』");
-          } else {
-            // 2-1. db not empty ['ongoing' && 'uid'] => alert
-            let myGroupExist = false;
-            groups.forEach((group) => {
-              if (
-                group.data().status === "ongoing" &&
-                group.data().uid === facebookbStatus.uid
-              ) {
-                myGroupExist = true;
-              }
-            });
-            if (myGroupExist) {
-              Swal.fire("請先結單哦");
-            } else {
-              // 2-2. db not empty 不符合上面 => create new group
-              orderListRef
-                .add({
+        getVariable()
+          .orderListRef.get()
+          .then((groups) => {
+            if (groups.size === 0) {
+              // 1. db is empty => create new group
+              getVariable()
+                .orderListRef.add({
                   status: "ongoing",
-                  uid: facebookbStatus.uid,
-                  displayName: facebookbStatus.displayName,
+                  uid: facebookStatus.uid,
+                  displayName: facebookStatus.displayName,
                 })
                 .then((mergeId) => {
-                  console.log(mergeId);
-                  orderListRef.doc(mergeId.id).set(
+                  getVariable().orderListRef.doc(mergeId).set(
                     {
                       id: mergeId.id,
                     },
@@ -377,9 +347,40 @@ function Menu({ data, facebookbStatus }) {
                   );
                 });
               Swal.fire("新團已開，請點擊『揪團』");
+            } else {
+              // 2-1. db not empty ['ongoing' && 'uid'] => alert
+              let myGroupExist = false;
+              groups.forEach((group) => {
+                if (
+                  group.data().status === "ongoing" &&
+                  group.data().uid === facebookStatus.uid
+                ) {
+                  myGroupExist = true;
+                }
+              });
+              if (myGroupExist) {
+                Swal.fire("請先結單哦");
+              } else {
+                // 2-2. db not empty 不符合上面 => create new group
+                getVariable()
+                  .orderListRef.add({
+                    status: "ongoing",
+                    uid: facebookStatus.uid,
+                    displayName: facebookStatus.displayName,
+                  })
+                  .then((mergeId) => {
+                    console.log(mergeId);
+                    getVariable().orderListRef.doc(mergeId.id).set(
+                      {
+                        id: mergeId.id,
+                      },
+                      { merge: true }
+                    );
+                  });
+                Swal.fire("新團已開，請點擊『揪團』");
+              }
             }
-          }
-        });
+          });
       } else {
         //  Follower
 
@@ -392,20 +393,15 @@ function Menu({ data, facebookbStatus }) {
           confirmButtonText: "Yes!",
         }).then((result) => {
           if (result.isConfirmed) {
-            // 1. clear LocalStorage
             localStorage.clear();
             setFollowerStorage(JSON.stringify([]));
 
-            // 2. setGrouperName
-            setGrouperName(`${facebookbStatus.displayName}開的團`);
+            setGrouperName(`${facebookStatus.displayName}開的團`);
 
-            // 3. clear URL
             history.push(`/menu?restaurantID=${getVariable().restaurantID}`);
 
-            // 4.setTeamBuyingBtnExist
             setTeamBuyingBtnExist(true);
 
-            // 5. Swal
             Swal.fire("新團已開!", "請點擊『揪團』", "success");
           }
         });
@@ -426,7 +422,7 @@ function Menu({ data, facebookbStatus }) {
             <div className={styles.subTitle}>
               <div className={styles.time}>
                 <Time className={styles.timeIcon} />
-                {restaurantDetail.businessHour[1] ? doubleTime : sigleTime}
+                {restaurantDetail.businessHour[1] ? doubleTime : singleTime}
               </div>
               <div className={styles.phone}>
                 <Phone className={styles.phoneIcon} />
@@ -456,20 +452,20 @@ function Menu({ data, facebookbStatus }) {
             <div className={styles.newGroup} onClick={CreateNewGroup}>
               開新團
             </div>
-            {teamBuyingBtnExist ? (
+            {teamBuyingBtnExist && (
               <div className={styles.together} onClick={teamBuying}>
                 揪團
               </div>
-            ) : null}
+            )}
             <div className={styles.cartBtn} onClick={linkToOrderList}>
-              {facebookbStatus.status && getVariable().docID !== null ? (
+              {facebookStatus.status && getVariable().docID !== null ? (
                 <span>{showFollowerLength()}</span>
               ) : (
                 <span>{cartLength}</span>
               )}
               <Cart className={styles.cart} />
               購物車
-              {facebookbStatus.status && getVariable().docID !== null ? (
+              {facebookStatus.status && getVariable().docID !== null ? (
                 <div className={styles.totalPrice}>{showFollowerPrice()}</div>
               ) : (
                 <div className={styles.totalPrice}>{cartPrice}</div>
@@ -478,17 +474,17 @@ function Menu({ data, facebookbStatus }) {
           </div>
         </div>
       </div>
-      {mealPopupSwitch ? (
+      {mealPopupSwitch && (
         <MealPoppup
           setMealPopupSwitch={setMealPopupSwitch}
           mealPopupDetail={mealPopupDetail}
           setMealPopupDetail={setMealPopupDetail}
-          facebookbStatus={facebookbStatus}
+          facebookStatus={facebookStatus}
           followerStorage={followerStorage}
           setFollowerStorage={setFollowerStorage}
         />
-      ) : null}
-      {teamBuyingPopup === true ? (
+      )}
+      {teamBuyingPopup === true && (
         <div
           className={styles.teamBuyingPopup}
           id="teamBuyingPopup"
@@ -506,7 +502,7 @@ function Menu({ data, facebookbStatus }) {
             </div>
           </div>
         </div>
-      ) : null}
+      )}
     </>
   );
 }
@@ -568,7 +564,7 @@ function Meal({ detail, setMealPopupSwitch, setMealPopupDetail }) {
 function MealPoppup({
   setMealPopupSwitch,
   mealPopupDetail,
-  facebookbStatus,
+  facebookStatus,
   followerStorage,
   setFollowerStorage,
 }) {
@@ -612,7 +608,7 @@ function MealPoppup({
     const newRecord = { ...record, ice: e.target.textContent };
     setRecord(newRecord);
   }
-  function chooseSuagr(e) {
+  function chooseSugar(e) {
     const newRecord = { ...record, sugar: e.target.textContent };
     setRecord(newRecord);
   }
@@ -651,7 +647,7 @@ function MealPoppup({
       });
       return;
     }
-    if (facebookbStatus.status === true) {
+    if (facebookStatus.status === true) {
       const orderListRef = db.collection("orderList");
       orderListRef.get().then((res1) => {
         if (res1.size === 0) {
@@ -661,16 +657,16 @@ function MealPoppup({
           orderListRef
             .add({
               status: "ongoing",
-              uid: facebookbStatus.uid,
-              displayName: facebookbStatus.displayName,
+              uid: facebookStatus.uid,
+              displayName: facebookStatus.displayName,
             })
             .then((res2) => {
               if (getVariable().docID !== null && getVariable().special) {
                 const cartBox = [];
                 const target = {
-                  uid: facebookbStatus.uid,
-                  displayName: facebookbStatus.displayName,
-                  email: facebookbStatus.email,
+                  uid: facebookStatus.uid,
+                  displayName: facebookStatus.displayName,
+                  email: facebookStatus.email,
                   name: mealPopupDetail.name,
                   qty: record.qty,
                   price: record.price,
@@ -706,9 +702,9 @@ function MealPoppup({
                   .doc(res2.id)
                   .collection("records")
                   .add({
-                    uid: facebookbStatus.uid,
-                    displayName: facebookbStatus.displayName,
-                    email: facebookbStatus.email,
+                    uid: facebookStatus.uid,
+                    displayName: facebookStatus.displayName,
+                    email: facebookStatus.email,
                     name: mealPopupDetail.name,
                     qty: record.qty,
                     price: record.price,
@@ -738,9 +734,9 @@ function MealPoppup({
               .then((specific) => {
                 if (specific.data() && specific.data().status === "ongoing") {
                   const target = {
-                    uid: facebookbStatus.uid,
-                    displayName: facebookbStatus.displayName,
-                    email: facebookbStatus.email,
+                    uid: facebookStatus.uid,
+                    displayName: facebookStatus.displayName,
+                    email: facebookStatus.email,
                     name: mealPopupDetail.name,
                     qty: record.qty,
                     price: record.price,
@@ -772,7 +768,7 @@ function MealPoppup({
           } else {
             orderListRef
               .where("status", "==", "ongoing")
-              .where("uid", "==", facebookbStatus.uid)
+              .where("uid", "==", facebookStatus.uid)
               .get()
               .then((ongoingUidTrueRes) => {
                 if (ongoingUidTrueRes.size !== 0) {
@@ -783,9 +779,9 @@ function MealPoppup({
                       .doc(ongoingUidTrueDoc.id)
                       .collection("records")
                       .add({
-                        uid: facebookbStatus.uid,
-                        displayName: facebookbStatus.displayName,
-                        email: facebookbStatus.email,
+                        uid: facebookStatus.uid,
+                        displayName: facebookStatus.displayName,
+                        email: facebookStatus.email,
                         name: mealPopupDetail.name,
                         qty: record.qty,
                         price: record.price,
@@ -813,8 +809,8 @@ function MealPoppup({
                   orderListRef
                     .add({
                       status: "ongoing",
-                      uid: facebookbStatus.uid,
-                      displayName: facebookbStatus.displayName,
+                      uid: facebookStatus.uid,
+                      displayName: facebookStatus.displayName,
                     })
                     .then((nonfix) => {
                       orderListRef
@@ -824,9 +820,9 @@ function MealPoppup({
                         .doc(nonfix.id)
                         .collection("records")
                         .add({
-                          uid: facebookbStatus.uid,
-                          displayName: facebookbStatus.displayName,
-                          email: facebookbStatus.email,
+                          uid: facebookStatus.uid,
+                          displayName: facebookStatus.displayName,
+                          email: facebookStatus.email,
                           name: mealPopupDetail.name,
                           qty: record.qty,
                           price: record.price,
@@ -849,7 +845,7 @@ function MealPoppup({
         }
       });
       setMealPopupSwitch(false);
-    } else if (facebookbStatus.status === false) {
+    } else if (facebookStatus.status === false) {
       Swal.fire({ icon: "error", title: "尚未登錄會員" });
     }
   }
@@ -922,7 +918,7 @@ function MealPoppup({
                   <div
                     className={styles.sugar}
                     key={nanoid()}
-                    onClick={chooseSuagr}
+                    onClick={chooseSugar}
                     style={{
                       background: item === record.sugar ? "#4c686f" : "none",
                       color: item === record.sugar ? "#fff" : "#877a6d",
@@ -947,7 +943,7 @@ function MealPoppup({
 }
 Menu.propTypes = {
   data: PropTypes.array.isRequired,
-  facebookbStatus: PropTypes.object.isRequired,
+  facebookStatus: PropTypes.object.isRequired,
 };
 Class.propTypes = {
   restaurantDetail: PropTypes.object.isRequired,
@@ -963,7 +959,7 @@ Meal.propTypes = {
 MealPoppup.propTypes = {
   setMealPopupSwitch: PropTypes.func.isRequired,
   mealPopupDetail: PropTypes.object.isRequired,
-  facebookbStatus: PropTypes.object.isRequired,
+  facebookStatus: PropTypes.object.isRequired,
   followerStorage: PropTypes.string.isRequired,
   setFollowerStorage: PropTypes.func.isRequired,
 };
