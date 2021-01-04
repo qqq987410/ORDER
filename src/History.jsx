@@ -11,7 +11,7 @@ function History({ facebookStatus }) {
 
   useEffect(() => {
     if (facebookStatus.status) {
-      getVariable().orderListRef.onSnapshot(() => {
+      const unsubscribe = getVariable().orderListRef.onSnapshot(() => {
         // 主揪
         getVariable()
           .orderListRef.where("uid", "==", facebookStatus.uid)
@@ -66,6 +66,9 @@ function History({ facebookStatus }) {
             });
           });
       });
+      return () => {
+        unsubscribe();
+      };
     }
   }, [facebookStatus]);
 

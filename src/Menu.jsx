@@ -10,6 +10,7 @@ import { ReactComponent as Location } from "./image/location.svg";
 import { ReactComponent as Cart } from "./image/cart.svg";
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
+import { orderListGet } from "./utils.js";
 
 function Menu({ data, facebookStatus }) {
   const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
@@ -53,61 +54,81 @@ function Menu({ data, facebookStatus }) {
   // 4. 從db撈訂單長度 & myOrders
   useEffect(() => {
     if (facebookStatus.status) {
-      getVariable().orderListRef.onSnapshot((onSnapshotRes) => {
-        onSnapshotRes.forEach((onSnapshotAgainDoc) => {
-          getVariable()
-            .orderListRef.doc(onSnapshotAgainDoc.data().id)
-            .collection("records")
-            .onSnapshot(() => {
-              if (getVariable().docID !== null) {
-                // 情況一 => docID存在
+      const unsubscribe = getVariable().orderListRef.onSnapshot(
+        (onSnapshotRes) => {
+          onSnapshotRes.forEach((onSnapshotAgainDoc) => {
+            const innerUnsubscribe = getVariable()
+              .orderListRef.doc(onSnapshotAgainDoc.data().id)
+              .collection("records")
+              .onSnapshot(() => {
+                if (getVariable().docID !== null) {
+                  // 情況一 => docID存在
 
-                getVariable()
-                  .orderListRef.doc(getVariable().docID)
-                  .get()
-                  .then((docIDRes) => {
-                    if (docIDRes.data().status === "ongoing") {
-                      getVariable()
-                        .orderListRef.doc(getVariable().docID)
-                        .collection("records")
-                        .where("uid", "==", facebookStatus.uid)
-                        .get()
-                        .then((followerRes) => {
-                          const followerLength = [];
-                          followerRes.forEach((followerDoc) => {
-                            followerLength.push(followerDoc.data());
+                  getVariable()
+                    .orderListRef.doc(getVariable().docID)
+                    .get()
+                    .then((docIDRes) => {
+                      if (docIDRes.data().status === "ongoing") {
+                        // orderListGet(getVariable().docID, ["uid", "==", facebookStatus.uid]).then(
+                        //    (followerRes) => {
+                        //       const followerLength = [];
+                        //       followerRes.forEach((followerDoc) => {
+                        //          followerLength.push(followerDoc.data());
+                        //       });
+                        //       console.log(followerLength);
+                        //       setCartLength(followerLength.length);
+                        //       setMyOrders(followerLength);
+                        //    }
+                        // );
+                        // ======
+                        getVariable()
+                          .orderListRef.doc(getVariable().docID)
+                          .collection("records")
+                          .where("uid", "==", facebookStatus.uid)
+                          .get()
+                          .then((followerRes) => {
+                            const followerLength = [];
+                            followerRes.forEach((followerDoc) => {
+                              followerLength.push(followerDoc.data());
+                            });
+                            console.log(followerLength.length);
+                            setCartLength(followerLength.length);
+                            setMyOrders(followerLength);
                           });
-                          setCartLength(followerLength.length);
-                          setMyOrders(followerLength);
-                        });
+                      }
+                    });
+                } else {
+                  // 情況二 => docID不存在
+
+                  onSnapshotRes.forEach((onSnapshotDoc) => {
+                    if (
+                      onSnapshotDoc.data().uid === facebookStatus.uid &&
+                      onSnapshotDoc.data().status === "ongoing"
+                    ) {
+                      orderListGet(onSnapshotDoc.data().id).then(
+                        (totalMealRes) => {
+                          console.log(totalMealRes.size);
+                          setCartLength(totalMealRes.size);
+                          const ownerOrderList = [];
+                          totalMealRes.forEach((totalMealDoc) => {
+                            ownerOrderList.push(totalMealDoc.data());
+                          });
+                          setMyOrders(ownerOrderList);
+                        }
+                      );
                     }
                   });
-              } else {
-                // 情況二 => docID不存在
-
-                onSnapshotRes.forEach((onSnapshotDoc) => {
-                  if (
-                    onSnapshotDoc.data().uid === facebookStatus.uid &&
-                    onSnapshotDoc.data().status === "ongoing"
-                  ) {
-                    getVariable()
-                      .orderListRef.doc(onSnapshotDoc.data().id)
-                      .collection("records")
-                      .get()
-                      .then((totalMealRes) => {
-                        setCartLength(totalMealRes.size);
-                        const ownerOrderList = [];
-                        totalMealRes.forEach((totalMealDoc) => {
-                          ownerOrderList.push(totalMealDoc.data());
-                        });
-                        setMyOrders(ownerOrderList);
-                      });
-                  }
-                });
-              }
-            });
-        });
-      });
+                }
+              });
+            return () => {
+              innerUnsubscribe();
+            };
+          });
+        }
+      );
+      return () => {
+        unsubscribe();
+      };
     }
   }, [facebookStatus.status]);
 
@@ -413,6 +434,7 @@ function Menu({ data, facebookStatus }) {
       });
     }
   }
+  console.log(cartLength);
   return (
     <>
       <div className={styles.main}>
