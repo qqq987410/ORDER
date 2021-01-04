@@ -196,15 +196,15 @@ function Item({ facebookStatus, dishData, setCartLists }) {
         <div className={styles.orderDetail}>
           <div className={styles.price}>{dishData.price}元</div>
           <div className={styles.qty}>{dishData.qty}份</div>
-          {dishData.size !== "" ? (
+          {dishData.size !== "" && (
             <div className={styles.size}>{dishData.size}</div>
-          ) : null}
-          {dishData.ice !== "" ? (
+          )}
+          {dishData.ice !== "" && (
             <div className={styles.ice}>{dishData.ice}</div>
-          ) : null}
-          {dishData.sugar !== "" ? (
+          )}
+          {dishData.sugar !== "" && (
             <div className={styles.sugar}>{dishData.sugar}</div>
-          ) : null}
+          )}
         </div>
       </div>
       <div className={styles.right}>

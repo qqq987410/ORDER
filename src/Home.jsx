@@ -119,14 +119,14 @@ function Home({ data }) {
         </div>
         <div className={styles.stores}>
           {showRestaurant.map((item) => {
-            return <SigleRestaurant detail={item} key={nanoid()} />;
+            return <SingleRestaurant detail={item} key={nanoid()} />;
           })}
         </div>
       </div>
     </>
   );
 }
-function SigleRestaurant({ detail }) {
+function SingleRestaurant({ detail }) {
   const history = useHistory();
   function linkToMenu() {
     if (getVariable().special) {
@@ -192,7 +192,7 @@ function Category({ categoryTitle, handleBox }) {
 Home.propTypes = {
   data: PropTypes.array.isRequired,
 };
-SigleRestaurant.propTypes = {
+SingleRestaurant.propTypes = {
   detail: PropTypes.object.isRequired,
 };
 Category.propTypes = {

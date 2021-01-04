@@ -1,6 +1,6 @@
 import styles from "./Menu.module.scss";
 import { useHistory } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { db } from "./firebase";
 import getVariable from "./Variable";
 import { nanoid } from "nanoid";
@@ -25,6 +25,7 @@ function Menu({ data, facebookStatus }) {
   const [grouperName, setGrouperName] = useState("");
   const [teamBuyingBtnExist, setTeamBuyingBtnExist] = useState();
   const history = useHistory();
+  const linkEl = useRef(null);
 
   // 1. 單一餐廳資訊
   let restaurantDetail;
@@ -212,8 +213,7 @@ function Menu({ data, facebookStatus }) {
     }
   }
   function copyLink() {
-    const link = document.getElementById("link");
-    link.select();
+    linkEl.current.select();
     document.execCommand("copy");
     Swal.fire({
       position: "center",
@@ -436,7 +436,7 @@ function Menu({ data, facebookStatus }) {
           </div>
         </div>
         <div className={styles.menuSpace}>
-          <div className={styles.folloeWho}>{grouperName}</div>
+          <div className={styles.followWho}>{grouperName}</div>
           {kindOfClass.map((item) => {
             return (
               <Class
@@ -494,7 +494,7 @@ function Menu({ data, facebookStatus }) {
             <input
               type="text"
               className={styles.link}
-              id="link"
+              ref={linkEl}
               defaultValue={URL}
             />
             <div className={styles.copyLink} onClick={copyLink}>
@@ -862,7 +862,7 @@ function MealPoppup({
             +
           </div>
         </div>
-        {mealPopupDetail.sizeOption ? (
+        {mealPopupDetail.sizeOption && (
           <>
             <div className={styles.sizeBlock}>
               <div className={styles.sizeTitle}>Size</div>
@@ -886,8 +886,8 @@ function MealPoppup({
               </div>
             </div>
           </>
-        ) : null}
-        {record.canChooseIce ? (
+        )}
+        {record.canChooseIce && (
           <div className={styles.iceBlock}>
             <div className={styles.iceTitle}>Ice</div>
             <div className={styles.iceContent}>
@@ -908,8 +908,8 @@ function MealPoppup({
               })}
             </div>
           </div>
-        ) : null}
-        {mealPopupDetail.sugar ? (
+        )}
+        {mealPopupDetail.sugar && (
           <div className={styles.sugarBlock}>
             <div className={styles.sugarTitle}>Sugar</div>
             <div className={styles.sugarContent}>
@@ -930,7 +930,7 @@ function MealPoppup({
               })}
             </div>
           </div>
-        ) : null}
+        )}
         <div className={styles.subTotal}>
           總金額：{record.qty * record.price}
         </div>

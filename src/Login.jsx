@@ -9,7 +9,7 @@ import googleIcon from "./image/googleIcon.svg";
 import Swal from "sweetalert2";
 
 function Login() {
-  const [trigger, setTrigger] = useState(false);
+  const [trigger, setTrigger] = useState(true);
   const [name, setName] = useState("");
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
@@ -18,38 +18,9 @@ function Login() {
   console.log(firebase.auth().currentUser);
 
   function signInAnimation() {
-    const min = document.getElementById("min");
-    const max = document.getElementById("max");
-    const signInUp = document.getElementById("signInUp");
-    const title = document.getElementById("title");
-    const greeting = document.getElementById("greeting");
-    const icon = document.getElementById("icon");
-    const nameInput = document.getElementById("nameInput");
-    const signUp = document.getElementById("signUp");
-    const signIn = document.getElementById("signIn");
-
     if (trigger) {
-      min.style.transform = "translateX(0%)";
-      max.style.transform = "translateX(0%)";
-      signInUp.textContent = "SIGN IN";
-      title.textContent = " Create Account";
-      greeting.textContent = "Welcome Back !";
-      icon.style.display = "none";
-      nameInput.style.display = "block";
-      signUp.style.display = "flex";
-      signIn.style.display = "none";
       setTrigger(false);
     } else {
-      min.style.transform = "translateX(185.714286%)";
-      max.style.transform = "translateX(-53.846154%)";
-      signInUp.textContent = "SIGN UP";
-      title.textContent = "Sign in to Order";
-      greeting.textContent = "Hello, Friend !";
-      icon.style.display = "flex";
-      nameInput.style.display = "none";
-      signUp.style.display = "none";
-      signIn.style.display = "flex";
-
       setTrigger(true);
     }
   }
@@ -143,27 +114,39 @@ function Login() {
   function passwordHandler(e) {
     setPassword(e.target.value);
   }
-  console.log(name, account, password);
   return (
     <div className={styles.outer}>
       <div className={styles.inner}>
-        <div className={styles.min} id="min">
-          <div className={styles.greeting} id="greeting">
-            Welcome Back !
+        <div
+          className={styles.min}
+          style={{
+            transform: trigger
+              ? `translateX(${0}%)`
+              : `translateX(${185.714286}%)`,
+          }}
+        >
+          <div className={styles.greeting}>
+            {trigger ? " Welcome Back !" : "Hello, Friend !"}
           </div>
-          <div
-            className={styles.signinBtn}
-            id="signInUp"
-            onClick={signInAnimation}
-          >
-            SIGN IN
+          <div className={styles.signinBtn} onClick={signInAnimation}>
+            {trigger ? "SIGN IN" : "SIGN UP"}
           </div>
         </div>
-        <div className={styles.max} id="max">
-          <div className={styles.titel} id="title">
-            Create Account
+        <div
+          className={styles.max}
+          style={{
+            transform: trigger
+              ? `translateX(${0}%)`
+              : `translateX(${-53.846154}%)`,
+          }}
+        >
+          <div className={styles.title}>
+            {trigger ? " Create Account" : "Sign in to Order"}
           </div>
-          <div className={styles.icon} id="icon">
+          <div
+            className={styles.icon}
+            style={{ display: trigger ? "none" : "flex" }}
+          >
             <div className={styles.fb} id="fbIcon" onClick={fbSignInHandler}>
               <img src={fbIcon} alt="FBIcon" />
             </div>
@@ -176,7 +159,10 @@ function Login() {
             </div>
           </div>
           <div className={styles.input}>
-            <div className={styles.name} id="nameInput">
+            <div
+              className={styles.name}
+              style={{ display: trigger ? "block" : "none" }}
+            >
               <input
                 type="text"
                 placeholder="Name"
@@ -200,10 +186,17 @@ function Login() {
                 onChange={passwordHandler}
               />
             </div>
-            <div className={styles.signUp} id="signUp" onClick={nativeSignUp}>
+            <div
+              className={styles.signUp}
+              style={{ display: trigger ? "flex" : "none" }}
+              onClick={nativeSignUp}
+            >
               SIGN UP
             </div>
-            <div className={styles.signIn} id="signIn">
+            <div
+              className={styles.signIn}
+              style={{ display: trigger ? "none" : "flex" }}
+            >
               SIGN IN
             </div>
           </div>
