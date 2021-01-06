@@ -74,7 +74,7 @@ DATA.forEach((item) => {
          title: item.title,
          id: item.id,
       })
-      .then((res) => {
+      .then(() => {
          item.menu.forEach((meal) => {
             reff
                .doc(item.id)
