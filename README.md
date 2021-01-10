@@ -1,6 +1,6 @@
-# STYLiSH
+# ORDER
 
-### An e-commerce shopping website that facilitates users to search for products through simple categories, and connects with cash flow services to realize online shopping.
+### A food exploring system, which helps user explore surrounded restaurants and start group-order event.
 
 ### Demo Link => https://order-7cbbf.web.app/
 
