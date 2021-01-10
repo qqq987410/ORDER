@@ -180,7 +180,7 @@ function Login() {
             </div>
             <div className={styles.password}>
               <input
-                type="text"
+                type="password"
                 placeholder="Password"
                 value={password}
                 onChange={passwordHandler}

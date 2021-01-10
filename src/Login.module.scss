@@ -181,3 +181,111 @@
     }
   }
 }
+@media (max-width: 900px) {
+  .outer {
+    .inner {
+      .min {
+        .greeting {
+          font-size: 23px;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 680px) {
+  .outer {
+    .inner {
+      .min {
+        min-width: 160px;
+        .greeting {
+          font-size: 18px;
+        }
+        .signinBtn {
+          width: 80px;
+          font-size: 10px;
+        }
+      }
+      .max {
+        .title {
+          font-size: 18px;
+        }
+        .icon {
+          width: 40%;
+          .fb {
+            img {
+              width: 30px;
+              height: 30px;
+            }
+          }
+          .google {
+            img {
+              width: 25px;
+              height: 25px;
+            }
+          }
+        }
+        .input {
+          width: 70%;
+          .name {
+          }
+          .account {
+          }
+          .password {
+          }
+          .signUp {
+            font-size: 10px;
+            width: 90px;
+          }
+          .signIn {
+            font-size: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 500px) {
+  .outer {
+    .inner {
+      width: 95%;
+      .min {
+        min-width: 100px;
+        .greeting {
+          font-size: 12px;
+        }
+      }
+      .max {
+        .title {
+          font-size: 15px;
+        }
+        .icon {
+          margin-bottom: 10px;
+        }
+        .input {
+          width: 90%;
+          .name {
+            input {
+              height: 30px;
+            }
+          }
+          .account {
+            input {
+              height: 30px;
+            }
+          }
+          .password {
+            input {
+              height: 30px;
+            }
+          }
+          .signUp {
+            font-size: 10px;
+          }
+          .signIn {
+            font-size: 10px;
+          }
+        }
+      }
+    }
+  }
+}

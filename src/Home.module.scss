@@ -23,7 +23,6 @@
     min-width: 300px;
     height: 100%;
     padding: 150px 20px 0;
-    // background-image: url("./image/brown.jpeg");
     background-size: cover;
     background-position: right;
     .choice {
@@ -59,7 +58,6 @@
           justify-content: center;
           padding: 15px 0;
           .categoryMiddle {
-            //  color: #686666;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -76,11 +74,9 @@
               border-radius: 6px;
               margin-left: 15px;
               cursor: pointer;
-              // background-image: url("./image/check.svg");
             }
             .categoryName {
               letter-spacing: 2px;
-              // color: #686666;
               letter-spacing: 2px;
             }
           }
@@ -223,13 +219,15 @@
     }
     .stores {
       justify-content: center;
-      padding: 20px 10px;
+      padding: 50px 10px 20px 10px;
 
       .store {
         width: 100%;
         max-width: 300px;
         margin-right: 10px;
         margin-left: 10px;
+        position: relative;
+        z-index: -100;
         .top {
           img {
             width: 100%;

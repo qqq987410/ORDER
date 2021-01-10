@@ -1043,7 +1043,7 @@ const DATA = [
   },
   {
     address: "110台北市信義區忠孝東路四段559巷16弄7號",
-    businessHour: ["unknow"],
+    businessHour: ["unknown"],
     category: "eastern",
     phoneNumber: "+886227458198",
     title: "台灣阿誠現炒菜",

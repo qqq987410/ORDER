@@ -471,9 +471,12 @@ function Menu({ data, facebookStatus }) {
             );
           })}
           <div className={styles.deco}>
-            <div className={styles.newGroup} onClick={CreateNewGroup}>
-              開新團
-            </div>
+            {getVariable().special && (
+              <div className={styles.newGroup} onClick={CreateNewGroup}>
+                開新團
+              </div>
+            )}
+
             {teamBuyingBtnExist && (
               <div className={styles.together} onClick={teamBuying}>
                 揪團

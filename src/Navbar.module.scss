@@ -9,7 +9,7 @@
   position: fixed;
   top: 0;
   padding-right: 20px;
-  padding-left: 20px;
+  padding-left: 10px;
   .logo {
     padding: 0 10px;
     width: 100px;
@@ -17,6 +17,7 @@
     background-color: #4c686f;
     .logoImg {
       width: 100%;
+      min-width: 80px;
       height: 100%;
       cursor: pointer;
       path {
@@ -89,6 +90,24 @@
       &:hover {
         background-color: #fff;
         color: #4c686f;
+      }
+    }
+  }
+}
+@media (max-width: 350px) {
+  .navbar {
+    .right {
+      .historyPage {
+        font-size: 12px;
+        width: 80px;
+      }
+      .loginPage {
+        font-size: 12px;
+        width: 80px;
+      }
+      .logOutPage {
+        font-size: 12px;
+        width: 80px;
       }
     }
   }

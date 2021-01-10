@@ -169,3 +169,43 @@
     }
   }
 }
+@media (max-width: 450px) {
+  .outer {
+    .inner {
+      width: 95%;
+      .middle {
+        .item {
+          padding-right: 6px;
+          padding-left: 6px;
+          .left {
+            .title {
+              font-size: 15px;
+            }
+            .orderDetail {
+              font-size: 8px;
+            }
+          }
+          .right {
+            .orderPeople {
+              font-size: 14px;
+              margin-right: 2px;
+            }
+            img {
+              width: 25px;
+              height: 25px;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+      .footer {
+        .keepBuying {
+          width: 120px;
+        }
+        .checkout {
+          width: 120px;
+        }
+      }
+    }
+  }
+}

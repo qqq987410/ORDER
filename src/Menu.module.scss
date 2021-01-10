@@ -248,6 +248,71 @@
     }
   }
 }
+@media (max-width: 700px) {
+  .main {
+    .menuSpace {
+      .class {
+        .classContent {
+          justify-content: center;
+          .meal {
+            width: 100%;
+            .name {
+              margin-right: 0;
+            }
+          }
+        }
+      }
+      .deco {
+        right: 0;
+        justify-content: center;
+        .newGroup {
+          width: 120px;
+          height: 50px;
+          font-size: 12px;
+        }
+        .together {
+          width: 120px;
+          height: 50px;
+          font-size: 12px;
+        }
+        .cartBtn {
+          width: 120px;
+          height: 50px;
+          font-size: 12px;
+          span {
+            bottom: 40px;
+          }
+          .cart {
+            width: 20px;
+          }
+          .totalPrice {
+            font-size: 12px;
+            &::before {
+              content: "$";
+              margin-left: 5px;
+              margin-right: 3px;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 500px) {
+  .main {
+    .header {
+      height: 250px;
+    }
+  }
+}
+@media (max-width: 400px) {
+  .main {
+    .menuSpace {
+      padding: 0 10px 120px;
+    }
+  }
+}
 /*========= <MealPoppup /> =========*/
 .outer {
   width: 100vw;
