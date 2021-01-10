@@ -80,7 +80,7 @@ function History({ facebookStatus }) {
   return (
     <div className={styles.out}>
       <div className={styles.in}>
-        <div className={styles.historyTitle}>History Order</div>
+        <div className={styles.historyTitle}>Order History</div>
         {mixBundle
           .sort((a, b) => (a.endTime.seconds > b.endTime.seconds ? -1 : 1))
           .map((res) => {

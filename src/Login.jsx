@@ -83,6 +83,7 @@ function Login() {
       .then(() => {
         // Update
         const userDetail = firebase.auth().currentUser;
+        console.log(name);
         userDetail.updateProfile({
           displayName: name,
           photoURL: "https://example.com/jane-q-user/profile.jpg",
@@ -102,6 +103,36 @@ function Login() {
         Swal.fire({
           icon: "error",
           title: "登入失敗，請重新登錄",
+        });
+      });
+  }
+  function nativeSignIn() {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(account, password)
+      .then((result) => {
+        console.log(result);
+        const user = result.user;
+        Swal.fire({
+          title: "Logged in sucessfully!",
+          text: user.displayName
+            ? `Welcome back, ${user.displayName}!`
+            : "Welcome back!",
+          icon: "success",
+          confirmButtonColor: "#003d5b",
+          confirmButtonText: "OK",
+        });
+        // 跳轉至前一頁
+        history.goBack();
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        Swal.fire({
+          title: "Oops...",
+          text: `${errorMessage}`,
+          icon: "error",
+          confirmButtonColor: "#003d5b",
+          confirmButtonText: "OK",
         });
       });
   }
@@ -196,6 +227,7 @@ function Login() {
             <div
               className={styles.signIn}
               style={{ display: trigger ? "none" : "flex" }}
+              onClick={nativeSignIn}
             >
               SIGN IN
             </div>

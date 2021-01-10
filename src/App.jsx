@@ -16,6 +16,7 @@ function App() {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(function (user) {
+      console.log("change");
       if (user) {
         setFacebookStatus({
           status: true,
@@ -28,6 +29,7 @@ function App() {
       }
     });
   }, []);
+  console.log(facebookStatus.displayName);
 
   return (
     <>

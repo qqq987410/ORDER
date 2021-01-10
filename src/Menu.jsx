@@ -157,8 +157,8 @@ function Menu({ data, facebookStatus }) {
     } else {
       return "";
     }
-  }, [facebookStatus.status]);
-
+  }, [facebookStatus]);
+  console.log(facebookStatus.displayName);
   // 7. 揪團Btn setState
   useEffect(() => {
     if (!getVariable().special) {
@@ -434,7 +434,6 @@ function Menu({ data, facebookStatus }) {
       });
     }
   }
-  console.log(cartLength);
   return (
     <>
       <div className={styles.main}>
