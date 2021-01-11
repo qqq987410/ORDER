@@ -49,6 +49,6 @@
 -  Protect private route
 -  Refactor website with Redux
 
-#### Plan for Next Version
+#### Contact
 
 E-mail: qqq987410@gmail.com
