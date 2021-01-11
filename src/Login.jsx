@@ -83,7 +83,6 @@ function Login() {
       .then(() => {
         // Update
         const userDetail = firebase.auth().currentUser;
-        console.log(name);
         userDetail.updateProfile({
           displayName: name,
           photoURL: "https://example.com/jane-q-user/profile.jpg",

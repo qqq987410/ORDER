@@ -91,7 +91,6 @@ function Menu({ data, facebookStatus }) {
                             followerRes.forEach((followerDoc) => {
                               followerLength.push(followerDoc.data());
                             });
-                            console.log(followerLength.length);
                             setCartLength(followerLength.length);
                             setMyOrders(followerLength);
                           });
@@ -107,7 +106,6 @@ function Menu({ data, facebookStatus }) {
                     ) {
                       orderListGet(onSnapshotDoc.data().id).then(
                         (totalMealRes) => {
-                          console.log(totalMealRes.size);
                           setCartLength(totalMealRes.size);
                           const ownerOrderList = [];
                           totalMealRes.forEach((totalMealDoc) => {
@@ -158,7 +156,7 @@ function Menu({ data, facebookStatus }) {
       return "";
     }
   }, [facebookStatus]);
-  console.log(facebookStatus.displayName);
+
   // 7. 揪團Btn setState
   useEffect(() => {
     if (!getVariable().special) {

@@ -61,7 +61,6 @@ function History({ facebookStatus }) {
               );
             });
             Promise.all(groupId).then((summary) => {
-              console.log(summary);
               setSubBundle(summary);
             });
           });

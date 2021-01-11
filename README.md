@@ -28,6 +28,10 @@
    -  ESLint / Prettier
    -  Sourcetree
 
+#### Core Components Structure
+
+<img src="componentStructure.png" alt="componentStructure" width="800"/>
+
 #### Demo
 
 -  Add order to order lists.
@@ -36,4 +40,15 @@
 
 #### RWD Demo
 
-![image](https://github.com/qqq987410/ORDER/blob/master/orderRWDScreenShot.png)
+<img src="orderRWDScreenShot.png" alt="mobileScreenShot" width="300"/>
+
+#### Plan for Next Version
+
+-  Add comment feature
+-  Add ranting feature
+-  Protect private route
+-  Refactor website with Redux
+
+#### Plan for Next Version
+
+E-mail: qqq987410@gmail.com
