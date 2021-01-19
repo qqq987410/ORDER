@@ -1,6 +1,5 @@
 import { Switch, Route } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
+import { useEffect, useState } from "react";
 import Home from "./Home";
 import Menu from "./Menu";
 import OrderList from "./OrderList";
@@ -10,6 +9,7 @@ import NotFound from "./NotFound";
 import firebase from "firebase/app";
 // import { db } from "./firebase";
 import DATA from "./data";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   const [facebookStatus, setFacebookStatus] = useState({});
@@ -33,26 +33,21 @@ function App() {
     <>
       <Switch>
         <Route exact path="/">
-          <Navbar facebookStatus={facebookStatus} />
-          <Home data={DATA} />
+          <Home data={DATA} facebookStatus={facebookStatus} />
         </Route>
         <Route path="/menu">
-          <Navbar facebookStatus={facebookStatus} />
           <Menu data={DATA} facebookStatus={facebookStatus} />
         </Route>
         <Route path="/orderList">
-          <Navbar facebookStatus={facebookStatus} />
           <OrderList facebookStatus={facebookStatus} />
         </Route>
-        <Route path="/history">
-          <Navbar facebookStatus={facebookStatus} />
+        <ProtectedRoute exact path="/history" facebookStatus={facebookStatus}>
           <History facebookStatus={facebookStatus} />
-        </Route>
+        </ProtectedRoute>
         <Route path="/login">
-          <Navbar facebookStatus={facebookStatus} />
-          <Login />
+          <Login facebookStatus={facebookStatus} />
         </Route>
-        <Route>
+        <Route path="*">
           <NotFound />
         </Route>
       </Switch>

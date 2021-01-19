@@ -1,8 +1,9 @@
 import styles from "./History.module.scss";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import getVariable from "./Variable";
 import { nanoid } from "nanoid";
 import PropTypes from "prop-types";
+import Navbar from "./Navbar";
 
 function History({ facebookStatus }) {
   const [bundle, setBundle] = useState([]);
@@ -77,24 +78,27 @@ function History({ facebookStatus }) {
   }, [bundle, subBundle]);
 
   return (
-    <div className={styles.out}>
-      <div className={styles.in}>
-        <div className={styles.historyTitle}>Order History</div>
-        {mixBundle
-          .sort((a, b) => (a.endTime.seconds > b.endTime.seconds ? -1 : 1))
-          .map((res) => {
-            if (res.orderLists.length > 0) {
-              return (
-                <Unit
-                  endTime={res.endTime}
-                  orderLists={res.orderLists}
-                  key={nanoid()}
-                />
-              );
-            }
-          })}
+    <>
+      <Navbar facebookStatus={facebookStatus} />
+      <div className={styles.out}>
+        <div className={styles.in}>
+          <div className={styles.historyTitle}>Order History</div>
+          {mixBundle
+            .sort((a, b) => (a.endTime.seconds > b.endTime.seconds ? -1 : 1))
+            .map((res) => {
+              if (res.orderLists.length > 0) {
+                return (
+                  <Unit
+                    endTime={res.endTime}
+                    orderLists={res.orderLists}
+                    key={nanoid()}
+                  />
+                );
+              }
+            })}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 function Unit({ endTime, orderLists }) {

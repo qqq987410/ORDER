@@ -5,10 +5,11 @@ import { useHistory } from "react-router-dom";
 import head from "./image/head.jpg";
 import dollarSign from "./image/dollarSign.png";
 import trash from "./image/trash.svg";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import getVariable from "./Variable";
 import PropTypes from "prop-types";
+import Navbar from "./Navbar";
 
 function OrderList({ facebookStatus }) {
   const orderListRef = db.collection("orderList");
@@ -117,47 +118,50 @@ function OrderList({ facebookStatus }) {
   }
 
   return (
-    <div className={styles.outer}>
-      <div className={styles.inner}>
-        <div className={styles.header}>
-          <div className={styles.user}>
-            <img src={head} alt="head photo" />
-            <p>{facebookStatus.displayName}</p>
+    <>
+      <Navbar facebookStatus={facebookStatus} />
+      <div className={styles.outer}>
+        <div className={styles.inner}>
+          <div className={styles.header}>
+            <div className={styles.user}>
+              <img src={head} alt="head photo" />
+              <p>{facebookStatus.displayName}</p>
+            </div>
+            <div className={styles.totalPrice}>
+              <img src={dollarSign} alt="money icon" />
+              <p>{orderListPrice}</p>
+            </div>
           </div>
-          <div className={styles.totalPrice}>
-            <img src={dollarSign} alt="money icon" />
-            <p>{orderListPrice}</p>
+          <div className={styles.middle}>
+            {cartLists?.map((item) => {
+              return (
+                <Item
+                  dishData={item}
+                  facebookStatus={facebookStatus}
+                  setCartLists={setCartLists}
+                  key={nanoid()}
+                />
+              );
+            })}
           </div>
-        </div>
-        <div className={styles.middle}>
-          {cartLists?.map((item) => {
-            return (
-              <Item
-                dishData={item}
-                facebookStatus={facebookStatus}
-                setCartLists={setCartLists}
-                key={nanoid()}
-              />
-            );
-          })}
-        </div>
-        <div className={styles.footer}>
-          <button className={styles.keepBuying} onClick={previousPage}>
-            繼續購買
-          </button>
+          <div className={styles.footer}>
+            <button className={styles.keepBuying} onClick={previousPage}>
+              繼續購買
+            </button>
 
-          {getVariable().special ? (
-            <button className={styles.checkout} onClick={toOwner}>
-              送單給團長
-            </button>
-          ) : (
-            <button className={styles.checkout} onClick={checkout}>
-              產生訂單
-            </button>
-          )}
+            {getVariable().special ? (
+              <button className={styles.checkout} onClick={toOwner}>
+                送單給團長
+              </button>
+            ) : (
+              <button className={styles.checkout} onClick={checkout}>
+                產生訂單
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 function Item({ facebookStatus, dishData, setCartLists }) {

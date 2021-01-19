@@ -1,6 +1,5 @@
 import styles from "./Navbar.module.scss";
 import { Link, useHistory } from "react-router-dom";
-import React from "react";
 import firebase from "firebase/app";
 import getVariable from "./Variable";
 import { ReactComponent as Logo } from "./image/Logo.svg";

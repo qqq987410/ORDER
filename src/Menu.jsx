@@ -1,6 +1,6 @@
 import styles from "./Menu.module.scss";
 import { useHistory } from "react-router-dom";
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "./firebase";
 import getVariable from "./Variable";
 import { nanoid } from "nanoid";
@@ -11,6 +11,7 @@ import { ReactComponent as Cart } from "./image/cart.svg";
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 import { orderListGet } from "./utils.js";
+import Navbar from "./Navbar";
 
 function Menu({ data, facebookStatus }) {
   const [mealPopupSwitch, setMealPopupSwitch] = useState(false);
@@ -434,6 +435,7 @@ function Menu({ data, facebookStatus }) {
   }
   return (
     <>
+      <Navbar facebookStatus={facebookStatus} />
       <div className={styles.main}>
         <div className={styles.header}>
           <div className={styles.detail}>
@@ -982,7 +984,7 @@ MealPoppup.propTypes = {
   setMealPopupSwitch: PropTypes.func.isRequired,
   mealPopupDetail: PropTypes.object.isRequired,
   facebookStatus: PropTypes.object.isRequired,
-  followerStorage: PropTypes.string.isRequired,
+  followerStorage: PropTypes.string,
   setFollowerStorage: PropTypes.func.isRequired,
 };
 export default Menu;

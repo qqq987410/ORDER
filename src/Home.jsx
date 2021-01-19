@@ -1,6 +1,6 @@
 import styles from "./Home.module.scss";
 import { useHistory } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import time from "./image/time.svg";
 import phone from "./image/phone.svg";
 import check from "./image/check.svg";
@@ -8,8 +8,9 @@ import getVariable from "./Variable";
 import { nanoid } from "nanoid";
 import "animate.css";
 import PropTypes from "prop-types";
+import Navbar from "./Navbar";
 
-function Home({ data }) {
+function Home({ data, facebookStatus }) {
   const [showRestaurant, setShowRestaurant] = useState([]);
   const [categoryBox, setCategoryBox] = useState([]);
   const [keyWord, setKeyWord] = useState("");
@@ -89,6 +90,7 @@ function Home({ data }) {
 
   return (
     <>
+      <Navbar facebookStatus={facebookStatus} />
       <div className={styles.slogan}>今天來點...?</div>
       <div className={styles.outer}>
         <div className={styles.sideBar}>
@@ -191,6 +193,7 @@ function Category({ categoryTitle, handleBox }) {
 }
 Home.propTypes = {
   data: PropTypes.array.isRequired,
+  facebookStatus: PropTypes.object.isRequired,
 };
 SingleRestaurant.propTypes = {
   detail: PropTypes.object.isRequired,
