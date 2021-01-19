@@ -29,4 +29,4 @@ yarn-error.log*
 .cert
 
 #config.js
-.config.js
+*.config.js
